@@ -40,8 +40,34 @@ body{font-family:var(--f);background:radial-gradient(130% 80% at 50% -12%,#dff0f
 .qcount{font-size:10.5px;font-weight:600;color:var(--dim);white-space:nowrap;letter-spacing:.02em}
 
 #app{flex:1;padding:6px 22px 38px;display:flex;flex-direction:column}
-.step{animation:stepIn .5s cubic-bezier(.22,1,.36,1) both;display:flex;flex-direction:column;flex:1}
-@keyframes stepIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.step{animation:stepIn .35s ease both;display:flex;flex-direction:column;flex:1}
+@keyframes stepIn{from{opacity:0}to{opacity:1}}
+/* staggered entrance — every screen cascades in */
+.step>*{animation:childIn .5s cubic-bezier(.22,1,.36,1) backwards}
+.step>*:nth-child(2){animation-delay:.05s}.step>*:nth-child(3){animation-delay:.10s}
+.step>*:nth-child(4){animation-delay:.15s}.step>*:nth-child(5){animation-delay:.20s}
+.step>*:nth-child(6){animation-delay:.25s}.step>*:nth-child(7){animation-delay:.30s}
+.step>*:nth-child(8){animation-delay:.35s}.step>*:nth-child(9){animation-delay:.40s}
+@keyframes childIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.opts .opt{animation:optIn .45s cubic-bezier(.22,1,.36,1) backwards}
+.opts .opt:nth-child(1){animation-delay:.12s}.opts .opt:nth-child(2){animation-delay:.19s}
+.opts .opt:nth-child(3){animation-delay:.26s}.opts .opt:nth-child(4){animation-delay:.33s}
+.opts .opt:nth-child(5){animation-delay:.40s}.opts .opt:nth-child(6){animation-delay:.47s}
+@keyframes optIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.gcard,.acard{animation:optIn .45s cubic-bezier(.22,1,.36,1) backwards}
+.gcards .gcard:nth-child(2),.acards .acard:nth-child(2){animation-delay:.08s}
+.acards .acard:nth-child(3){animation-delay:.16s}.acards .acard:nth-child(4){animation-delay:.24s}
+.plans .plan{animation:optIn .45s cubic-bezier(.22,1,.36,1) backwards}
+.plans .plan:nth-child(2){animation-delay:.08s}.plans .plan:nth-child(3){animation-delay:.16s}.plans .plan:nth-child(4){animation-delay:.24s}
+/* ambient ocean background */
+.bgfx{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bgfx i{position:absolute;border-radius:50%;filter:blur(46px);opacity:.55}
+.bgfx .b1{width:340px;height:340px;background:radial-gradient(circle,rgba(15,180,196,.17),transparent 70%);top:-80px;left:-90px;animation:drift1 16s ease-in-out infinite alternate}
+.bgfx .b2{width:300px;height:300px;background:radial-gradient(circle,rgba(43,143,214,.14),transparent 70%);bottom:-70px;right:-80px;animation:drift2 19s ease-in-out infinite alternate}
+.bgfx .b3{width:230px;height:230px;background:radial-gradient(circle,rgba(255,106,77,.08),transparent 70%);top:38%;right:-60px;animation:drift3 22s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(70px,50px) scale(1.15)}}
+@keyframes drift2{to{transform:translate(-60px,-45px) scale(1.1)}}
+@keyframes drift3{to{transform:translate(-45px,60px) scale(1.2)}}
 
 .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--aqua);font-weight:700;margin-bottom:13px;display:flex;align-items:center;gap:8px}
 .eyebrow:before{content:"";width:16px;height:2px;background:var(--orange);border-radius:2px}
@@ -306,18 +332,74 @@ h1 .red{color:var(--orange)}
 .limbox p b{color:var(--text)}
 .lvl-line{font-size:12px;color:var(--dim);margin-top:10px}
 .lvl-line b{color:var(--text)}
+/* tap feedback — ripple, float-up emoji, selection pop */
+.opt,.gcard,.acard{position:relative;overflow:hidden}
+.ripple{position:absolute;width:14px;height:14px;border-radius:50%;background:rgba(15,180,196,.35);transform:translate(-50%,-50%) scale(0);animation:rip .55s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:translate(-50%,-50%) scale(18);opacity:0}}
+.floatup{position:fixed;z-index:80;font-size:21px;transform:translate(-50%,-50%);animation:flup .8s cubic-bezier(.22,1,.36,1) forwards;pointer-events:none}
+@keyframes flup{20%{opacity:1}to{transform:translate(-50%,-190%) scale(1.3);opacity:0}}
+.opt.sel,.gcard.sel,.acard.sel{animation:selPop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes selPop{40%{transform:scale(1.025)}}
+.opt.sel .tick{animation:pop .3s cubic-bezier(.34,1.56,.64,1)}
+/* progress bar — shimmer + surfer riding the fill */
+.bar{position:relative;overflow:visible}
+.bar>i{position:relative;overflow:hidden}
+.bar>i:after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-100%);animation:shim 2s linear infinite}
+@keyframes shim{to{transform:translateX(100%)}}
+#barsurfer{position:absolute;top:50%;left:0%;font-size:15px;transform:translate(-55%,-58%) scaleX(-1);transition:left .5s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 2px 3px rgba(12,42,63,.3));pointer-events:none}
+.qcount.bump{animation:qbump .35s}
+@keyframes qbump{40%{transform:scale(1.2);color:var(--aqua)}}
+/* coach's note typing indicator */
+.typing{display:flex;gap:5px;padding:8px 2px 4px}
+.typing i{width:8px;height:8px;border-radius:50%;background:var(--aqua);opacity:.35;animation:tdot 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{30%{opacity:1;transform:translateY(-3px)}}
+.snipin{animation:childIn .45s cubic-bezier(.22,1,.36,1) both}
+/* score reveal fx */
+.radarg{transform-box:view-box;transform-origin:50% 49%;animation:radarIn .9s .3s cubic-bezier(.34,1.56,.64,1) backwards}
+@keyframes radarIn{from{opacity:0;transform:scale(.25)}to{opacity:1;transform:scale(1)}}
+.rdot{transform-box:fill-box;transform-origin:center;animation:dotIn .4s cubic-bezier(.34,1.56,.64,1) backwards}
+@keyframes dotIn{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+.bignum.settled{animation:numSettle .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes numSettle{35%{transform:scale(1.14)}}
+.limbox.attn{animation:attn 1.1s}
+@keyframes attn{35%{box-shadow:0 0 0 8px rgba(255,106,77,.16)}70%,100%{box-shadow:0 0 0 0 rgba(255,106,77,0)}}
+.gauge .bub{position:absolute;bottom:4px;width:9px;height:9px;border-radius:50%;background:rgba(15,180,196,.3);animation:rise 3.4s ease-in infinite}
+.gauge .bub:nth-child(odd){width:6px;height:6px}
+@keyframes rise{0%{transform:translateY(0);opacity:0}12%{opacity:.9}100%{transform:translateY(-118px);opacity:0}}
+/* CTA shine sweep */
+.cta{position:relative;overflow:hidden}
+.cta:after{content:"";position:absolute;top:0;left:0;width:55%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,.35) 50%,transparent 80%);transform:translateX(-170%) skewX(-18deg);animation:ctashine 3.4s ease-in-out infinite}
+@keyframes ctashine{0%,55%{transform:translateX(-170%) skewX(-18deg)}90%,100%{transform:translateX(330%) skewX(-18deg)}}
+.cta:disabled:after{display:none}
+/* milestone radiating rings */
+.mck{position:relative}
+.mck:before,.mck:after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid rgba(15,180,196,.5);animation:ringx 1.6s ease-out .35s infinite}
+.mck:after{animation-delay:.95s}
+@keyframes ringx{from{transform:scale(1);opacity:.8}to{transform:scale(1.95);opacity:0}}
+/* loader + result juice */
+.testi.tin{animation:childIn .5s both}
+.chk.done .cb{animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
+.tiercard{animation:cardIn .65s .15s cubic-bezier(.22,1,.36,1) backwards}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.plan .pbadge{animation:badgeP 2s infinite}
+@keyframes badgeP{50%{transform:scale(1.1)}}
+.scratch-hint{animation:hintB 1.6s infinite}
+@keyframes hintB{50%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 .tag-debug{position:fixed;bottom:8px;left:10px;font-size:10px;font-family:monospace;z-index:50;color:#456}
 .backlink{position:absolute;left:16px;top:14px;color:var(--mute);font-size:24px;cursor:pointer;z-index:6;line-height:1;padding:4px;display:none}
 .backlink.show{display:block}
 </style>
 </head>
 <body>
+<div class="bgfx"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
 <div id="shell">
   <span class="backlink" id="back" onclick="goBack()">‹</span>
   <div id="topbar">
     <div class="brand"><div class="mark">IS</div><div class="wm">IMPROVE <b>SURFING</b></div></div>
     <div class="progress-wrap" id="progwrap" style="visibility:hidden">
-      <div class="bar"><i id="barfill"></i></div>
+      <div class="bar"><i id="barfill"></i><span id="barsurfer">🏄</span></div>
       <div class="qcount" id="qcount"></div>
     </div>
   </div>
@@ -463,7 +545,7 @@ const STEPS = [
       {label:'I stay calm — I just wait it out and paddle back',val:'calm',score:3},
     ]},
 
-  { id:'ms1', type:'milestone', stage:2,
+  { id:'ms1', type:'milestone', stage:2, confetti:24,
     title:"{nm}that's your ocean & technique read — done ✓",
     sub:'Strong start. Now the part most quizzes skip: how you actually surf the wave.',
     btn:'Keep going →' },
@@ -590,7 +672,7 @@ const STEPS = [
       {label:'Handling bigger or more demanding surf',val:'progression'},
     ]},
 
-  { id:'ms2', type:'milestone', stage:4, confetti:true,
+  { id:'ms2', type:'milestone', stage:4, confetti:70,
     title:'{nm}your surf profile is complete.',
     sub:'20-point diagnostic captured. A few quick ones to match your programme — then we calculate your Surf Score.',
     btn:'Match my programme →' },
@@ -726,10 +808,13 @@ function setProgress(step){
   const isInput=INPUT.includes(step.type);
   if(isInput){
     pw.style.visibility='visible';
-    const all=inputSteps(), n=all.indexOf(step)+1;
-    document.getElementById('barfill').style.width=(n/all.length*100)+'%';
-    if(step.q){const q=qSteps();document.getElementById('qcount').textContent='Question '+(q.indexOf(step)+1)+' of '+q.length;}
-    else document.getElementById('qcount').textContent='';
+    const all=inputSteps(), n=all.indexOf(step)+1, pct=(n/all.length*100);
+    document.getElementById('barfill').style.width=pct+'%';
+    const surf=document.getElementById('barsurfer'); if(surf)surf.style.left=pct+'%';
+    const qc=document.getElementById('qcount');
+    if(step.q){const q=qSteps();qc.textContent='Question '+(q.indexOf(step)+1)+' of '+q.length;
+      qc.classList.remove('bump'); void qc.offsetWidth; qc.classList.add('bump');}
+    else qc.textContent='';
   } else pw.style.visibility='hidden';
   document.getElementById('back').classList.toggle('show', idx>0&&STEPS[idx].type!=='result'&&STEPS[idx].type!=='plans');
 }
@@ -812,23 +897,37 @@ function renderGender(el,step){
     </div>
     <div class="gcard alt" onclick="pickGender(this,'Prefer not to say')">Prefer not to say</div>`;
 }
-function pickGender(node,v){ state.gender=v; const from=idx; document.querySelectorAll('.gcard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},300); }
+function pickGender(node,v){ state.gender=v; fx(node,window.event,null); const from=idx; document.querySelectorAll('.gcard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},430); }
 function renderImgCards(el,step){
   el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${step.title}</h1>${step.sub?`<div class="sub">${step.sub}</div>`:''}
     <div class="acards">${step.options.map(o=>`<div class="acard${state[step.id]===o.val?' sel':''}" onclick="pickCard(this,'${step.id}','${o.val}')">${slot(o.img,'ar-card',o.label)}<div class="aname">${o.label}</div></div>`).join('')}</div>`;
 }
-function pickCard(node,id,v){ state[id]=v; const from=idx; document.querySelectorAll('.acard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},300); }
+function pickCard(node,id,v){ state[id]=v; fx(node,window.event,null); const from=idx; document.querySelectorAll('.acard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},430); }
 function interp(t){ if(!t)return t; const nm=state.name?state.name.split(' ')[0]:'';
   return t.replace('{nm}', nm?nm+', ':'').replace(/^([a-z])/,c=>c.toUpperCase()); }
+function buzz(ms){ try{ if(navigator.vibrate)navigator.vibrate(ms); }catch(e){} }
+function fx(node,e,score){ /* ripple inside the card + emoji floating up from the tap point */
+  buzz(9);
+  const b=node.getBoundingClientRect();
+  const cx=(e&&e.clientX)?e.clientX:b.left+b.width/2, cy=(e&&e.clientY)?e.clientY:b.top+b.height/2;
+  const r=document.createElement('span'); r.className='ripple';
+  r.style.left=(cx-b.left)+'px'; r.style.top=(cy-b.top)+'px';
+  node.appendChild(r); setTimeout(()=>r.remove(),600);
+  const f=document.createElement('span'); f.className='floatup';
+  f.textContent=(score!=null&&score>=3)?'🤙':'✓';
+  f.style.left=cx+'px'; f.style.top=cy+'px';
+  document.body.appendChild(f); setTimeout(()=>f.remove(),850);
+}
 function renderSingle(el,step){
   el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}<div class="opts"></div>`;
   const opts=el.querySelector('.opts');
   step.options.forEach(o=>{
     const b=document.createElement('button'); b.className='opt'+(state[step.id]===o.val?' sel':'');
     b.innerHTML=`<span class="tick"></span>${o.emoji?`<span class="emoji">${o.emoji}</span>`:''}<span class="txt">${o.label}</span>`;
-    b.onclick=()=>{ state[step.id]=o.val; if(o.score!=null)state._sc[step.id]=o.score;
+    b.onclick=(e)=>{ state[step.id]=o.val; if(o.score!=null)state._sc[step.id]=o.score;
+      fx(b,e,o.score);
       opts.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
-      const from=idx; setTimeout(()=>{if(idx===from)next()},280); };
+      const from=idx; setTimeout(()=>{if(idx===from)next()},430); };
     opts.appendChild(b);
   });
 }
@@ -867,16 +966,28 @@ function saveNums(id){
 }
 function renderSnippet(el,step){
   const c=step.content();
+  /* chat-style: typing dots first, then the note springs in */
   el.innerHTML=`
     <div class="spacer" style="max-height:46px"></div>
     <div class="snip">
       <div class="sk"><div class="sav">IS</div><div><div class="skk">Coach's note</div><div class="skn">Improve Surfing · Gold Coast</div></div></div>
-      <div class="st">${interp(c.title)}</div>
-      <div class="sb">${c.body}</div>
-      ${c.stat?`<div class="snipstat"><b>${c.stat[0]}</b><span>${c.stat[1]}</span></div>`:''}
+      <div class="typing" id="snipTyping"><i></i><i></i><i></i></div>
+      <div id="snipBody" style="display:none">
+        <div class="st">${interp(c.title)}</div>
+        <div class="sb">${c.body}</div>
+        ${c.stat?`<div class="snipstat"><b>${c.stat[0]}</b><span>${c.stat[1]}</span></div>`:''}
+      </div>
     </div>
     <div class="spacer"></div>
-    <button class="cta green" onclick="next()">${c.btn||'Got it →'}</button>`;
+    <button class="cta green" id="snipGo" style="visibility:hidden" onclick="next()">${c.btn||'Got it →'}</button>`;
+  const from=idx;
+  setTimeout(()=>{ if(idx!==from)return;
+    const t=document.getElementById('snipTyping'), b=document.getElementById('snipBody'), g=document.getElementById('snipGo');
+    if(t)t.remove();
+    if(b){ b.style.display='block'; b.classList.add('snipin'); }
+    if(g){ g.style.visibility='visible'; g.classList.add('snipin'); }
+    buzz(8);
+  },850);
 }
 function renderMilestone(el,step){
   el.innerHTML=`
@@ -887,7 +998,8 @@ function renderMilestone(el,step){
       <div class="milebars">${[1,2,3,4].map(i=>`<i class="${i<=step.stage?'on':''}"></i>`).join('')}</div>
     </div>
     <button class="cta" onclick="next()">${step.btn||'Continue →'}</button>`;
-  if(step.confetti) burstConfetti();
+  if(step.confetti) burstConfetti(step.confetti===true?70:step.confetti);
+  buzz(12);
 }
 function renderLoader(el){
   el.innerHTML=`
@@ -919,7 +1031,8 @@ function renderLoader(el){
   ];
   const chks=[...el.querySelectorAll('.chk')], ring=el.querySelector('#ringfill'), rnum=el.querySelector('#ringnum'),
         lstat=el.querySelector('#lstat'), testi=el.querySelector('#testi'); const C=326.7;
-  function showT(i){const t=testis[i%testis.length];testi.innerHTML=`<img class="av" src="img/${t.f}.jpg" onerror="avFallback(this,'${t.i}')"><div class="tbody"><div class="stars">★★★★★</div><span>“${t.t}”</span><b>${t.n}</b></div>`;}
+  function showT(i){const t=testis[i%testis.length];testi.innerHTML=`<img class="av" src="img/${t.f}.jpg" onerror="avFallback(this,'${t.i}')"><div class="tbody"><div class="stars">★★★★★</div><span>“${t.t}”</span><b>${t.n}</b></div>`;
+    testi.classList.remove('tin'); void testi.offsetWidth; testi.classList.add('tin');}
   showT(0);
   /* setInterval (not rAF) — in-app browsers (IG/FB webview) throttle rAF and would freeze the funnel here */
   const from=idx, DUR=4200, t0=performance.now(); let lastStage=-1;
@@ -942,8 +1055,8 @@ function radarSVG(p){
   let s='<svg viewBox="0 0 300 212" width="100%">';
   for(let g=1;g<=MAX;g++){ s+='<polygon points="'+KEYS.map((_,i)=>pt(i,R*g/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="none" stroke="#e2eef5"/>'; }
   KEYS.forEach((_,i)=>{const e=pt(i,R); s+=`<line x1="${cx}" y1="${cy}" x2="${e[0].toFixed(1)}" y2="${e[1].toFixed(1)}" stroke="#e2eef5"/>`;});
-  s+='<polygon points="'+KEYS.map((k,i)=>pt(i,R*Math.max(.35,(p[k]||1))/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="rgba(15,180,196,.18)" stroke="#0fb4c4" stroke-width="2.5" stroke-linejoin="round"/>';
-  KEYS.forEach((k,i)=>{const d=pt(i,R*Math.max(.35,(p[k]||1))/MAX); s+=`<circle cx="${d[0].toFixed(1)}" cy="${d[1].toFixed(1)}" r="3.5" fill="#0fb4c4" stroke="#fff" stroke-width="1.5"/>`;});
+  s+='<g class="radarg"><polygon points="'+KEYS.map((k,i)=>pt(i,R*Math.max(.35,(p[k]||1))/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="rgba(15,180,196,.18)" stroke="#0fb4c4" stroke-width="2.5" stroke-linejoin="round"/></g>';
+  KEYS.forEach((k,i)=>{const d=pt(i,R*Math.max(.35,(p[k]||1))/MAX); s+=`<circle class="rdot" style="animation-delay:${(0.9+i*0.09).toFixed(2)}s" cx="${d[0].toFixed(1)}" cy="${d[1].toFixed(1)}" r="3.5" fill="#0fb4c4" stroke="#fff" stroke-width="1.5"/>`;});
   KEYS.forEach((k,i)=>{const l=pt(i,R+22); const anc=Math.abs(l[0]-cx)<10?'middle':(l[0]>cx?'start':'end');
     s+=`<text class="rlab" x="${l[0].toFixed(1)}" y="${(l[1]+3.5).toFixed(1)}" text-anchor="${anc}">${PILLARS[k].label}</text>`;});
   return s+'</svg>';
@@ -960,7 +1073,8 @@ function renderScore(el){
         <path d="M20,130 A100,100 0 0 1 220,130" fill="none" stroke="#e2eef5" stroke-width="16" stroke-linecap="round"/>
         <path id="gf" d="M20,130 A100,100 0 0 1 220,130" fill="none" stroke="url(#gg)" stroke-width="16" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/>
         <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ef4444"/><stop offset="1" stop-color="#ff6a4d"/></linearGradient></defs>
-      </svg></div>
+      </svg>
+      <span class="bub" style="left:16%"></span><span class="bub" style="left:38%;animation-delay:.9s"></span><span class="bub" style="left:62%;animation-delay:1.7s"></span><span class="bub" style="left:83%;animation-delay:.4s"></span></div>
       <div class="bignum"><span id="bn">0</span><span class="of">/100</span></div>
       <div class="lvl-line">Diagnostic level: <b>L${r.lvl} · ${LEVELS[r.lvl]}</b> (${r.avg}/4)</div>
       <div class="reveal-headline">${nm?nm+', you':'You'}'re surfing at <span class="red">roughly ${r.score}%</span> of your potential.</div>
@@ -977,7 +1091,9 @@ function renderScore(el){
   const gf=el.querySelector('#gf');
   setTimeout(()=>{gf.style.transition='stroke-dashoffset 1.4s cubic-bezier(.22,1,.36,1)';gf.style.strokeDashoffset=(314-314*pct)},120);
   animateNum(el.querySelector('#bn'),0,r.score,1500,v=>Math.round(v));
+  setTimeout(()=>{const bn=el.querySelector('.bignum'); if(bn)bn.classList.add('settled'); buzz(14);},1650);
   setTimeout(()=>{el.querySelectorAll('.bar2 i').forEach(b=>b.style.width=b.dataset.w+'%');},500);
+  setTimeout(()=>{const lb=el.querySelector('.limbox'); if(lb)lb.classList.add('attn');},2100);
 }
 function renderProjection(el){
   const p=computeProjection(state); state._proj=p;
@@ -1147,9 +1263,9 @@ function renderPlans(el){
 function selectPlan(node,k){ state._sel=k; document.querySelectorAll('.plan').forEach(p=>p.classList.remove('sel')); node.classList.add('sel'); const pp=document.getElementById('payprice'); if(pp)pp.textContent='A$'+(parseFloat(TIERS[k].price.replace('A$',''))/7).toFixed(2); updateDebug(); }
 function payTier(){ const t=TIERS[state._sel]; alert('(prototype) Opens the Stripe checkout for '+t.name+' — '+t.price+'/week.\nURL: '+t.url); }
 function igFallback(img){ img.style.display='none'; const s=img.nextElementSibling; if(s)s.style.display='flex'; }
-function burstConfetti(){
+function burstConfetti(n){
   const cols=['#0fb4c4','#2b8fd6','#ff6a4d','#f5a623','#0c2a3f'];
-  for(let i=0;i<70;i++){ const c=document.createElement('div'); c.className='confetti';
+  for(let i=0;i<(n||70);i++){ const c=document.createElement('div'); c.className='confetti';
     c.style.left=Math.random()*100+'vw'; c.style.background=cols[i%cols.length];
     c.style.animationDuration=(2+Math.random()*2)+'s'; c.style.animationDelay=(Math.random()*.4)+'s';
     document.body.appendChild(c); setTimeout(()=>c.remove(),4200); }
