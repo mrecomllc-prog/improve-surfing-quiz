@@ -94,7 +94,9 @@ h1 .red{color:var(--orange)}
 .gcard{flex:1;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:0 0 14px;cursor:pointer;overflow:hidden;box-shadow:var(--shadow-card);transition:.15s;text-align:center}
 .gcard:hover{transform:translateY(-2px);border-color:var(--aqua)}
 .gcard.sel{border-color:var(--aqua);background:linear-gradient(180deg,rgba(34,211,238,.08),transparent)}
-.gcard .gname{font-size:14px;font-weight:700;margin-top:11px;color:var(--text)}
+.gcard .gbadge{width:78px;height:78px;border-radius:50%;margin:26px auto 0;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,rgba(15,180,196,.16),rgba(43,143,214,.10));border:1px solid rgba(15,180,196,.32);transition:.15s}
+.gcard.sel .gbadge{background:linear-gradient(135deg,rgba(15,180,196,.28),rgba(43,143,214,.16));border-color:var(--aqua)}
+.gcard .gname{font-size:15px;font-weight:700;margin-top:13px;color:var(--text)}
 .gcard.alt{flex:none;width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:15px;margin-top:11px;color:var(--dim);font-weight:600}
 
 /* buttons */
@@ -892,8 +894,8 @@ function renderGender(el,step){
   el.innerHTML=`
     <div class="eyebrow">${step.eyebrow}</div><h1>${step.title}</h1>
     <div class="gcards">
-      <div class="gcard" onclick="pickGender(this,'Man')">${slot('male','ar-port','MALE SURFER #2a')}<div class="gname">Man</div></div>
-      <div class="gcard" onclick="pickGender(this,'Woman')">${slot('female','ar-port','FEMALE SURFER #2b')}<div class="gname">Woman</div></div>
+      <div class="gcard" onclick="pickGender(this,'Man')"><div class="gbadge">🏄‍♂️</div><div class="gname">Man</div></div>
+      <div class="gcard" onclick="pickGender(this,'Woman')"><div class="gbadge">🏄‍♀️</div><div class="gname">Woman</div></div>
     </div>
     <div class="gcard alt" onclick="pickGender(this,'Prefer not to say')">Prefer not to say</div>`;
 }
