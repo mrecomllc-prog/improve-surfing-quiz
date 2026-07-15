@@ -260,6 +260,52 @@ h1 .red{color:var(--orange)}
 .confetti{position:fixed;top:-10px;width:9px;height:14px;z-index:60;pointer-events:none;border-radius:2px;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
 
+/* coaching snippet (coach's note) */
+.snip{background:var(--surface);border:1.5px solid rgba(15,180,196,.4);border-left:4px solid var(--aqua);border-radius:16px;padding:18px;box-shadow:var(--shadow-card);text-align:left;margin-top:4px}
+.snip .sk{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.snip .sav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--aqua),var(--blue));display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;flex-shrink:0}
+.snip .skk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua);font-weight:700}
+.snip .skn{font-size:12px;color:var(--dim);font-weight:600;margin-top:2px}
+.snip .st{font-size:16.5px;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:8px}
+.snip .sb{font-size:13.5px;line-height:1.55;color:var(--dim)}
+.snip .sb b{color:var(--text)}
+.snipstat{display:flex;align-items:center;gap:10px;background:rgba(15,180,196,.08);border:1px solid rgba(15,180,196,.25);border-radius:11px;padding:10px 13px;margin-top:12px;font-size:12.5px;font-weight:600;color:var(--text);text-align:left}
+.snipstat b{color:var(--aqua);font-size:17px;flex-shrink:0}
+/* milestone */
+.mile{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.mile .mck{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,var(--aqua),var(--blue));margin:0 auto 18px;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 40px -14px rgba(15,180,196,.55);animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
+.mile .mck svg{width:32px;height:32px;fill:#fff}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.mile h1{font-size:26px;margin-top:2px}
+.milebars{display:flex;gap:7px;justify-content:center;margin:16px 0 4px}
+.milebars i{width:34px;height:6px;border-radius:99px;background:var(--track)}
+.milebars i.on{background:linear-gradient(90deg,var(--aqua),var(--blue))}
+/* multi select */
+.opt .box{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s}
+.opt.sel .box{border-color:var(--aqua);background:var(--aqua)}
+.opt.sel .box:after{content:"✓";color:#fff;font-weight:800;font-size:12px}
+/* number inputs */
+.numrow{display:flex;gap:11px;margin-top:4px}
+.numrow .field{flex:1;margin-bottom:0}
+.skiplink{text-align:center;margin-top:14px;font-size:13px;color:var(--dim);text-decoration:underline;cursor:pointer}
+/* radar + pillar breakdown */
+.radarcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 10px 4px;margin:14px 0 4px;box-shadow:var(--shadow-card)}
+.radarcard .rlab{font:600 10px 'Poppins',sans-serif;fill:var(--dim)}
+.pillrows{margin:8px 8px 14px}
+.prow2{display:flex;align-items:center;gap:9px;margin:7px 0;font-size:12px;font-weight:600;color:var(--text)}
+.prow2 .nm2{width:100px;text-align:left;flex-shrink:0}
+.prow2 .bar2{flex:1;height:6px;background:var(--track);border-radius:99px;overflow:hidden}
+.prow2 .bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:99px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.prow2 .vv{width:30px;text-align:right;color:var(--aqua);font-weight:700;flex-shrink:0}
+.prow2.weak .vv{color:var(--orange)}
+.prow2.weak .bar2 i{background:linear-gradient(90deg,var(--orange),var(--orange-deep))}
+.limbox{background:rgba(255,106,77,.08);border:1px solid rgba(255,106,77,.3);border-radius:14px;padding:14px 15px;margin:12px 0 2px;text-align:left}
+.limbox .lk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:5px}
+.limbox .ln2{font-size:19px;font-weight:800;color:var(--text);margin-bottom:5px}
+.limbox p{font-size:12.5px;color:var(--dim);line-height:1.5}
+.limbox p b{color:var(--text)}
+.lvl-line{font-size:12px;color:var(--dim);margin-top:10px}
+.lvl-line b{color:var(--text)}
 .tag-debug{position:fixed;bottom:8px;left:10px;font-size:10px;font-family:monospace;z-index:50;color:#456}
 .backlink{position:absolute;left:16px;top:14px;color:var(--mute);font-size:24px;cursor:pointer;z-index:6;line-height:1;padding:4px;display:none}
 .backlink.show{display:block}
@@ -306,56 +352,252 @@ const STEPS = [
       {label:'50+',val:'50+',img:'age4'},
     ]},
 
-  { id:'level', type:'single', q:true,
-    eyebrow:'Where you are now', title:"What's your surfing level right now?",
+  /* ═══ Section 1 · Your surfing today ═══ */
+  { id:'q1', type:'single', q:true,
+    eyebrow:'Your surfing', title:"What's your <span class='hl'>main goal</span> in surfing right now?",
+    sub:'Choose the one that feels most true today.',
     options:[
-      {label:'Beginner — mostly whitewater',val:'beginner'},
-      {label:'Intermediate — green waves, but inconsistent',val:'intermediate'},
-      {label:'Advanced — but stuck at the same level',val:'advanced'},
-      {label:"I've surfed for years and I've plateaued",val:'plateaued'},
+      {label:'Catch more waves & stand up consistently',val:'catch_waves'},
+      {label:'Improve my turns & control on the wave face',val:'turns_control'},
+      {label:'Surf with more flow, speed and style',val:'flow_style'},
+      {label:'Ride bigger or more powerful waves',val:'bigger_waves'},
+      {label:'Compete or push into high performance',val:'compete'},
     ]},
 
-  { id:'howlong', type:'single', q:true,
+  { id:'q2', type:'single', q:true,
     eyebrow:'Your history', title:'How long have you been surfing?',
     options:[
-      {label:'Less than a year',val:'<1'},
-      {label:'1 to 3 years',val:'1-3'},
-      {label:'3 to 10 years',val:'3-10'},
-      {label:'10+ years',val:'10+'},
+      {label:'Less than 1 year',val:'under_1yr'},
+      {label:'1–2 years',val:'1_2yr'},
+      {label:'3–5 years',val:'3_5yr'},
+      {label:'6–10 years',val:'6_10yr'},
+      {label:'More than 10 years',val:'over_10yr'},
     ]},
 
-  { id:'frequency', type:'single', q:true,
-    eyebrow:'Your rhythm', title:'How often do you surf at the moment?',
+  { id:'q3', type:'single', q:true,
+    eyebrow:'Your rhythm', title:'How often do you surf?',
     options:[
-      {label:'Rarely — when I get the chance',val:'rarely'},
-      {label:'Weekends only',val:'weekends'},
-      {label:'A few times a week',val:'few'},
-      {label:'Almost every day',val:'daily'},
+      {label:'Less than once a week',val:'rarely',score:1},
+      {label:'About once a week',val:'once_week',score:2},
+      {label:'2–3 times a week',val:'2_3_week',score:3},
+      {label:'4 or more times a week',val:'4plus_week',score:4},
     ]},
 
-  { id:'frustration', type:'single', q:true,
-    eyebrow:'The real problem', title:"What frustrates you <span class='hl'>most</span> in the water?",
-    sub:'Be honest — this is what your programme will target first.',
+  { id:'q4', type:'single', q:true,
+    eyebrow:'Paddle power', title:'How does your paddle fitness hold up in a typical session?',
     options:[
-      {label:"I can't read waves / pick the right one",val:'reading'},
-      {label:'My take-offs are inconsistent',val:'takeoff'},
-      {label:"I'm not progressing — same level for ages",val:'plateau'},
-      {label:'No one gives me real feedback',val:'feedback'},
-      {label:'Paddle & fitness hold me back',val:'fitness'},
+      {label:'I tire quickly — short sessions wear me out',val:'low',score:1},
+      {label:'I manage, but fade in longer or bigger surf',val:'moderate',score:2},
+      {label:'Solid most of the time',val:'good',score:3},
+      {label:'Strong — fitness rarely limits me',val:'strong',score:4},
     ]},
 
-  { id:'goal', type:'single', q:true,
-    eyebrow:'Your target', title:"What's your <span class='hl'>#1 goal</span> for the next 6 months?",
+  /* ═══ Section 2 · Technique diagnostic ═══ */
+  { id:'q5', type:'single', q:true,
+    eyebrow:'Technique check', title:'When you paddle for a wave, what usually happens?',
+    sub:'Think about your average session, not your best day.',
     options:[
-      {label:'Surf bigger, better waves',val:'bigger'},
-      {label:'Finally become consistent',val:'consistency'},
-      {label:'Performance — turns, manoeuvres, style',val:'performance'},
-      {label:'Just keep improving, steadily',val:'steady'},
-      {label:'Get surf-fit & paddle stronger',val:'fitness'},
+      {label:'I miss most of them, or nose-dive when I catch one',val:'miss_most',score:1},
+      {label:'I catch waves but getting to my feet is inconsistent',val:'inconsistent_standup',score:2},
+      {label:'I catch and stand reliably — I can angle on green waves',val:'reliable_angle',score:3},
+      {label:'I angle, time it, and take off where I choose',val:'precise_takeoff',score:4},
     ]},
 
+  { id:'sn5', type:'snippet', cond:()=>scOf('q5')!=null&&scOf('q5')<=2,
+    content:()=>({
+      title:"{nm}take-off inconsistency is the #1 plateau we coach.",
+      body:"It's almost never strength — it's <b>positioning and timing</b>. Fix where you sit and when you go, and your wave count doubles. That's the fastest win in surfing.",
+      stat:['2×',"wave count in ~6 weeks is the norm once positioning clicks"]
+    })},
+
+  { id:'q6', type:'single', q:true,
+    eyebrow:'Technique check', title:"Before you paddle for a wave, how well do you read where it's going to break?",
+    options:[
+      {label:'I mostly react — I paddle when I see others go',val:'reactive',score:1},
+      {label:'I can spot peaks but still misjudge timing a lot',val:'developing',score:2},
+      {label:'I usually know where to be and pick decent waves',val:'capable',score:3},
+      {label:'I read sets early and position before they arrive',val:'advanced',score:4},
+    ]},
+
+  { id:'sn6', type:'snippet', cond:()=>scOf('q6')!=null&&scOf('q6')<=2,
+    content:()=>({
+      title:"Wave reading isn't talent — it's pattern recognition.",
+      body:"And you can't learn it by trial and error alone. It's the single skill <b>video analysis</b> accelerates the most — you literally watch the pattern until you own it.",
+      stat:['#1',"skill our coaches fix fastest with video analysis"]
+    })},
+
+  { id:'q7', type:'single', q:true,
+    eyebrow:'In the lineup', title:'In the lineup, how do you decide where to sit?',
+    options:[
+      {label:'I sit where others sit, or wherever feels safe',val:'follow_crowd',score:1},
+      {label:'I have a rough idea but often end up in the wrong spot',val:'rough_idea',score:2},
+      {label:'I use landmarks and adjust when I drift off position',val:'uses_landmarks',score:3},
+      {label:'I read the peak, track my position, move with the sets',val:'reads_peak',score:4},
+    ]},
+
+  { id:'q8', type:'single', q:true,
+    eyebrow:'On the wave', title:"Once you're on your feet, what does a typical ride look like?",
+    sub:'Your average ride — not your best wave.',
+    options:[
+      {label:'Short ride — a few seconds, then I fall or kick off',val:'short_ride',score:1},
+      {label:'I ride along the wave but mostly straight',val:'straight_trim',score:2},
+      {label:'I turn both ways and link a couple of moves',val:'linking_turns',score:3},
+      {label:'I control the line, generate speed, choose where to go',val:'controlled_line',score:4},
+    ]},
+
+  { id:'q9', type:'single', q:true,
+    eyebrow:'Ocean sense', title:'How comfortable are you in the ocean in general?',
+    options:[
+      {label:'Still getting used to it — bigger days make me anxious',val:'uncomfortable',score:1},
+      {label:'Comfortable in small surf, cautious when it builds',val:'cautious',score:2},
+      {label:'At ease most days — I hesitate only in real conditions',val:'comfortable',score:3},
+      {label:'Confident across a wide range of conditions',val:'confident',score:4},
+    ]},
+
+  { id:'q9b', type:'single', q:true, cond:()=>scOf('q9')!=null&&scOf('q9')<=2,
+    eyebrow:'Quick follow-up', title:'When a bigger set lands on you, what actually happens?',
+    sub:'No judgement — this tells us exactly where confidence work starts.',
+    options:[
+      {label:'I panic a bit — heart races, I rush to the surface',val:'panic',score:1},
+      {label:'I cope, but it drains my confidence for the session',val:'copes',score:2},
+      {label:'I stay calm — I just wait it out and paddle back',val:'calm',score:3},
+    ]},
+
+  { id:'ms1', type:'milestone', stage:2,
+    title:"{nm}that's your ocean & technique read — done ✓",
+    sub:'Strong start. Now the part most quizzes skip: how you actually surf the wave.',
+    btn:'Keep going →' },
+
+  { id:'q10', type:'single', q:true,
+    eyebrow:'On the wave', title:'When you turn your board, which feels closest to what you actually do?',
+    options:[
+      {label:'I lean with my upper body and hope the board follows',val:'lean_hope',score:1},
+      {label:'I shift my weight but turns feel clumsy or late',val:'weight_shift',score:2},
+      {label:'I compress, rotate and extend — getting more consistent',val:'compress_rotate',score:3},
+      {label:'I drive through turns and link them into the next section',val:'linked_turns',score:4},
+    ]},
+
+  { id:'q11', type:'single', q:true,
+    eyebrow:'On the wave', title:'When a section closes out in front of you, what usually happens?',
+    options:[
+      {label:"I straighten out or fall — no time to react",val:'falls',score:1},
+      {label:'I try to get around it, sometimes make it',val:'tries',score:2},
+      {label:'I redirect or climb the foam to stay on the wave',val:'redirects',score:3},
+      {label:'I see it early and choose how to hit or use the section',val:'anticipates',score:4},
+    ]},
+
+  { id:'q12', type:'single', q:true,
+    eyebrow:'The real blocker', title:"What's the single biggest thing holding your surfing back right now?",
+    sub:'{nm}be honest — this decides where your programme starts.',
+    options:[
+      {label:"My technique — I know what to do, my body doesn't do it yet",val:'technique_limiter',score:4},
+      {label:"My understanding — I don't always know what to do or why",val:'knowledge_limiter',score:2},
+      {label:'My mindset — fear, frustration or hesitation gets in the way',val:'mindset_limiter',score:2},
+      {label:"My equipment — my board feels wrong for where I'm at",val:'equipment_limiter',score:2},
+      {label:"My ocean reading — I can't position or read waves well",val:'ocean_limiter',score:2},
+      {label:"Not sure — it feels like a bit of everything",val:'unsure',score:1},
+    ]},
+
+  { id:'sn12', type:'snippet', cond:()=>!!state.q12,
+    content:()=>({
+      technique_limiter:{title:"Your body is one rep behind your brain — classic.",body:"You know what to do; it just doesn't happen at wave speed yet. That gap closes with <b>repetition + feedback</b> — coached sessions and surfskate drills, not more random surfs."},
+      knowledge_limiter:{title:"Not knowing <i>why</i> is the fastest thing to fix.",body:"Most surfers waste years on trial and error. <b>Theory + video analysis</b> compresses that into weeks — you see exactly what to change and why."},
+      mindset_limiter:{title:"Fear and hesitation are trainable. Literally.",body:"It's not a personality trait — it's a skill gap. <b>Breath work (apnea) + gradual exposure</b> with a coach rewires it session by session."},
+      equipment_limiter:{title:"The wrong board means fighting the ocean AND your gear.",body:"A 10-minute <b>board check</b> often explains years of frustration — volume, shape and fin setup matched to your actual level, not your ego or your fear."},
+      ocean_limiter:{title:"Positioning is 80% of a good session.",body:"Read the peak better and everything downstream gets easier — more waves, better waves, less paddling. It's the most coachable skill in surfing."},
+      unsure:{title:"'A bit of everything' usually means no feedback loop.",body:"Nobody's ever shown you which lever actually moves your surfing. A <b>diagnostic session</b> finds the real bottleneck fast — that's exactly what this quiz starts."},
+    }[state.q12]||{title:'Noted.',body:'Your programme starts exactly here.'}),
+    },
+
+  { id:'q13', type:'single', q:true,
+    eyebrow:'Adaptability', title:'How does your surfing hold up in unfamiliar or more challenging conditions?',
+    options:[
+      {label:'It falls apart — I revert to basics or get out',val:'falls_apart',score:1},
+      {label:'It gets messy but I stay in it',val:'messy_stays',score:2},
+      {label:'It drops a level but I adapt after a while',val:'drops_adapts',score:3},
+      {label:'I adjust quickly and surf close to my usual level',val:'adapts_well',score:4},
+    ]},
+
+  { id:'q14', type:'single', q:true,
+    eyebrow:'Your best waves', title:'On your better waves, what do your rides usually look like?',
+    sub:'Your consistent best — not the one perfect wave you remember.',
+    options:[
+      {label:'I stay on and trim — the ride itself is the win',val:'trimming',score:1},
+      {label:'I make a few direction changes and stay on the face',val:'direction_changes',score:2},
+      {label:'I link turns and work the sections — it flows',val:'linking_flow',score:3},
+      {label:'I choose my line and execute it — power, flow, control',val:'controlled_expression',score:4},
+    ]},
+
+  { id:'q14b', type:'single', q:true, cond:()=>levelAvg()>=3,
+    eyebrow:'Unlocked · advanced check', title:"In overhead or powerful surf, what's most true for you lately?",
+    sub:'Your answers unlocked this one — it separates L3 from L4.',
+    options:[
+      {label:"I survive but I don't really surf — just getting through",val:'surviving',score:2},
+      {label:'My technique holds until real pressure hits',val:'breaks_under_pressure',score:3},
+      {label:'I surf close to my normal level in most bigger conditions',val:'consistent_bigger',score:4},
+    ]},
+
+  /* ═══ Section 3 · Your gear ═══ */
+  { id:'q15', type:'single', q:true,
+    eyebrow:'Your gear', title:'Which best describes your current board?',
+    options:[
+      {label:'A softboard or large learner board (8ft+)',val:'foamie',score:1},
+      {label:'A mid-length or hybrid (7–8ft)',val:'midlength',score:2},
+      {label:'A shortboard or fish (under 7ft)',val:'shortboard',score:3},
+      {label:'A performance board tuned to my surfing',val:'performance',score:4},
+    ]},
+
+  { id:'sn15', type:'snippet', cond:()=>{const a=scOf('q15'),b=scOf('q5');return a!=null&&b!=null&&((a>=3&&b<=2)||(a<=2&&b>=3));},
+    content:()=>scOf('q15')>=3
+      ? {title:"Heads up — your board might be working against you.",body:"Short, low-volume boards <b>punish a developing take-off</b>. Riding the right volume now means faster progress, not slower — and we check that in your first session.",stat:['1st',"session includes a free board check"]}
+      : {title:"You've probably outgrown your board.",body:"Your take-off is ahead of your equipment — a step down in volume unlocks <b>turns you physically can't do</b> on a big board. Worth checking before you plateau on it.",stat:['$200',"off partner shapers when you're ready to switch"]}
+    },
+
+  { id:'q16', type:'single', q:true,
+    eyebrow:'Your gear', title:"How does your current board feel for where you're at?",
+    options:[
+      {label:"Too advanced — I'm fighting it more than riding it",val:'too_advanced',score:1},
+      {label:'Not quite right, but I manage',val:'wrong_fit',score:2},
+      {label:'About right for my level',val:'right_fit',score:3},
+      {label:"Dialled in — it supports how I want to surf",val:'dialled',score:4},
+    ]},
+
+  /* ═══ Section 4 · Habits & direction ═══ */
+  { id:'q17', type:'multi', q:true,
+    eyebrow:'Your habits', title:'What do you usually do after a surf?',
+    sub:'Select all that apply.',
+    options:[
+      {label:"Think about what worked and what I'd change",val:'reflects'},
+      {label:'Watch video of myself',val:'video_review'},
+      {label:'Talk it through with a friend or coach',val:'discusses'},
+      {label:'Nothing — I enjoy it and move on',val:'nothing',solo:true},
+      {label:"I don't surf often enough to have a routine",val:'infrequent',solo:true},
+    ]},
+
+  { id:'sn17', type:'snippet', cond:()=>true,
+    content:()=>({
+      title:"The fastest improvers all share one habit.",
+      body:(state.q17&&(state.q17.includes('video_review'))?"You already review footage — huge. Now imagine that review <b>with a coach's eyes</b> on it, every week.":"They <b>review</b>. Surfers who watch themselves back progress about twice as fast — that's why video analysis is core to how we coach."),
+      stat:['2×',"faster progression when sessions get reviewed"]
+    })},
+
+  { id:'q18', type:'single', q:true,
+    eyebrow:'Six months out', title:'Six months from now, what would success in your surfing look like?',
+    options:[
+      {label:'Surfing consistently, feeling confident in the water',val:'confidence'},
+      {label:'Linking turns and understanding the wave better',val:'technical'},
+      {label:'Surfing with flow, style and my own expression',val:'expression'},
+      {label:'Handling bigger or more demanding surf',val:'progression'},
+    ]},
+
+  { id:'ms2', type:'milestone', stage:4, confetti:true,
+    title:'{nm}your surf profile is complete.',
+    sub:'20-point diagnostic captured. A few quick ones to match your programme — then we calculate your Surf Score.',
+    btn:'Match my programme →' },
+
+  /* ═══ Section 5 · Programme match ═══ */
   { id:'missing', type:'single', q:true,
-    eyebrow:'The gap', title:"What's <span class='hl'>missing</span> from your surfing today?",
+    eyebrow:'Programme match', title:"What's <span class='hl'>missing</span> from your surfing today?",
     options:[
       {label:'A structured plan',val:'plan',emoji:'🗺️'},
       {label:'Expert feedback & video analysis',val:'analysis',emoji:'🎥'},
@@ -364,7 +606,7 @@ const STEPS = [
     ]},
 
   { id:'sessions', type:'single', q:true,
-    eyebrow:'Your ideal week', title:'How many coached sessions a week feel right?',
+    eyebrow:'Programme match', title:'How many coached sessions a week feel right?',
     options:[
       {label:'1 session — steady and simple',val:'1'},
       {label:'1–2 sessions — real momentum',val:'1-2'},
@@ -372,7 +614,7 @@ const STEPS = [
     ]},
 
   { id:'commit', type:'single', q:true,
-    eyebrow:'Your commitment', title:'How committed are you to breaking through?',
+    eyebrow:'Programme match', title:'How committed are you to breaking through?',
     sub:'There are no wrong answers — this just matches you to the right programme.',
     options:[
       {label:"Let's test it — a few months",val:'test'},
@@ -390,6 +632,14 @@ const STEPS = [
       {label:'Somewhere else',val:'elsewhere'},
     ]},
 
+  { id:'q19', type:'num', q:true,
+    eyebrow:'Coach profile', title:'Almost there — these help your coach personalise fitness & board recs.',
+    sub:'Optional — skip if you prefer.',
+    fields:[
+      {key:'height_cm',label:'Height (cm)',placeholder:'e.g. 175',min:140,max:220},
+      {key:'weight_kg',label:'Weight (kg)',placeholder:'e.g. 75',min:40,max:150},
+    ]},
+
   { id:'phone', type:'text', field:'phone', inputType:'tel', phone:true, privacy:true,
     eyebrow:'Almost there', title:'{nm}where do we send your <span class="hl">Surf Score?</span>',
     sub:'Drop your number to unlock your result + programme match. We text it over — no spam.',
@@ -403,23 +653,44 @@ const STEPS = [
   { id:'plans', type:'plans' },
 ];
 
-/* ---------- scoring ---------- */
-const BASE={beginner:22,intermediate:35,advanced:48,plateaued:30};
-const FREQADD={rarely:0,weekends:4,few:8,daily:10};
+/* ---------- scoring (20-point diagnostic, Yugen-style 1–4 scale) ---------- */
+function scOf(id){ return (state._sc&&state._sc[id]!=null)?state._sc[id]:null; }
+const LEVEL_QS=['q5','q6','q7','q8','q9','q9b','q10','q11','q12','q13','q14','q14b'];
+function levelAvg(){ let t=0,c=0; LEVEL_QS.forEach(q=>{const s=scOf(q); if(s!=null){t+=s;c++}}); return c?t/c:1; }
+const LEVELS={1:'Foundation',2:'Directional Control',3:'Flow & Manoeuvring',4:'Mastery & Expression'};
+const PILLARS={
+  skill:{label:'Skill',qs:['q5','q8','q10','q11','q14','q14b']},
+  theory:{label:'Wave IQ',qs:['q6','q7','q10','q11','q13','q14','q14b']},
+  mindset:{label:'Mindset',qs:['q9','q9b','q11','q12','q13','q14']},
+  ocean:{label:'Ocean Sense',qs:['q5','q6','q7','q9','q13']},
+  fitness:{label:'Fitness',qs:['q3','q4']},
+  equipment:{label:'Equipment',qs:['q15','q16']},
+};
+function pillarScores(){ const out={}; for(const k in PILLARS){ let t=0,c=0; PILLARS[k].qs.forEach(q=>{const s=scOf(q); if(s!=null){t+=s;c++}}); out[k]=c?Math.round(t/c*10)/10:null; } return out; }
+const LIMITER_META={
+  skill:{label:'Skill',fix:'technique-first coached sessions + surfskate drills'},
+  theory:{label:'Wave IQ',fix:'video analysis + wave-reading theory'},
+  mindset:{label:'Mindset',fix:'confidence coaching + apnea training'},
+  ocean:{label:'Ocean Sense',fix:'lineup positioning work in guided sessions'},
+  fitness:{label:'Fitness',fix:'paddle fitness + mobility programme'},
+  equipment:{label:'Equipment',fix:'a board check + $200-off partner shapers'},
+};
+function limiterKey(){ const p=pillarScores(); let k=null,v=99; for(const key in p){ if(p[key]!=null&&p[key]<v){v=p[key];k=key;} } return k||'skill'; }
 function computeScore(s){
-  let sc=(BASE[s.level]||30)+(FREQADD[s.frequency]||0);
-  sc=Math.max(20,Math.min(58,sc));
-  return {score:sc,potential:90,gap:90-sc};
+  const avg=levelAvg();
+  let sc=Math.round(avg/4*62); sc=Math.max(20,Math.min(58,sc));
+  const lvl=Math.max(1,Math.min(4,Math.floor(avg+1e-9)));
+  return {score:sc,potential:90,gap:90-sc,avg:Math.round(avg*10)/10,lvl,pillars:pillarScores(),limiter:limiterKey()};
 }
-const YEARS_STUCK={'<1':'a year','1-3':'2 years','3-10':'3 years','10+':'5 years'};
+const YEARS_STUCK={under_1yr:'a year','1_2yr':'2 years','3_5yr':'4 years','6_10yr':'6 years',over_10yr:'8 years'};
 function computeProjection(s){
   // weeks to break through, faster with more sessions / higher commitment
   let weeks=22;
   if(s.sessions==='2+')weeks-=8; else if(s.sessions==='1-2')weeks-=4;
   if(s.commit==='allin')weeks-=4; else if(s.commit==='6mo')weeks-=2;
-  if(s.level==='beginner')weeks+=2;
+  if(levelAvg()<1.8)weeks+=2;
   weeks=Math.max(8,Math.min(24,weeks));
-  return {weeks, stuck:YEARS_STUCK[s.howlong]||'3 years'};
+  return {weeks, stuck:YEARS_STUCK[s.q2]||'3 years'};
 }
 const TIERS={
   elite:{key:'elite',tag:'Performance track',name:'Elite Surf Training',price:'A$159',lock:'12-month',sessions:'2 sessions / week',
@@ -436,16 +707,18 @@ const TIERS={
     inc:['1 coached session every week','Master the fundamentals, step by step','30% OFF trips & events','20% OFF all Surf Shop products','Partner perks + board discounts','Monthly community gatherings + free coffee']},
 };
 function pickTier(s){
-  if(s.goal==='performance'||s.level==='advanced'){ if(s.sessions==='2+'||s.commit==='allin') return 'elite'; }
-  if(s.sessions==='2+'&&s.commit==='allin') return 'elite';
-  if(s.commit==='test'||s.commit==='unsure'||s.goal==='consistency') return 'consistency';
-  if(s.commit==='6mo'||s.level==='intermediate') return 'swell';
+  const lvl=levelAvg();
+  const perf=(s.q1==='compete'||s.q1==='turns_control'||s.q1==='bigger_waves');
+  if(lvl>=3&&(s.sessions==='2+'||s.commit==='allin')) return 'elite';
+  if(perf&&s.sessions==='2+') return 'elite';
+  if(s.commit==='test'||s.commit==='unsure'||s.q1==='catch_waves'||lvl<1.8) return 'consistency';
+  if(s.commit==='6mo'||lvl<3) return 'swell';
   return 'foundation';
 }
 
 /* ENGINE */
-const state={}; let idx=0; const app=document.getElementById('app');
-const INPUT=['single','gender','imgcards','text'];
+const state={_sc:{}}; let idx=0; const app=document.getElementById('app');
+const INPUT=['single','gender','imgcards','text','multi','num'];
 function inputSteps(){ return STEPS.filter(s=>INPUT.includes(s.type)&&(!s.cond||s.cond(state))); }
 function qSteps(){ return STEPS.filter(s=>s.q&&(!s.cond||s.cond(state))); }
 function setProgress(step){
@@ -466,6 +739,7 @@ function render(){
   const step=STEPS[idx]; setProgress(step); app.innerHTML='';
   const el=document.createElement('div'); el.className='step';
   ({intro:renderIntro,text:renderText,gender:renderGender,imgcards:renderImgCards,single:renderSingle,
+    multi:renderMulti,num:renderNum,snippet:renderSnippet,milestone:renderMilestone,
     loader:renderLoader,score:renderScore,projection:renderProjection,bridge:renderBridge,result:renderResult,plans:renderPlans})[step.type](el,step);
   app.appendChild(el); updateDebug();
 }
@@ -476,10 +750,10 @@ function avFallback(img,ini){ const s=document.createElement('span'); s.classNam
 
 function renderIntro(el){
   el.innerHTML=`
-    <div class="intro-badge">Free · 2-min surf diagnostic</div>
+    <div class="intro-badge">Free · 3-min surf diagnostic</div>
     ${slot('hero','ar-hero','HERO — prompt #1 (surfer, Gold Coast wave)')}
     <div class="intro-h" style="margin-top:16px">There are 2 kinds of surfers: the ones who <span class="hl">keep improving</span> — and the ones <span class="red">stuck at the same level for years.</span></div>
-    <div class="sub">Every session on your own without feedback is a session that <b>doesn't move you forward.</b><br><br>Find your <b>Surf Score</b> in 2 minutes — and the exact path to your next level.</div>
+    <div class="sub">Every session on your own without feedback is a session that <b>doesn't move you forward.</b><br><br>Take the <b>20-point diagnostic</b> — get your <b>Surf Score</b>, your 6-pillar breakdown, and the exact path to your next level.</div>
     <div class="trust">
       <div class="t"><b>Since</b><span>2019</span></div>
       <div class="t"><b>300+</b><span>surfers coached</span></div>
@@ -544,16 +818,76 @@ function renderImgCards(el,step){
     <div class="acards">${step.options.map(o=>`<div class="acard${state[step.id]===o.val?' sel':''}" onclick="pickCard(this,'${step.id}','${o.val}')">${slot(o.img,'ar-card',o.label)}<div class="aname">${o.label}</div></div>`).join('')}</div>`;
 }
 function pickCard(node,id,v){ state[id]=v; const from=idx; document.querySelectorAll('.acard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},300); }
+function interp(t){ if(!t)return t; const nm=state.name?state.name.split(' ')[0]:'';
+  return t.replace('{nm}', nm?nm+', ':'').replace(/^([a-z])/,c=>c.toUpperCase()); }
 function renderSingle(el,step){
-  el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${step.title}</h1>${step.sub?`<div class="sub">${step.sub}</div>`:''}<div class="opts"></div>`;
+  el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}<div class="opts"></div>`;
   const opts=el.querySelector('.opts');
   step.options.forEach(o=>{
     const b=document.createElement('button'); b.className='opt'+(state[step.id]===o.val?' sel':'');
     b.innerHTML=`<span class="tick"></span>${o.emoji?`<span class="emoji">${o.emoji}</span>`:''}<span class="txt">${o.label}</span>`;
-    b.onclick=()=>{ state[step.id]=o.val; opts.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+    b.onclick=()=>{ state[step.id]=o.val; if(o.score!=null)state._sc[step.id]=o.score;
+      opts.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
       const from=idx; setTimeout(()=>{if(idx===from)next()},280); };
     opts.appendChild(b);
   });
+}
+function renderMulti(el,step){
+  state[step.id]=state[step.id]||[];
+  el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}<div class="opts"></div>
+    <button class="cta" id="multiGo" style="margin-top:18px" disabled>Continue →</button>`;
+  const opts=el.querySelector('.opts'), go=el.querySelector('#multiGo');
+  const sync=()=>{ go.disabled=!(state[step.id]&&state[step.id].length); };
+  step.options.forEach(o=>{
+    const on=state[step.id].includes(o.val);
+    const b=document.createElement('button'); b.className='opt'+(on?' sel':'');
+    b.innerHTML=`<span class="box"></span>${o.emoji?`<span class="emoji">${o.emoji}</span>`:''}<span class="txt">${o.label}</span>`;
+    b.onclick=()=>{ const a=state[step.id]; const i=a.indexOf(o.val);
+      if(i>=0){ a.splice(i,1); b.classList.remove('sel'); }
+      else {
+        if(o.solo){ a.length=0; opts.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); }
+        else { step.options.forEach((oo,j)=>{ if(oo.solo){ const k=a.indexOf(oo.val); if(k>=0){ a.splice(k,1); opts.children[j].classList.remove('sel'); } } }); }
+        a.push(o.val); b.classList.add('sel');
+      }
+      sync(); };
+    opts.appendChild(b);
+  });
+  go.onclick=()=>next(); sync();
+}
+function renderNum(el,step){
+  el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}
+    <div class="numrow">${step.fields.map(f=>`<div class="field"><label>${f.label}</label><input id="nf_${f.key}" type="number" inputmode="numeric" min="${f.min}" max="${f.max}" placeholder="${f.placeholder}" value="${state[f.key]||''}"></div>`).join('')}</div>
+    <button class="cta" style="margin-top:18px" onclick="saveNums('${step.id}')">Continue →</button>
+    <div class="skiplink" onclick="next()">Skip this step</div>`;
+}
+function saveNums(id){
+  const step=STEPS.find(s=>s.id===id);
+  step.fields.forEach(f=>{ const v=val('nf_'+f.key); if(v)state[f.key]=v; });
+  next();
+}
+function renderSnippet(el,step){
+  const c=step.content();
+  el.innerHTML=`
+    <div class="spacer" style="max-height:46px"></div>
+    <div class="snip">
+      <div class="sk"><div class="sav">IS</div><div><div class="skk">Coach's note</div><div class="skn">Improve Surfing · Gold Coast</div></div></div>
+      <div class="st">${interp(c.title)}</div>
+      <div class="sb">${c.body}</div>
+      ${c.stat?`<div class="snipstat"><b>${c.stat[0]}</b><span>${c.stat[1]}</span></div>`:''}
+    </div>
+    <div class="spacer"></div>
+    <button class="cta green" onclick="next()">${c.btn||'Got it →'}</button>`;
+}
+function renderMilestone(el,step){
+  el.innerHTML=`
+    <div class="mile">
+      <div class="mck"><svg viewBox="0 0 24 24"><path d="M9 16.2l-4.2-4.2L3.4 13.4 9 19 21 7l-1.4-1.4z"/></svg></div>
+      <h1>${interp(step.title)}</h1>
+      <div class="sub" style="margin-top:10px">${interp(step.sub||'')}</div>
+      <div class="milebars">${[1,2,3,4].map(i=>`<i class="${i<=step.stage?'on':''}"></i>`).join('')}</div>
+    </div>
+    <button class="cta" onclick="next()">${step.btn||'Continue →'}</button>`;
+  if(step.confetti) burstConfetti();
 }
 function renderLoader(el){
   el.innerHTML=`
@@ -587,9 +921,11 @@ function renderLoader(el){
         lstat=el.querySelector('#lstat'), testi=el.querySelector('#testi'); const C=326.7;
   function showT(i){const t=testis[i%testis.length];testi.innerHTML=`<img class="av" src="img/${t.f}.jpg" onerror="avFallback(this,'${t.i}')"><div class="tbody"><div class="stars">★★★★★</div><span>“${t.t}”</span><b>${t.n}</b></div>`;}
   showT(0);
+  /* setInterval (not rAF) — in-app browsers (IG/FB webview) throttle rAF and would freeze the funnel here */
   const from=idx, DUR=4200, t0=performance.now(); let lastStage=-1;
-  function frame(now){
-    const p=Math.min(1,(now-t0)/DUR);
+  const tick=setInterval(()=>{
+    if(idx!==from){clearInterval(tick);return;}
+    const p=Math.min(1,(performance.now()-t0)/DUR);
     ring.style.strokeDashoffset=C*(1-p);
     rnum.textContent=Math.round(p*100)+'%';
     const done=Math.min(4,Math.floor(p*4));
@@ -597,13 +933,26 @@ function renderLoader(el){
     const stage=Math.min(3,Math.floor(p*4));
     lstat.textContent=stats[stage];
     if(stage!==lastStage){showT(stage);lastStage=stage;}
-    if(p<1)requestAnimationFrame(frame); else setTimeout(()=>{if(idx===from)next()},520);
-  }
-  requestAnimationFrame(frame);
+    if(p>=1){clearInterval(tick);setTimeout(()=>{if(idx===from)next()},520);}
+  },50);
+}
+function radarSVG(p){
+  const KEYS=Object.keys(PILLARS), N=KEYS.length, cx=150, cy=104, R=72, MAX=4;
+  const pt=(i,rad)=>{const a=(-90+i*360/N)*Math.PI/180; return [cx+rad*Math.cos(a), cy+rad*Math.sin(a)];};
+  let s='<svg viewBox="0 0 300 212" width="100%">';
+  for(let g=1;g<=MAX;g++){ s+='<polygon points="'+KEYS.map((_,i)=>pt(i,R*g/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="none" stroke="#e2eef5"/>'; }
+  KEYS.forEach((_,i)=>{const e=pt(i,R); s+=`<line x1="${cx}" y1="${cy}" x2="${e[0].toFixed(1)}" y2="${e[1].toFixed(1)}" stroke="#e2eef5"/>`;});
+  s+='<polygon points="'+KEYS.map((k,i)=>pt(i,R*Math.max(.35,(p[k]||1))/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="rgba(15,180,196,.18)" stroke="#0fb4c4" stroke-width="2.5" stroke-linejoin="round"/>';
+  KEYS.forEach((k,i)=>{const d=pt(i,R*Math.max(.35,(p[k]||1))/MAX); s+=`<circle cx="${d[0].toFixed(1)}" cy="${d[1].toFixed(1)}" r="3.5" fill="#0fb4c4" stroke="#fff" stroke-width="1.5"/>`;});
+  KEYS.forEach((k,i)=>{const l=pt(i,R+22); const anc=Math.abs(l[0]-cx)<10?'middle':(l[0]>cx?'start':'end');
+    s+=`<text class="rlab" x="${l[0].toFixed(1)}" y="${(l[1]+3.5).toFixed(1)}" text-anchor="${anc}">${PILLARS[k].label}</text>`;});
+  return s+'</svg>';
 }
 function renderScore(el){
   const r=computeScore(state); state._score=r; const pct=r.score/100;
   const proj=computeProjection(state);
+  const lim=LIMITER_META[r.limiter];
+  const nm=state.name?state.name.split(' ')[0]:'';
   el.innerHTML=`
     <div class="reveal-wrap">
       <div class="reveal-label">Your Surf Score</div>
@@ -613,15 +962,22 @@ function renderScore(el){
         <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ef4444"/><stop offset="1" stop-color="#ff6a4d"/></linearGradient></defs>
       </svg></div>
       <div class="bignum"><span id="bn">0</span><span class="of">/100</span></div>
-      <div class="reveal-headline">You're surfing at <span class="red">roughly ${r.score}%</span> of your potential.</div>
-      <div class="reveal-body">You've got the stoke — but without feedback and structure, you're <b>repeating the same session</b> and calling it practice.</div>
-      <div class="tenyr">At this rate, you'll likely still be at this exact level in <b>${proj.stuck}</b>.</div>
+      <div class="lvl-line">Diagnostic level: <b>L${r.lvl} · ${LEVELS[r.lvl]}</b> (${r.avg}/4)</div>
+      <div class="reveal-headline">${nm?nm+', you':'You'}'re surfing at <span class="red">roughly ${r.score}%</span> of your potential.</div>
+      <div class="reveal-body">Your 20-point diagnostic, mapped across the <b>6 pillars</b> of surf progression:</div>
+      <div class="radarcard">${radarSVG(r.pillars)}
+        <div class="pillrows">${Object.keys(PILLARS).map(k=>{const v=r.pillars[k];const w=k===r.limiter;const pw=v?Math.round(v/4*100):8;
+          return `<div class="prow2${w?' weak':''}"><span class="nm2">${PILLARS[k].label}${w?' ⚠':''}</span><span class="bar2"><i style="width:0%" data-w="${pw}"></i></span><span class="vv">${v!=null?v.toFixed(1):'–'}</span></div>`;}).join('')}</div>
+      </div>
+      <div class="limbox"><div class="lk">Your #1 limiter</div><div class="ln2">${lim.label}</div><p>This is what's capping everything else. Your programme attacks it first — with <b>${lim.fix}</b>.</p></div>
+      <div class="tenyr">On your own, at this rate, you'll likely still be at this exact level in <b>${proj.stuck}</b>.</div>
       ${gslot('worried','ar-wide','FRUSTRATED SURFER — prompt #5 (by gender)')}
       <button class="cta" style="margin-top:14px" onclick="next()">See how fast I can break through →</button>
     </div>`;
   const gf=el.querySelector('#gf');
   setTimeout(()=>{gf.style.transition='stroke-dashoffset 1.4s cubic-bezier(.22,1,.36,1)';gf.style.strokeDashoffset=(314-314*pct)},120);
   animateNum(el.querySelector('#bn'),0,r.score,1500,v=>Math.round(v));
+  setTimeout(()=>{el.querySelectorAll('.bar2 i').forEach(b=>b.style.width=b.dataset.w+'%');},500);
 }
 function renderProjection(el){
   const p=computeProjection(state); state._proj=p;
@@ -690,13 +1046,14 @@ function renderBridge(el){
 function renderResult(el){
   const key=pickTier(state); const t=TIERS[key]; state._tier=key;
   const nm=state.name?state.name.split(' ')[0]:'';
-  const goalLine={bigger:'surf bigger, better waves',consistency:'finally get consistent',performance:'sharpen your performance',steady:'keep improving steadily',fitness:'get surf-fit'}[state.goal]||'reach your next level';
+  const goalLine={catch_waves:'catch more waves, more consistently',turns_control:'own your turns and control',flow_style:'surf with flow, speed and style',bigger_waves:'ride bigger waves with confidence',compete:'push into real performance'}[state.q1]||'reach your next level';
+  const lim=LIMITER_META[(state._score&&state._score.limiter)||limiterKey()];
   const spots=3;
   el.innerHTML=`
     <div class="scratch-wrap">
       <div class="eyebrow" style="justify-content:center">${nm?nm+', your match':'Your match'}</div>
       <h1 style="text-align:center">Based on your answers, this is <span class="hl">your programme.</span></h1>
-      <div class="sub" style="text-align:center">To ${goalLine} — at ${state.sessions==='2+'?'2+':state.sessions==='1-2'?'1–2':'1'} session${state.sessions==='1'?'':'s'} a week — this is your best-fit tier.</div>
+      <div class="sub" style="text-align:center">To ${goalLine} — starting with your #1 limiter, <b>${lim.label}</b> — this is your best-fit tier at ${state.sessions==='2+'?'2+':state.sessions==='1-2'?'1–2':'1'} session${state.sessions==='1'?'':'s'} a week.</div>
       <div class="tiercard">
         <div class="tier-tag">${t.tag} · your match</div>
         <div class="tier-name">${t.name}</div>
@@ -798,8 +1155,8 @@ function burstConfetti(){
     document.body.appendChild(c); setTimeout(()=>c.remove(),4200); }
 }
 function val(id){const e=document.getElementById(id);return e?e.value.trim():''}
-function animateNum(node,from,to,dur,fmt){const t0=performance.now();(function tick(t){const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);node.textContent=fmt(from+(to-from)*e);if(p<1)requestAnimationFrame(tick)})(performance.now());}
-function updateDebug(){const sc=state._score?state._score.score:'—';const tier=state._tier||(state.commit?pickTier(state):'—');document.getElementById('tagdebug').textContent=`[debug] ${state.gender||'?'} · score:${sc} · tier:${tier}`;}
+function animateNum(node,from,to,dur,fmt){const t0=performance.now();const iv=setInterval(()=>{const p=Math.min(1,(performance.now()-t0)/dur),e=1-Math.pow(1-p,3);node.textContent=fmt(from+(to-from)*e);if(p>=1)clearInterval(iv);},40);}
+function updateDebug(){const sc=state._score?state._score.score:'—';const tier=state._tier||(state.commit?pickTier(state):'—');document.getElementById('tagdebug').textContent=`[debug] lvl:${levelAvg().toFixed(2)} · score:${sc} · lim:${limiterKey()} · tier:${tier}`;}
 render();
 </script>
 </body>
