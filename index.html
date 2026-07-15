@@ -894,15 +894,15 @@ function renderGender(el,step){
   el.innerHTML=`
     <div class="eyebrow">${step.eyebrow}</div><h1>${step.title}</h1>
     <div class="gcards">
-      <div class="gcard" onclick="pickGender(this,'Man')"><div class="gbadge">🏄‍♂️</div><div class="gname">Man</div></div>
-      <div class="gcard" onclick="pickGender(this,'Woman')"><div class="gbadge">🏄‍♀️</div><div class="gname">Woman</div></div>
+      <div class="gcard" onclick="pickGender(this,'Man')">${slot('male','ar-port','MALE SURFER')}<div class="gname">Man</div></div>
+      <div class="gcard" onclick="pickGender(this,'Woman')">${slot('female','ar-port','FEMALE SURFER')}<div class="gname">Woman</div></div>
     </div>
     <div class="gcard alt" onclick="pickGender(this,'Prefer not to say')">Prefer not to say</div>`;
 }
 function pickGender(node,v){ state.gender=v; fx(node,window.event,null); const from=idx; document.querySelectorAll('.gcard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},430); }
 function renderImgCards(el,step){
   el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${step.title}</h1>${step.sub?`<div class="sub">${step.sub}</div>`:''}
-    <div class="acards">${step.options.map(o=>`<div class="acard${state[step.id]===o.val?' sel':''}" onclick="pickCard(this,'${step.id}','${o.val}')">${slot(o.img,'ar-card',o.label)}<div class="aname">${o.label}</div></div>`).join('')}</div>`;
+    <div class="acards">${step.options.map(o=>`<div class="acard${state[step.id]===o.val?' sel':''}" onclick="pickCard(this,'${step.id}','${o.val}')">${gslot(o.img,'ar-card',o.label)}<div class="aname">${o.label}</div></div>`).join('')}</div>`;
 }
 function pickCard(node,id,v){ state[id]=v; fx(node,window.event,null); const from=idx; document.querySelectorAll('.acard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},430); }
 function interp(t){ if(!t)return t; const nm=state.name?state.name.split(' ')[0]:'';
