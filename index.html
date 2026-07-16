@@ -9,23 +9,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0a0d; --bg2:#101015; --bg3:#17171d;
-  --surface:#15151b; --surface2:#1c1c24;
-  --line:#2a2a34; --line2:#202029;
-  --text:#ffffff; --dim:#9a9aa7; --mute:#62626e;
-  --aqua:#4d6bff; --aqua-deep:#3552e0; --blue:#1a36e8; --blue-deep:#1329c4; --navy:#0a0a0d;
+  --bg:#f4f7fb; --bg2:#eaeff6; --bg3:#dfe6f0;
+  --surface:#ffffff; --surface2:#f3f6fc;
+  --line:#e1e8f1; --line2:#eef2f8;
+  --text:#0e1424; --dim:#5b6577; --mute:#98a2b3;
+  --aqua:#4d6bff; --aqua-deep:#3552e0; --blue:#1a36e8; --blue-deep:#1329c4; --navy:#0e1424;
   --orange:#ff6a4d; --orange-deep:#ee5334;
-  --green:#22c55e; --green-deep:#16a34a; --red:#f43f5e; --red-deep:#e11d48;
-  --gold:#f5c451; --ink:#ffffff;
+  --green:#10b981; --green-deep:#059669; --red:#ef4444; --red-deep:#dc2626;
+  --gold:#e0a020; --ink:#ffffff;
   --f:'Poppins',system-ui,-apple-system,sans-serif;
-  --track:rgba(255,255,255,.10);
-  --shadow:0 22px 55px -22px rgba(0,0,0,.7);
-  --shadow-card:0 10px 26px -16px rgba(0,0,0,.6);
-  --shadow-btn:0 16px 34px -12px rgba(26,54,232,.55);
+  --track:rgba(14,20,36,.10);
+  --shadow:0 22px 55px -22px rgba(14,20,36,.22);
+  --shadow-card:0 8px 24px -14px rgba(14,20,36,.14);
+  --shadow-btn:0 16px 34px -12px rgba(26,54,232,.4);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#0a0a0d}
-body{font-family:var(--f);background:radial-gradient(130% 80% at 50% -12%,#16162a 0%,var(--bg) 55%);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;justify-content:center;min-height:100%}
+html,body{height:100%;background:#f4f7fb}
+body{font-family:var(--f);background:radial-gradient(130% 80% at 50% -12%,#e6ecfb 0%,var(--bg) 55%);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;justify-content:center;min-height:100%}
 #shell{width:100%;max-width:460px;min-height:100vh;display:flex;flex-direction:column;position:relative}
 
 /* top bar */
@@ -33,7 +33,7 @@ body{font-family:var(--f);background:radial-gradient(130% 80% at 50% -12%,#16162
 .brand{display:flex;align-items:center;gap:9px;justify-content:center;margin-bottom:13px}
 .brand .mark{width:30px;height:30px;object-fit:contain;display:block}
 .brand .wm{font-size:10.5px;letter-spacing:.24em;font-weight:600;color:var(--dim);text-transform:uppercase}
-.brand .wm b{color:#fff}
+.brand .wm b{color:var(--text)}
 .progress-wrap{display:flex;align-items:center;gap:10px}
 .bar{flex:1;height:6px;background:var(--track);border-radius:99px;overflow:hidden}
 .bar>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
@@ -475,7 +475,7 @@ h1 .red{color:var(--orange)}
 <div id="shell">
   <span class="backlink" id="back" onclick="goBack()">‹</span>
   <div id="topbar">
-    <div class="brand"><img class="mark" src="img/ta-logo.png" alt="TA"><div class="wm">IMPROVE <b>SURFING</b></div></div>
+    <div class="brand"><img class="mark" src="img/ta-logo-dark.png" alt="TA"><div class="wm">IMPROVE <b>SURFING</b></div></div>
     <div class="progress-wrap" id="progwrap" style="visibility:hidden">
       <div class="bar"><i id="barfill"></i><span id="barsurfer">🏄</span></div>
       <div class="qcount" id="qcount"></div>
@@ -1118,7 +1118,7 @@ function renderLoader(el){
     <div class="loader-wrap">
       <div class="ring-wrap big">
         <svg viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="52" fill="none" stroke="#262630" stroke-width="9"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="#e1e8f1" stroke-width="9"/>
           <circle id="ringfill" cx="60" cy="60" r="52" fill="none" stroke="url(#rg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)"/>
           <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4d6bff"/><stop offset=".55" stop-color="#1a36e8"/><stop offset="1" stop-color="#ff6a4d"/></linearGradient></defs>
         </svg>
@@ -1172,8 +1172,8 @@ function radarSVG(p){
   const KEYS=Object.keys(PILLARS), N=KEYS.length, cx=150, cy=104, R=72, MAX=4;
   const pt=(i,rad)=>{const a=(-90+i*360/N)*Math.PI/180; return [cx+rad*Math.cos(a), cy+rad*Math.sin(a)];};
   let s='<svg viewBox="0 0 300 212" width="100%">';
-  for(let g=1;g<=MAX;g++){ s+='<polygon points="'+KEYS.map((_,i)=>pt(i,R*g/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="none" stroke="#262630"/>'; }
-  KEYS.forEach((_,i)=>{const e=pt(i,R); s+=`<line x1="${cx}" y1="${cy}" x2="${e[0].toFixed(1)}" y2="${e[1].toFixed(1)}" stroke="#262630"/>`;});
+  for(let g=1;g<=MAX;g++){ s+='<polygon points="'+KEYS.map((_,i)=>pt(i,R*g/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="none" stroke="#e1e8f1"/>'; }
+  KEYS.forEach((_,i)=>{const e=pt(i,R); s+=`<line x1="${cx}" y1="${cy}" x2="${e[0].toFixed(1)}" y2="${e[1].toFixed(1)}" stroke="#e1e8f1"/>`;});
   s+='<g class="radarg"><polygon points="'+KEYS.map((k,i)=>pt(i,R*Math.max(.35,(p[k]||1))/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="rgba(77,107,255,.18)" stroke="#4d6bff" stroke-width="2.5" stroke-linejoin="round"/></g>';
   KEYS.forEach((k,i)=>{const d=pt(i,R*Math.max(.35,(p[k]||1))/MAX); s+=`<circle class="rdot" style="animation-delay:${(0.9+i*0.09).toFixed(2)}s" cx="${d[0].toFixed(1)}" cy="${d[1].toFixed(1)}" r="3.5" fill="#4d6bff" stroke="#fff" stroke-width="1.5"/>`;});
   KEYS.forEach((k,i)=>{const l=pt(i,R+22); const anc=Math.abs(l[0]-cx)<10?'middle':(l[0]>cx?'start':'end');
@@ -1189,7 +1189,7 @@ function renderScore(el){
     <div class="reveal-wrap">
       <div class="reveal-label">Your Surf Score</div>
       <div class="gauge"><svg viewBox="0 0 240 140" width="240" height="140">
-        <path d="M20,130 A100,100 0 0 1 220,130" fill="none" stroke="#262630" stroke-width="16" stroke-linecap="round"/>
+        <path d="M20,130 A100,100 0 0 1 220,130" fill="none" stroke="#e1e8f1" stroke-width="16" stroke-linecap="round"/>
         <path id="gf" d="M20,130 A100,100 0 0 1 220,130" fill="none" stroke="url(#gg)" stroke-width="16" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/>
         <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ef4444"/><stop offset="1" stop-color="#ff6a4d"/></linearGradient></defs>
       </svg>
@@ -1228,7 +1228,7 @@ function renderProjection(el){
       <div class="chartbox2">
         <svg viewBox="0 0 320 206" width="100%" preserveAspectRatio="xMidYMid meet">
           <defs><linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d6bff" stop-opacity=".30"/><stop offset="1" stop-color="#4d6bff" stop-opacity="0"/></linearGradient></defs>
-          <line x1="${x0}" y1="${baseY}" x2="${xR}" y2="${baseY}" stroke="#262630"/>
+          <line x1="${x0}" y1="${baseY}" x2="${xR}" y2="${baseY}" stroke="#e1e8f1"/>
           <line id="pfree" x1="${x0}" y1="${tgtY}" x2="${xR}" y2="${tgtY}" stroke="#93a7b6" stroke-width="1" stroke-dasharray="4 4" opacity="0"/>
           <text id="cfree" class="cfree" x="${x0+2}" y="${tgtY-7}" opacity="0">★ Your potential</text>
           <path id="parea" d="${gArea}" fill="url(#gArea)" opacity="0"/>
