@@ -184,6 +184,20 @@ h1 .red{color:var(--orange)}
 .trustline{margin-top:16px;font-size:11.5px;color:var(--dim);text-align:center}
 .trustline b{color:var(--text)}
 .trustline .stars{display:inline}
+/* loader — richer */
+.ring-wrap.big{width:150px;height:150px;margin:0 auto 20px}
+.ring-wrap.big:before{content:"";position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle,rgba(15,180,196,.28),transparent 68%);animation:pulse 1.8s ease-in-out infinite}
+.ring-wrap.big svg{width:150px;height:150px}
+.ring-orbit{position:absolute;inset:0;animation:spin 3.2s linear infinite}
+.ring-orbit i{position:absolute;top:-3px;left:50%;width:9px;height:9px;margin-left:-4px;border-radius:50%;background:var(--aqua);box-shadow:0 0 10px var(--aqua)}
+.ring-orbit i:nth-child(2){top:auto;bottom:-3px;background:var(--blue);box-shadow:0 0 10px var(--blue)}
+.ldata{font-size:12px;color:var(--dim);font-weight:600;margin:-14px 0 16px}
+.ldata b{color:var(--aqua);font-variant-numeric:tabular-nums}
+.lpills{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;max-width:320px;margin:2px auto 6px}
+.lpill{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;color:var(--dim)}
+.lpill .lpb{flex:1;height:5px;background:var(--track);border-radius:99px;overflow:hidden}
+.lpill .lpb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:99px;transition:width .6s ease}
+.lpill.on{color:var(--text)}
 
 /* reveal */
 .reveal-wrap{text-align:center;display:flex;flex-direction:column;flex:1}
@@ -259,7 +273,17 @@ h1 .red{color:var(--orange)}
 .plan .pday span{font-size:11px;color:var(--dim);font-weight:600}
 .plan .pweek{font-size:11px;color:var(--dim);margin-top:4px}
 .plan .pbadge{position:absolute;top:-9px;left:14px;background:var(--orange);color:#fff;font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:99px}
+.plan .pweekbig{white-space:nowrap}
+.plan .pweekbig b{font-size:20px;font-weight:800;color:var(--aqua);line-height:1}
+.plan .pweekbig span{font-size:11px;color:var(--dim);font-weight:600}
+.disc-banner{text-align:center;margin:0 0 10px}
 .paytrust{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;color:var(--dim);margin-top:12px}
+/* IG real card */
+.igservices{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 4px}
+.igservices span{background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:5px 11px;font-size:11.5px;font-weight:600;color:var(--text)}
+.igreal{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0 0;box-shadow:var(--shadow-card)}
+.igreal-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text);font-weight:600;padding:4px 0}
+.igreal-note{font-size:11.5px;color:var(--mute);margin-top:6px;font-style:italic}
 
 /* instagram grid */
 .igsec{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
@@ -299,7 +323,24 @@ h1 .red{color:var(--orange)}
 .snip .sb b{color:var(--text)}
 .snipstat{display:flex;align-items:center;gap:10px;background:rgba(15,180,196,.08);border:1px solid rgba(15,180,196,.25);border-radius:11px;padding:10px 13px;margin-top:12px;font-size:12.5px;font-weight:600;color:var(--text);text-align:left}
 .snipstat b{color:var(--aqua);font-size:17px;flex-shrink:0}
-/* milestone */
+/* milestone (rich checkpoint) */
+.mile-ck{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--aqua);font-weight:700;text-align:center;margin-bottom:4px}
+.mrecap{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 14px;margin:18px 0 4px;box-shadow:var(--shadow-card)}
+.mrow{display:flex;align-items:center;gap:11px;padding:9px 2px;font-size:13.5px;font-weight:600;border-bottom:1px solid var(--line2)}
+.mrow:last-child{border-bottom:none}
+.mrow .mi{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.mrow.ok .mi{background:var(--green)}
+.mrow.ok .mi:after{content:"✓";color:#fff;font-size:12px;font-weight:800}
+.mrow.now .mi{border:2px solid var(--aqua);background:rgba(15,180,196,.12)}
+.mrow.now .mi:after{content:"";width:9px;height:9px;border-radius:50%;background:var(--aqua)}
+.mrow.wait .mi{border:2px solid var(--line)}
+.mrow.ok .ml{color:var(--text)}.mrow.now .ml{color:var(--text)}.mrow.wait .ml{color:var(--mute)}
+.mrow .ml{flex:1;text-align:left}
+.mprog{margin:16px 4px 2px}
+.mprog .mpbar{height:8px;background:var(--track);border-radius:99px;overflow:hidden}
+.mprog .mpbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:99px;transition:width 1s cubic-bezier(.22,1,.36,1)}
+.mprog .mpt{display:flex;justify-content:space-between;font-size:11.5px;color:var(--dim);font-weight:600;margin-top:7px}
+.mprog .mpt b{color:var(--aqua)}
 .mile{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center}
 .mile .mck{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,var(--aqua),var(--blue));margin:0 auto 18px;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 40px -14px rgba(15,180,196,.55);animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
 .mile .mck svg{width:32px;height:32px;fill:#fff}
@@ -315,7 +356,20 @@ h1 .red{color:var(--orange)}
 /* number inputs */
 .numrow{display:flex;gap:11px;margin-top:4px}
 .numrow .field{flex:1;margin-bottom:0}
+.numfield{position:relative}
+.numfield .ni{position:absolute;left:13px;top:34px;font-size:17px;pointer-events:none;opacity:.85}
+.numfield input{padding-left:40px!important}
 .skiplink{text-align:center;margin-top:14px;font-size:13px;color:var(--dim);text-decoration:underline;cursor:pointer}
+.boardcard{background:linear-gradient(160deg,#0e2a3f,#0b1f30);border:1px solid rgba(15,180,196,.4);border-radius:16px;padding:16px 18px;margin:18px 0 4px;color:#fff;box-shadow:var(--shadow-card);position:relative;overflow:hidden}
+.boardcard:before{content:"";position:absolute;top:-40px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(15,180,196,.35),transparent 70%)}
+.boardcard .bk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua);font-weight:700;display:flex;align-items:center;gap:7px}
+.boardcard .bv{font-size:30px;font-weight:800;color:#2fd4e6;line-height:1;margin:8px 0 2px}
+.boardcard .bv small{font-size:14px;color:#a9c3da;font-weight:600}
+.boardcard .bd{font-size:12.5px;color:#c7dced;line-height:1.5}
+.boardcard.empty{background:var(--surface);border:1px dashed var(--line);color:var(--dim)}
+.boardcard.empty .bk{color:var(--dim)}
+.numwhy{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--dim);margin-top:12px;line-height:1.45}
+.numwhy svg{width:15px;height:15px;fill:var(--green);flex-shrink:0;margin-top:1px}
 /* radar + pillar breakdown */
 .radarcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 10px 4px;margin:14px 0 4px;box-shadow:var(--shadow-card)}
 .radarcard .rlab{font:600 10px 'Poppins',sans-serif;fill:var(--dim)}
@@ -389,6 +443,28 @@ h1 .red{color:var(--orange)}
 .scratch-hint{animation:hintB 1.6s infinite}
 @keyframes hintB{50%{transform:translateY(3px)}}
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+/* scratch modal */
+.modal-ov{position:fixed;inset:0;z-index:100;background:rgba(6,20,32,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:22px;animation:ovin .3s ease}
+@keyframes ovin{from{opacity:0}to{opacity:1}}
+.modal-card{width:100%;max-width:360px;background:linear-gradient(165deg,#0f2536,#0a1826);border:1px solid rgba(15,180,196,.45);border-radius:22px;padding:24px 22px 26px;text-align:center;box-shadow:0 34px 90px -22px rgba(0,0,0,.7);position:relative;animation:modin .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes modin{from{opacity:0;transform:translateY(26px) scale(.92)}to{opacity:1;transform:none}}
+.modal-kick{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.modal-h{font-size:23px;font-weight:800;color:#fff;margin:8px 0 4px;letter-spacing:-.01em}
+.modal-sub{font-size:13px;color:#a9c3da;margin-bottom:16px;line-height:1.45}
+.m-scratch{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.m-prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,var(--aqua-deep),var(--navy))}
+.m-prize .pk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.m-prize .pt{font-size:34px;font-weight:800;color:#fff;line-height:1;margin:5px 0}
+.m-prize .ps{font-size:11.5px;color:#d3e7f5}
+#mScratchCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.m-hint{font-size:12px;color:var(--aqua);margin-top:12px;font-weight:600;animation:hintB 1.6s infinite}
+.m-claim{display:none;width:100%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--aqua),var(--aqua-deep));color:#04302c;font-weight:800;font-size:17px;padding:15px;border-radius:14px;margin-top:16px;letter-spacing:.02em}
+/* discounted price on tier card */
+.tier-price .was{font-size:16px;color:#7c96ad;text-decoration:line-through;font-weight:600;margin-right:6px}
+.tier-perday{font-size:12.5px;color:#a9c3da;margin-top:2px}
+.tier-perday b{color:#2fd4e6}
+.disc-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(52,211,153,.16);border:1px solid rgba(52,211,153,.5);color:#6ee7b7;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px;margin-top:10px}
+.plan .pold{font-size:11px;color:#9aacbb;text-decoration:line-through;margin-right:4px}
 .tag-debug{position:fixed;bottom:8px;left:10px;font-size:10px;font-family:monospace;z-index:50;color:#456}
 .backlink{position:absolute;left:16px;top:14px;color:var(--mute);font-size:24px;cursor:pointer;z-index:6;line-height:1;padding:4px;display:none}
 .backlink.show{display:block}
@@ -905,8 +981,14 @@ function renderImgCards(el,step){
     <div class="acards">${step.options.map(o=>`<div class="acard${state[step.id]===o.val?' sel':''}" onclick="pickCard(this,'${step.id}','${o.val}')">${gslot(o.img,'ar-card',o.label)}<div class="aname">${o.label}</div></div>`).join('')}</div>`;
 }
 function pickCard(node,id,v){ state[id]=v; fx(node,window.event,null); const from=idx; document.querySelectorAll('.acard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},430); }
-function interp(t){ if(!t)return t; const nm=state.name?state.name.split(' ')[0]:'';
+function firstName(){ let nm=state.name?String(state.name).trim().split(' ')[0]:''; return (nm && /[a-zA-Z]/.test(nm)) ? nm : ''; }
+function interp(t){ if(!t)return t; const nm=firstName();
   return t.replace('{nm}', nm?nm+', ':'').replace(/^([a-z])/,c=>c.toUpperCase()); }
+/* ── pricing + founding discount (scratch) ── */
+function tierWk(t){ return parseFloat(t.price.replace('A$','')); }
+function wkNow(t){ return tierWk(t)*(1-(state._discount||0)); }
+function dayNow(t){ return wkNow(t)/7; }
+function money(n){ return 'A$'+(Number.isInteger(+n.toFixed(2))? n.toFixed(0): n.toFixed(2)); }
 function buzz(ms){ try{ if(navigator.vibrate)navigator.vibrate(ms); }catch(e){} }
 function fx(node,e,score){ /* ripple inside the card + emoji floating up from the tap point */
   buzz(9);
@@ -955,11 +1037,28 @@ function renderMulti(el,step){
   });
   go.onclick=()=>next(); sync();
 }
+const NUM_ICON={height_cm:'📏',weight_kg:'⚖️'};
 function renderNum(el,step){
   el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}
-    <div class="numrow">${step.fields.map(f=>`<div class="field"><label>${f.label}</label><input id="nf_${f.key}" type="number" inputmode="numeric" min="${f.min}" max="${f.max}" placeholder="${f.placeholder}" value="${state[f.key]||''}"></div>`).join('')}</div>
-    <button class="cta" style="margin-top:18px" onclick="saveNums('${step.id}')">Continue →</button>
-    <div class="skiplink" onclick="next()">Skip this step</div>`;
+    <div class="numrow">${step.fields.map(f=>`<div class="field numfield"><label>${f.label}</label><span class="ni">${NUM_ICON[f.key]||''}</span><input id="nf_${f.key}" type="number" inputmode="numeric" min="${f.min}" max="${f.max}" placeholder="${f.placeholder}" value="${state[f.key]||''}"></div>`).join('')}</div>
+    <div id="boardEst"></div>
+    <button class="cta" style="margin-top:16px" onclick="saveNums('${step.id}')">Continue →</button>
+    <div class="skiplink" onclick="next()">Skip — I'll add it later</div>`;
+  const upd=()=>renderBoardEst(el);
+  step.fields.forEach(f=>{const i=el.querySelector('#nf_'+f.key); if(i)i.addEventListener('input',upd);});
+  renderBoardEst(el);
+}
+function renderBoardEst(el){
+  const box=el.querySelector('#boardEst'); if(!box)return;
+  const w=parseFloat(val('nf_weight_kg'));
+  if(!w||w<40){ box.innerHTML=`<div class="boardcard empty"><div class="bk">🏄 Recommended board volume</div><div class="bd" style="margin-top:6px">Add your weight to see the ideal board volume for your level.</div></div>`; return; }
+  // volume factor by measured level: beginner needs more float, advanced less
+  const lvl=levelAvg(); const f = lvl<1.6?1.0 : lvl<2.4?0.75 : lvl<3.2?0.55 : 0.42;
+  const lo=Math.round(w*(f-0.05)), hi=Math.round(w*(f+0.05));
+  const lab = lvl<1.6?'high-float, stable foam or mid-length' : lvl<2.4?'forgiving mid-length or hybrid' : lvl<3.2?'performance hybrid or fish' : 'tuned performance shortboard';
+  box.innerHTML=`<div class="boardcard"><div class="bk">🏄 Your recommended board volume</div>
+    <div class="bv">${lo}–${hi}<small> L</small></div>
+    <div class="bd">Best paired with a <b>${lab}</b>. Your coach fine-tunes this in your first session.</div></div>`;
 }
 function saveNums(id){
   const step=STEPS.find(s=>s.id===id);
@@ -992,30 +1091,44 @@ function renderSnippet(el,step){
   },850);
 }
 function renderMilestone(el,step){
+  const SEC=['Ocean comfort & take-off','Wave reading & rail control','Your board & equipment fit','Goals & programme match'];
+  const doneN = step.stage>=4?4:2;
+  const pct = Math.round(doneN/4*100);
+  const cp = step.stage>=4?2:1;
   el.innerHTML=`
     <div class="mile">
+      <div class="mile-ck">Checkpoint ${cp} of 2</div>
       <div class="mck"><svg viewBox="0 0 24 24"><path d="M9 16.2l-4.2-4.2L3.4 13.4 9 19 21 7l-1.4-1.4z"/></svg></div>
       <h1>${interp(step.title)}</h1>
-      <div class="sub" style="margin-top:10px">${interp(step.sub||'')}</div>
-      <div class="milebars">${[1,2,3,4].map(i=>`<i class="${i<=step.stage?'on':''}"></i>`).join('')}</div>
+      <div class="sub" style="margin-top:9px">${interp(step.sub||'')}</div>
+      <div class="mrecap">${SEC.map((s,i)=>{const st=i<doneN?'ok':(i===doneN?'now':'wait');return `<div class="mrow ${st}"><span class="mi"></span><span class="ml">${s}</span></div>`;}).join('')}</div>
+      <div class="mprog">
+        <div class="mpbar"><i data-w="${pct}"></i></div>
+        <div class="mpt"><span>Diagnostic progress</span><span><b>${pct}%</b> complete</span></div>
+      </div>
     </div>
     <button class="cta" onclick="next()">${step.btn||'Continue →'}</button>`;
+  setTimeout(()=>{const b=el.querySelector('.mpbar i'); if(b)b.style.width=b.dataset.w+'%';},250);
   if(step.confetti) burstConfetti(step.confetti===true?70:step.confetti);
   buzz(12);
 }
 function renderLoader(el){
+  const PILL=Object.values(PILLARS).map(p=>p.label);
   el.innerHTML=`
     <div class="loader-wrap">
-      <div class="ring-wrap">
-        <svg viewBox="0 0 120 120" width="122" height="122">
+      <div class="ring-wrap big">
+        <svg viewBox="0 0 120 120">
           <circle cx="60" cy="60" r="52" fill="none" stroke="#e2eef5" stroke-width="9"/>
           <circle id="ringfill" cx="60" cy="60" r="52" fill="none" stroke="url(#rg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)"/>
           <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0fb4c4"/><stop offset=".55" stop-color="#2b8fd6"/><stop offset="1" stop-color="#ff6a4d"/></linearGradient></defs>
         </svg>
+        <div class="ring-orbit"><i></i><i></i></div>
         <div class="ring-num" id="ringnum">0%</div>
       </div>
       <div class="lstat" id="lstat">Analysing your answers…</div>
       <div class="lsub">Building your personalised Surf Score</div>
+      <div class="ldata"><b id="ldp">0</b> data points cross-checked</div>
+      <div class="lpills">${PILL.map((p,i)=>`<div class="lpill" id="lp${i}"><span class="lpb"><i></i></span>${p}</div>`).join('')}</div>
       <div class="checks">
         <div class="chk"><span class="cb"></span>Mapping your level & wave count</div>
         <div class="chk"><span class="cb"></span>Spotting what's holding you back</div>
@@ -1025,6 +1138,8 @@ function renderLoader(el){
       <div class="testi" id="testi"></div>
       <div class="trustline"><span class="stars">★★★★★</span> <b>4.9/5</b> · 300+ surfers coached on the Gold Coast</div>
     </div>`;
+  const ldp=el.querySelector('#ldp'), pills=[...el.querySelectorAll('.lpill')];
+  const pillTargets=Object.values(PILLARS).map(p=>{let t=0,c=0;p.qs.forEach(q=>{const s=scOf(q);if(s!=null){t+=s;c++;}});return c?Math.round(t/c/4*100):40;});
   const stats=['Analysing your answers…','Cross-checking coaching since 2019…','Calculating your Surf Score…','Building your progression curve…'];
   const testis=[
     {f:'t1',i:'J',t:'I surfed for 8 years stuck on the same waves. 3 months in, I finally got barrelled.',n:'Jake M., Currumbin'},
@@ -1048,6 +1163,8 @@ function renderLoader(el){
     const stage=Math.min(3,Math.floor(p*4));
     lstat.textContent=stats[stage];
     if(stage!==lastStage){showT(stage);lastStage=stage;}
+    if(ldp) ldp.textContent=Math.round(p*1240).toLocaleString();
+    pills.forEach((pl,i)=>{ const thr=0.15+i*0.12; if(p>=thr){ pl.classList.add('on'); const bar=pl.querySelector('.lpb i'); if(bar&&!bar.style.width)bar.style.width=pillTargets[i]+'%'; } });
     if(p>=1){clearInterval(tick);setTimeout(()=>{if(idx===from)next()},520);}
   },50);
 }
@@ -1067,7 +1184,7 @@ function renderScore(el){
   const r=computeScore(state); state._score=r; const pct=r.score/100;
   const proj=computeProjection(state);
   const lim=LIMITER_META[r.limiter];
-  const nm=state.name?state.name.split(' ')[0]:'';
+  const nm=firstName();
   el.innerHTML=`
     <div class="reveal-wrap">
       <div class="reveal-label">Your Surf Score</div>
@@ -1163,7 +1280,7 @@ function renderBridge(el){
 }
 function renderResult(el){
   const key=pickTier(state); const t=TIERS[key]; state._tier=key;
-  const nm=state.name?state.name.split(' ')[0]:'';
+  const nm=firstName();
   const goalLine={catch_waves:'catch more waves, more consistently',turns_control:'own your turns and control',flow_style:'surf with flow, speed and style',bigger_waves:'ride bigger waves with confidence',compete:'push into real performance'}[state.q1]||'reach your next level';
   const lim=LIMITER_META[(state._score&&state._score.limiter)||limiterKey()];
   const spots=3;
@@ -1175,42 +1292,59 @@ function renderResult(el){
       <div class="tiercard">
         <div class="tier-tag">${t.tag} · your match</div>
         <div class="tier-name">${t.name}</div>
-        <div class="tier-price"><b>A$${(parseFloat(t.price.replace('A$',''))/7).toFixed(2)}</b><span>/day</span></div>
-        <div class="tier-meta"><b>${t.sessions}</b> · just ${t.price}/week</div>
-        <ul class="tier-inc">${t.inc.map(i=>`<li>${i}</li>`).join('')}</ul>
+        <div class="tier-price" id="tcPrice"></div>
+        <div class="tier-perday" id="tcDay"></div>
+        <div id="tcBadge"></div>
+        <ul class="tier-inc" style="margin-top:12px">${t.inc.map(i=>`<li>${i}</li>`).join('')}</ul>
       </div>
-
-      <div class="eyebrow" style="justify-content:center">Founding member bonus</div>
-      <div class="jackpot-line" id="jackpot">Unlocked!</div>
-      <div class="scratch-stage">
-        <div class="prize-under" id="pu">
-          <div class="prize-kicker">Founding member offer</div>
-          <div class="prize-title">10% OFF<br>your membership</div>
-          <div class="prize-sub">Founding members lock in 10% off — for as long as you stay.</div>
-        </div>
-        <canvas id="scratchCanvas"></canvas>
-      </div>
-      <div class="scratch-hint" id="hint">Scratch the panel to unlock your offer</div>
 
       <button class="cta" id="claimBtn" style="display:none;margin-top:16px" onclick="next()">See all plans → join now</button>
       <div class="guar" id="guar" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> 10% founding discount unlocked · secure checkout</div>
     </div>`;
+  paintTierPrice();
+  if(!state._discount) setTimeout(()=>openScratchModal(),850);
+  else { document.getElementById('claimBtn').style.display='block'; document.getElementById('guar').style.display='flex'; }
+}
+function paintTierPrice(){
+  const t=TIERS[state._tier]; const d=state._discount||0;
+  const pw=document.getElementById('tcPrice'), pd=document.getElementById('tcDay'), pb=document.getElementById('tcBadge');
+  if(!pw)return;
+  pw.innerHTML=(d?`<span class="was">${t.price}</span>`:'')+`<b>${money(wkNow(t))}</b><span>/week</span>`;
+  pd.innerHTML=`<b>${t.sessions}</b> · ≈ ${money(dayNow(t))}/day`;
+  pb.innerHTML=d?`<span class="disc-badge">✓ 10% founding discount applied</span>`:'';
+}
+function openScratchModal(){
+  if(document.getElementById('scratchModal'))return;
+  const ov=document.createElement('div'); ov.className='modal-ov'; ov.id='scratchModal';
+  ov.innerHTML=`
+    <div class="modal-card">
+      <div class="modal-kick">Founding member bonus</div>
+      <div class="modal-h">Scratch to reveal your bonus</div>
+      <div class="modal-sub">Only this intake's founding members get it. Scratch the panel 👇</div>
+      <div class="m-scratch">
+        <div class="m-prize"><div class="pk">You unlocked</div><div class="pt">10% OFF</div><div class="ps">your membership — for as long as you stay</div></div>
+        <canvas id="mScratchCanvas"></canvas>
+      </div>
+      <div class="m-hint" id="mHint">👆 Scratch the silver panel</div>
+      <button class="m-claim" id="mClaim" onclick="claimDiscount()">Claim my 10% off →</button>
+    </div>`;
+  document.body.appendChild(ov);
   setTimeout(()=>initScratch(),60);
 }
 function initScratch(){
-  const cv=document.getElementById('scratchCanvas'); if(!cv)return;
+  const cv=document.getElementById('mScratchCanvas'); if(!cv)return;
   const r=cv.getBoundingClientRect(); cv.width=r.width; cv.height=r.height;
   const ctx=cv.getContext('2d');
-  const g=ctx.createLinearGradient(0,0,r.width,r.height); g.addColorStop(0,'#0e9bb5'); g.addColorStop(1,'#0b2a44');
+  const g=ctx.createLinearGradient(0,0,r.width,r.height); g.addColorStop(0,'#c7d2da'); g.addColorStop(.5,'#9fb0bd'); g.addColorStop(1,'#c7d2da');
   ctx.fillStyle=g; ctx.fillRect(0,0,r.width,r.height);
-  ctx.fillStyle='rgba(255,255,255,.9)'; ctx.font='700 15px Poppins, sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='rgba(11,42,68,.75)'; ctx.font='700 15px Poppins, sans-serif'; ctx.textAlign='center';
   ctx.fillText('SCRATCH HERE', r.width/2, r.height/2-4);
-  ctx.font='24px serif'; ctx.fillText('🏄 ✦ 🏄', r.width/2, r.height/2+26);
+  ctx.font='22px serif'; ctx.fillText('🏄 ✦ 🏄', r.width/2, r.height/2+24);
   ctx.globalCompositeOperation='destination-out';
   let drawing=false, done=false;
   function pos(e){const t=e.touches?e.touches[0]:e;const b=cv.getBoundingClientRect();return{x:t.clientX-b.left,y:t.clientY-b.top}}
-  function scratch(e){ if(!drawing)return; const p=pos(e); ctx.beginPath(); ctx.arc(p.x,p.y,24,0,7); ctx.fill();
-    if(!done&&cleared()>0.5){ done=true; reveal(); } }
+  function scratch(e){ if(!drawing)return; const p=pos(e); ctx.beginPath(); ctx.arc(p.x,p.y,22,0,7); ctx.fill(); buzz(4);
+    if(!done&&cleared()>0.45){ done=true; reveal(); } }
   function cleared(){ const d=ctx.getImageData(0,0,cv.width,cv.height).data; let c=0; for(let i=3;i<d.length;i+=40){if(d[i]===0)c++;} return c/(d.length/40); }
   cv.addEventListener('mousedown',e=>{drawing=true;scratch(e)});
   cv.addEventListener('mousemove',scratch);
@@ -1220,50 +1354,74 @@ function initScratch(){
   cv.addEventListener('touchend',()=>drawing=false);
 }
 function reveal(){
-  const cv=document.getElementById('scratchCanvas'); if(cv){cv.style.transition='opacity .5s';cv.style.opacity=0;setTimeout(()=>cv.remove(),500);}
-  document.getElementById('hint').style.display='none';
-  document.getElementById('jackpot').style.display='block';
-  document.getElementById('claimBtn').style.display='block';
-  document.getElementById('guar').style.display='flex';
-  burstConfetti();
+  const cv=document.getElementById('mScratchCanvas'); if(cv){cv.style.transition='opacity .5s';cv.style.opacity=0;setTimeout(()=>cv.remove(),500);}
+  const h=document.getElementById('mHint'); if(h)h.style.display='none';
+  const c=document.getElementById('mClaim'); if(c)c.style.display='block';
+  burstConfetti(); buzz(18);
+}
+function claimDiscount(){
+  state._discount=0.10;
+  const ov=document.getElementById('scratchModal');
+  if(ov){ ov.style.transition='opacity .3s'; ov.style.opacity=0; setTimeout(()=>ov.remove(),300); }
+  paintTierPrice();
+  const cb=document.getElementById('claimBtn'), gr=document.getElementById('guar');
+  if(cb){cb.style.display='block';cb.classList.add('snipin');}
+  if(gr)gr.style.display='flex';
+  const pw=document.getElementById('tcPrice'); if(pw){pw.classList.remove('settled');void pw.offsetWidth;pw.classList.add('settled');}
 }
 function claimTier(){
   const t=TIERS[state._tier];
-  alert('(prototype) Would open the Stripe checkout for '+t.name+' — '+t.price+'/week.\nURL: '+t.url);
+  alert('(prototype) Would open the Stripe checkout for '+t.name+' — '+money(wkNow(t))+'/week.\nURL: '+t.url);
 }
+/* Paste the @improvesurfing LightWidget id here (lightwidget.com → connect account → copy widget id)
+   e.g. IG_WIDGET_ID='ab12cd34...'; leave '' to show the real profile card fallback. */
+const IG_WIDGET_ID='';
 function renderPlans(el){
   const rec=state._tier||pickTier(state); if(!state._sel)state._sel=rec;
   const order=['foundation','swell','consistency','elite'];
-  const nm=state.name?state.name.split(' ')[0]:'';
+  const nm=firstName(); const d=state._discount||0;
   el.innerHTML=`
     <div class="eyebrow">Choose your plan</div>
     <h1>${nm?nm+', choose':'Choose'} your <span class="hl">programme.</span></h1>
     <div class="sub">Your match is pre-selected — but pick whichever fits you best.</div>
+    ${d?`<div class="disc-banner"><span class="disc-badge">✓ 10% founding discount applied to all plans</span></div>`:''}
     <div class="plans">${order.map(k=>{const t=TIERS[k];const sel=state._sel===k;const rc=rec===k;
-      const per=(parseFloat(t.price.replace('A$',''))/7).toFixed(2);
       return `<div class="plan${sel?' sel':''}" onclick="selectPlan(this,'${k}')">
         ${rc?`<span class="pbadge">★ Your match</span>`:''}
         <span class="pradio"></span>
         <div class="pinfo"><div class="pn2">${t.name}</div><div class="pm">${t.sessions}</div></div>
-        <div class="pprice"><div class="pday"><b>A$${per}</b> <span>/day</span></div><div class="pweek">${t.price} / week</div></div>
+        <div class="pprice"><div class="pweekbig">${d?`<span class="pold">${t.price}</span>`:''}<b>${money(wkNow(t))}</b> <span>/wk</span></div><div class="pweek">≈ ${money(dayNow(t))} / day</div></div>
       </div>`;}).join('')}</div>
     <div class="scarce" style="margin-top:2px"><span class="dotr"></span> Only 15 members this intake · <b>&nbsp;3 spots left</b></div>
-    <button class="cta" id="payBtn" style="margin-top:14px" onclick="payTier()">Join now → <span id="payprice">A$${(parseFloat(TIERS[state._sel].price.replace('A$',''))/7).toFixed(2)}</span>/day</button>
+    <button class="cta" id="payBtn" style="margin-top:14px" onclick="payTier()">Join now → <span id="payprice">${money(wkNow(TIERS[state._sel]))}</span>/week</button>
     <div class="guar"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> Founding member intake · billed weekly in A$</div>
     <div class="paytrust">🔒 Secure checkout · powered by Stripe</div>
     <div class="igsec">
       <div class="ighead">
         <div class="igav">IS</div>
-        <div class="igmeta"><div class="ighandle">@improvesurfing</div><div class="igtag">See the crew in action — Gold Coast surf coaching</div></div>
+        <div class="igmeta"><div class="ighandle">@improvesurfing</div><div class="igtag">Improve Surfing · Training Academy — Currumbin, Gold Coast</div></div>
       </div>
-      <div class="iggrid">
-        ${Array.from({length:9},(_,i)=>`<a class="igtile" href="https://www.instagram.com/improvesurfing/" target="_blank" rel="noopener"><img src="img/ig/${i+1}.jpg" onerror="igFallback(this)"><span class="igph" style="display:none">POST ${i+1}</span></a>`).join('')}
-      </div>
-      <a class="igbtn" href="https://www.instagram.com/improvesurfing/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1012 18.6 6.6 6.6 0 0012 5.4zm0 10.9a4.3 4.3 0 110-8.6 4.3 4.3 0 010 8.6zM18.9 5.1a1.5 1.5 0 100 3.1 1.5 1.5 0 000-3.1z"/></svg> Follow @improvesurfing</a>
+      <div class="igservices"><span>1:1 Surf</span><span>Video Analysis</span><span>Surfskate</span><span>Mobility</span><span>Apnea</span></div>
+      <div id="igFeed"></div>
+      <a class="igbtn" href="https://www.instagram.com/improvesurfing/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1012 18.6 6.6 6.6 0 0012 5.4zm0 10.9a4.3 4.3 0 110-8.6 4.3 4.3 0 010 8.6zM18.9 5.1a1.5 1.5 0 100 3.1 1.5 1.5 0 000-3.1z"/></svg> Follow the real feed → @improvesurfing</a>
     </div>`;
+  mountIgFeed();
 }
-function selectPlan(node,k){ state._sel=k; document.querySelectorAll('.plan').forEach(p=>p.classList.remove('sel')); node.classList.add('sel'); const pp=document.getElementById('payprice'); if(pp)pp.textContent='A$'+(parseFloat(TIERS[k].price.replace('A$',''))/7).toFixed(2); updateDebug(); }
-function payTier(){ const t=TIERS[state._sel]; alert('(prototype) Opens the Stripe checkout for '+t.name+' — '+t.price+'/week.\nURL: '+t.url); }
+function mountIgFeed(){
+  const box=document.getElementById('igFeed'); if(!box)return;
+  if(IG_WIDGET_ID){
+    box.innerHTML=`<iframe src="//lightwidget.com/widgets/${IG_WIDGET_ID}.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;border-radius:12px;margin-top:12px"></iframe>`;
+    if(!window.__lwLoaded){ const s=document.createElement('script'); s.src='https://cdn.lightwidget.com/widgets/lightwidget.js'; document.body.appendChild(s); window.__lwLoaded=true; }
+  } else {
+    box.innerHTML=`<div class="igreal">
+      <div class="igreal-row"><span>📍</span> Flat Rock / Currumbin, Gold Coast QLD</div>
+      <div class="igreal-row"><span>🗓️</span> Coaching since 2019 · 300+ surfers · 99% satisfaction</div>
+      <div class="igreal-note">Live feed loads here once the @improvesurfing Instagram is connected.</div>
+    </div>`;
+  }
+}
+function selectPlan(node,k){ state._sel=k; document.querySelectorAll('.plan').forEach(p=>p.classList.remove('sel')); node.classList.add('sel'); const pp=document.getElementById('payprice'); if(pp)pp.textContent=money(wkNow(TIERS[k])); updateDebug(); }
+function payTier(){ const t=TIERS[state._sel]; alert('(prototype) Opens the Stripe checkout for '+t.name+' — '+money(wkNow(t))+'/week.\nURL: '+t.url); }
 function igFallback(img){ img.style.display='none'; const s=img.nextElementSibling; if(s)s.style.display='flex'; }
 function burstConfetti(n){
   const cols=['#0fb4c4','#2b8fd6','#ff6a4d','#f5a623','#0c2a3f'];
