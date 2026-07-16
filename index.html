@@ -886,13 +886,12 @@ function setProgress(step){
   const isInput=INPUT.includes(step.type);
   if(isInput){
     pw.style.visibility='visible';
-    const all=inputSteps(), n=all.indexOf(step)+1, pct=(n/all.length*100);
+    const all=inputSteps(), n=all.indexOf(step)+1;
+    /* front-loaded curve (^0.5): the bar jumps fast on the first questions so it feels like a short quiz */
+    const pct=Math.round(Math.pow(n/all.length,0.5)*100);
     document.getElementById('barfill').style.width=pct+'%';
     const surf=document.getElementById('barsurfer'); if(surf)surf.style.left=pct+'%';
-    const qc=document.getElementById('qcount');
-    if(step.q){const q=qSteps();qc.textContent='Question '+(q.indexOf(step)+1)+' of '+q.length;
-      qc.classList.remove('bump'); void qc.offsetWidth; qc.classList.add('bump');}
-    else qc.textContent='';
+    const qc=document.getElementById('qcount'); if(qc)qc.textContent='';   /* no "Question X of Y" — keep it feeling short */
   } else pw.style.visibility='hidden';
   document.getElementById('back').classList.toggle('show', idx>0&&STEPS[idx].type!=='result'&&STEPS[idx].type!=='plans');
 }
