@@ -1,0 +1,171 @@
+/* ============================================================
+   THEME D — "PERFORMANCE LAB"
+   Athletic instrument. Near-black, electric lime, condensed
+   uppercase headings, mono numerals, tight square corners.
+   Reads as a measurement device — fits the "20-point diagnostic".
+   Reference: Whoop / Garmin / Nike Training Club.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@700;800&display=swap');
+
+:root{
+  --bg:#08090a; --bg2:#0e1113; --bg3:#161a1d;
+  --surface:#111417; --surface2:#161a1e;
+  --line:#252b31; --line2:#1b2024;
+  --text:#f4f6f5; --dim:#9aa3a8; --mute:#626c72;
+  --aqua:#c8f24e; --aqua-deep:#a9d62f; --blue:#7ee0c0; --blue-deep:#4fc4a0; --navy:#08090a;
+  --orange:#ff8a3d; --orange-deep:#ef6f1f;
+  --green:#4ade80; --green-deep:#22c55e; --red:#ff4d5e; --red-deep:#ff7484;
+  --gold:#e8c249; --ink:#08090a;
+  --f:'Barlow',system-ui,-apple-system,sans-serif;
+  --fd:'Barlow Condensed',Impact,sans-serif;
+  --fm:'JetBrains Mono',ui-monospace,monospace;
+  --track:rgba(255,255,255,.08);
+  --shadow:0 26px 60px -26px rgba(0,0,0,.9);
+  --shadow-card:0 10px 26px -18px rgba(0,0,0,.8);
+  --shadow-btn:0 14px 32px -14px rgba(200,242,78,.35);
+}
+
+html,body{background:#08090a}
+body{background:
+  linear-gradient(180deg,#0b0e10 0%,#08090a 40%),
+  repeating-linear-gradient(90deg,rgba(255,255,255,.016) 0 1px,transparent 1px 44px);
+}
+
+/* almost no ambience — this theme is dry and technical */
+.bgfx i{opacity:.30;filter:blur(70px)}
+.bgfx .b1{background:radial-gradient(circle,rgba(200,242,78,.13),transparent 70%)}
+.bgfx .b2{background:radial-gradient(circle,rgba(126,224,192,.10),transparent 70%)}
+.bgfx .b3{background:radial-gradient(circle,rgba(255,138,61,.07),transparent 70%)}
+
+/* top bar */
+#topbar{background:#08090a;border-bottom:1px solid var(--line);box-shadow:none}
+#topbar .bar{background:rgba(255,255,255,.09);height:4px;border-radius:0}
+#topbar .bar>i{border-radius:0;background:var(--aqua)}
+#topbar .qcount{color:var(--mute);font-family:var(--fm);font-size:10px}
+.brand .wm{color:var(--mute);letter-spacing:.3em}
+.brand .wm b{color:#fff}
+.brand .mark{filter:brightness(0) invert(1)}
+
+/* CONDENSED UPPERCASE HEADINGS — the signature */
+h1,.intro-h,.lstat,.reveal-headline,.tiercard .tier-name,.mile h1,.limbox .ln2,.prize-title,.plan .pn2,.snip .st{
+  font-family:var(--fd);font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:1.02
+}
+.intro-h{font-size:44px;line-height:.98}
+h1{font-size:33px}
+.reveal-headline{font-size:28px;line-height:1.06}
+.snip .st{font-size:20px;letter-spacing:.01em}
+.plan .pn2{font-size:18px}
+.tiercard .tier-name{font-size:32px}
+.mile h1{font-size:32px}
+.limbox .ln2{font-size:23px}
+/* every number is mono — instrument readout */
+.bignum,.proj-card .pn,.trust .t b,.auth-grid .a b,.boardcard .bv,.tiercard .tier-price b,
+.plan .pday b,.plan .pweekbig b,.ring-num,.ldata b,.prow2 .vv,.snipstat b{
+  font-family:var(--fm);font-weight:800;letter-spacing:-.04em
+}
+.eyebrow,.reveal-label,.mile-ck,.field label,.intro-badge,.tiercard .tier-tag,.limbox .lk,.snip .skk,.plan .pbadge{
+  font-family:var(--fm);font-weight:700;letter-spacing:.14em;font-size:10px
+}
+.sub,.reveal-body{font-size:14.5px;line-height:1.55}
+
+/* SQUARE — corners are cut, not rounded */
+.opt,.gcard,.acard,.plan,.testi,.radarcard,.proj-card,.chartbox2,.mrecap,.igreal,.snip,.limbox,
+.tenyr,.savedpill,.snipstat,.auth-grid .a,.bigfield input,.field input,.phonewrap input,.ccode,
+.suggest,.cta,.imgslot,.igtile,.scratch-stage,.prize-under,.tiercard,.boardcard,.igbtn{border-radius:3px}
+.gcard .gbadge{border-radius:3px}
+.opt .tick,.plan .pradio{border-radius:2px}
+.opt .box{border-radius:2px}
+.bar,.bar>i,.mpbar,.mpbar i,.bar2,.bar2 i,.lpb,.lpb i,.milebars i{border-radius:0}
+.intro-badge{border-radius:2px;background:transparent;border-color:var(--aqua);color:var(--aqua)}
+.methodrow .m,.igservices span{border-radius:2px;background:var(--surface2)}
+.plan .pbadge{border-radius:2px;background:var(--aqua);color:var(--ink)}
+
+/* surfaces — flat panels with a visible edge */
+.opt,.gcard,.acard,.plan,.testi,.radarcard,.proj-card,.chartbox2,.mrecap,.igreal,.auth-grid .a{
+  background:var(--surface);border-color:var(--line)
+}
+.opt:hover,.gcard:hover,.acard:hover,.plan:hover{transform:none;border-color:var(--aqua);background:var(--surface2)}
+.opt.sel{background:rgba(200,242,78,.10);border-color:var(--aqua);box-shadow:inset 3px 0 0 var(--aqua)}
+.gcard.sel,.acard.sel{background:rgba(200,242,78,.09);border-color:var(--aqua)}
+.plan.sel{background:rgba(200,242,78,.08);border-color:var(--aqua);box-shadow:inset 3px 0 0 var(--aqua)}
+.opt.sel .tick:after,.plan.sel .pradio:after{background:var(--ink);border-radius:0}
+.opt.sel .box:after{color:var(--ink)}
+
+/* inputs */
+.bigfield input,.field input,.phonewrap input,.ccode{background:var(--surface);border-color:var(--line);color:var(--text)}
+.bigfield input:focus,.field input:focus,.phonewrap input:focus{border-color:var(--aqua);box-shadow:0 0 0 2px rgba(200,242,78,.18)}
+.field input,.phonewrap input,.bigfield input{font-family:var(--fm);font-weight:700;letter-spacing:-.02em}
+.sugg:hover{background:var(--surface2)}
+
+/* buttons — flat lime block, hard edge */
+.cta{background:var(--aqua);color:var(--ink);font-family:var(--fd);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;padding:19px}
+.cta:hover{background:#d6ff5e;transform:none;box-shadow:0 16px 34px -14px rgba(200,242,78,.5)}
+.cta.green{background:var(--blue);color:var(--ink);box-shadow:0 14px 32px -14px rgba(126,224,192,.4)}
+.cta.green:hover{background:#96ecd0}
+
+/* photography — desaturated, high-contrast, so lime stays the only colour */
+.imgslot{filter:saturate(.55) contrast(1.16) brightness(.86)}
+.imgslot.ph{background:var(--surface2);border-color:var(--line)}
+
+/* dark cards — lift off the page with an edge, not a gradient */
+.tiercard{background:var(--surface);border:1px solid var(--aqua);box-shadow:0 0 0 1px rgba(200,242,78,.12),var(--shadow)}
+.tiercard:before{background:radial-gradient(circle,rgba(200,242,78,.18),transparent 70%)}
+.tiercard .tier-tag{color:var(--aqua)}
+.tiercard .tier-price b{color:var(--aqua)}
+.tiercard .tier-meta{color:var(--dim)}
+.tiercard .tier-meta b,.tier-inc li:before{color:var(--aqua)}
+.tier-inc li{color:#d6dcdd}
+.boardcard{background:var(--surface);border:1px solid var(--line)}
+.boardcard:before{background:radial-gradient(circle,rgba(200,242,78,.14),transparent 70%)}
+.boardcard .bk{color:var(--aqua)}
+.boardcard .bv{color:var(--aqua)}
+.boardcard .bv small,.boardcard .bd{color:var(--dim)}
+.prize-under{background:linear-gradient(160deg,#1a2208,#08090a)}
+.prize-kicker{color:var(--aqua)}
+.prize-sub{color:var(--dim)}
+.scarce{color:var(--red)}
+
+/* accents */
+.chk .cb{border-radius:2px}
+.chk.done .cb:after{color:var(--ink)}
+.testi .avph{color:var(--ink);background:var(--aqua)}
+.snip{background:var(--surface);border-color:var(--line);border-left:3px solid var(--aqua)}
+.snip .sav{background:var(--aqua);color:var(--ink);border-radius:2px}
+.snipstat{background:rgba(200,242,78,.08);border-color:rgba(200,242,78,.25)}
+.tenyr{background:rgba(255,77,94,.09);border-color:rgba(255,77,94,.3);color:#ffa3ad}
+.tenyr b{color:var(--red)}
+.limbox{background:rgba(255,138,61,.09);border-color:rgba(255,138,61,.3)}
+.savedpill{background:rgba(200,242,78,.09);border-color:rgba(200,242,78,.3)}
+.mile .mck{border-radius:3px;background:var(--aqua);box-shadow:0 16px 36px -16px rgba(200,242,78,.5)}
+.mile .mck svg{fill:var(--ink)}
+.mrow.ok .mi{border-radius:2px;background:var(--aqua)}
+.mrow.ok .mi:after{color:var(--ink)}
+.mrow.now .mi{border-radius:2px;border-color:var(--aqua);background:rgba(200,242,78,.14)}
+.mrow.now .mi:after{border-radius:0;background:var(--aqua)}
+.mrow.wait .mi{border-radius:2px}
+.milebars i.on{background:var(--aqua)}
+.igav{border-radius:3px;background:var(--aqua);color:var(--ink);box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--aqua)}
+.ripple{background:rgba(200,242,78,.28)}
+.ring-orbit i{background:var(--aqua);box-shadow:0 0 10px var(--aqua)}
+.ring-orbit i:nth-child(2){background:var(--blue);box-shadow:0 0 10px var(--blue)}
+.bar>i,.mprog .mpbar i,.prow2 .bar2 i,.lpill .lpb i{background:linear-gradient(90deg,var(--aqua),var(--blue))}
+.prow2.weak .bar2 i{background:var(--orange)}
+.prow2.weak .vv{color:var(--orange)}
+.stars{color:var(--gold)}
+
+/* SVG re-map */
+[stroke="#e1e8f1"]{stroke:var(--line)}
+[stroke="#4d6bff"],[fill="#4d6bff"]{stroke:var(--aqua);fill:var(--aqua)}
+polygon[fill="rgba(77,107,255,.18)"]{fill:rgba(200,242,78,.16)}
+[stop-color="#4d6bff"]{stop-color:var(--aqua)}
+[stop-color="#1a36e8"]{stop-color:var(--aqua-deep)}
+[stop-color="#ff6a4d"]{stop-color:var(--orange)}
+[stop-color="#ef4444"]{stop-color:var(--red)}
+[stroke="#ef4444"],[fill="#ef4444"]{stroke:var(--red);fill:var(--red)}
+[stroke="#ffffff"]{stroke:var(--bg)}
+[stroke="#93a7b6"]{stroke:var(--mute)}
+.chartbox2 .ctag{fill:var(--ink);font-family:'JetBrains Mono',monospace;font-size:10px}
+.radarcard .rlab{fill:var(--dim);font-family:'JetBrains Mono',monospace;font-size:9px}
+.chartbox2 .cfree{fill:var(--dim);font-family:'JetBrains Mono',monospace}
+.chartbox2 .caxis{fill:var(--mute);font-family:'JetBrains Mono',monospace}
+rect[fill="#4d6bff"]{fill:var(--aqua)}

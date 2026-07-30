@@ -1,0 +1,128 @@
+/* ============================================================
+   THEME C — "SUNRISE SESSION"
+   Warm, high-energy dawn patrol. Cream base, sunrise coral→amber,
+   deep lagoon teal, very round shapes, coloured shadows.
+   Reference: Nike Run Club / Headspace / Strava's warm side.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+:root{
+  --bg:#fff6ef; --bg2:#ffeee2; --bg3:#ffe3d1;
+  --surface:#ffffff; --surface2:#fff3ea;
+  --line:#f6ddcb; --line2:#fdeade;
+  --text:#241610; --dim:#7a6157; --mute:#b39c90;
+  --aqua:#ff5a36; --aqua-deep:#e8431f; --blue:#ff8a2b; --blue-deep:#f07310; --navy:#241610;
+  --orange:#0e7d7d; --orange-deep:#0a6060;
+  --green:#12a97a; --green-deep:#0b8a62; --red:#e23b4e; --red-deep:#c22a3c;
+  --gold:#f0a92b; --ink:#ffffff;
+  --f:'Outfit',system-ui,-apple-system,sans-serif;
+  --track:rgba(36,22,16,.09);
+  --shadow:0 28px 60px -26px rgba(232,67,31,.35);
+  --shadow-card:0 10px 26px -16px rgba(196,110,70,.35);
+  --shadow-btn:0 18px 38px -12px rgba(255,90,54,.5);
+}
+
+html,body{background:#fff6ef}
+body{
+  background:
+    radial-gradient(120% 65% at 50% -12%,#ffe0c9 0%,transparent 58%),
+    radial-gradient(90% 55% at 85% 100%,#ffe9dc 0%,transparent 60%),
+    var(--bg);
+}
+
+/* warm ambient sun */
+.bgfx i{opacity:.6;filter:blur(58px)}
+.bgfx .b1{background:radial-gradient(circle,rgba(255,138,43,.28),transparent 70%)}
+.bgfx .b2{background:radial-gradient(circle,rgba(255,90,54,.18),transparent 70%)}
+.bgfx .b3{background:radial-gradient(circle,rgba(14,125,125,.14),transparent 70%)}
+
+/* top bar — deep lagoon, so the warm page reads brighter under it */
+#topbar{background:#0c2b2b;box-shadow:0 8px 22px -14px rgba(12,43,43,.6)}
+#topbar .bar{background:rgba(255,255,255,.18)}
+#topbar .bar>i{background:linear-gradient(90deg,#ff8a2b,#ff5a36)}
+#topbar .qcount{color:#9dc0be}
+.brand .wm{color:#9dc0be}
+.brand .wm b{color:#fff}
+
+/* type — Outfit is rounder and reads friendlier */
+h1,.intro-h,.lstat,.reveal-headline,.mile h1{font-weight:800;letter-spacing:-.03em}
+.intro-h{font-size:34px;line-height:1.1}
+.bignum,.proj-card .pn,.trust .t b,.auth-grid .a b{font-weight:900;letter-spacing:-.035em}
+.eyebrow,.reveal-label,.mile-ck{letter-spacing:.18em}
+.eyebrow:before{background:var(--gold)}
+
+/* ROUND — every corner is generous */
+.opt,.plan,.testi,.radarcard,.proj-card,.chartbox2,.mrecap,.igreal,.snip,.limbox,.tenyr,.savedpill{border-radius:20px}
+.gcard,.acard,.tiercard,.boardcard,.scratch-stage,.prize-under{border-radius:24px}
+.bigfield input,.field input,.phonewrap input,.ccode,.suggest,.snipstat,.auth-grid .a{border-radius:16px}
+.cta,.igbtn{border-radius:99px;padding:18px}
+.imgslot{border-radius:20px}
+.acard .imgslot{border-radius:0}
+.gcard .gbadge{border-radius:50%}
+.intro-badge{background:linear-gradient(135deg,rgba(255,90,54,.14),rgba(255,138,43,.14));border-color:rgba(255,90,54,.32);color:var(--aqua-deep)}
+
+/* buttons — sunrise gradient, coloured shadow */
+.cta{background:linear-gradient(120deg,#ff8a2b,#ff5a36 60%,#f2413d);color:#fff;font-weight:700}
+.cta:hover{box-shadow:0 24px 46px -12px rgba(255,90,54,.6)}
+.cta.green{background:linear-gradient(120deg,#12a97a,#0e7d7d);color:#fff;box-shadow:0 18px 38px -12px rgba(14,125,125,.5)}
+
+/* selection states glow warm */
+.opt:hover,.plan:hover,.gcard:hover,.acard:hover{border-color:var(--aqua);box-shadow:0 14px 30px -18px rgba(255,90,54,.55)}
+.opt.sel{background:linear-gradient(180deg,rgba(255,90,54,.12),rgba(255,138,43,.05));border-color:var(--aqua)}
+.gcard.sel,.acard.sel,.plan.sel{background:linear-gradient(180deg,rgba(255,90,54,.10),transparent);border-color:var(--aqua)}
+.gcard .gbadge{background:linear-gradient(135deg,rgba(255,90,54,.16),rgba(255,138,43,.12));border-color:rgba(255,90,54,.3)}
+.gcard.sel .gbadge{background:linear-gradient(135deg,rgba(255,90,54,.3),rgba(255,138,43,.2));border-color:var(--aqua)}
+
+/* photography — golden hour push */
+.imgslot{filter:saturate(1.12) contrast(1.03) brightness(1.02) hue-rotate(-4deg)}
+
+/* dark cards → deep lagoon teal, warm accents on top */
+.tiercard{background:linear-gradient(160deg,#0f3a3a,#07201f);border-color:rgba(255,138,43,.45)}
+.tiercard:before{background:radial-gradient(circle,rgba(255,138,43,.4),transparent 70%)}
+.tiercard .tier-tag{color:var(--gold)}
+.tiercard .tier-price b{color:#ffb454}
+.tiercard .tier-meta{color:#9dc0be}
+.tiercard .tier-meta b,.tier-inc li:before{color:var(--gold)}
+.tier-inc li{color:#d9ece9}
+.boardcard{background:linear-gradient(160deg,#0f3a3a,#07201f);border-color:rgba(255,138,43,.4)}
+.boardcard:before{background:radial-gradient(circle,rgba(255,138,43,.35),transparent 70%)}
+.boardcard .bk{color:var(--gold)}
+.boardcard .bv{color:#ffb454}
+.boardcard .bv small,.boardcard .bd{color:#9dc0be}
+.prize-under{background:radial-gradient(circle at 50% 30%,#ff8a2b,#c2361a)}
+.prize-kicker{color:#fff3d6}
+.prize-sub{color:#ffe6d2}
+.scarce{color:#e23b4e}
+
+/* accents */
+.chk.done .cb:after{color:#fff}
+.testi .avph{color:#fff;background:linear-gradient(135deg,#ff8a2b,#ff5a36)}
+.snip{background:linear-gradient(180deg,rgba(255,138,43,.09),#fff);border-color:rgba(255,90,54,.28);border-left-color:var(--aqua)}
+.snip .sav{background:linear-gradient(135deg,#ff8a2b,#ff5a36)}
+.snipstat{background:rgba(255,138,43,.1);border-color:rgba(255,138,43,.3)}
+.tenyr{background:rgba(226,59,78,.07);border-color:rgba(226,59,78,.25)}
+.limbox{background:rgba(14,125,125,.08);border-color:rgba(14,125,125,.28)}
+.limbox .lk{color:var(--orange)}
+.savedpill{background:linear-gradient(135deg,rgba(255,138,43,.16),rgba(255,90,54,.08));border-color:rgba(255,90,54,.35)}
+.mile .mck{background:linear-gradient(135deg,#ff8a2b,#ff5a36);box-shadow:0 20px 44px -14px rgba(255,90,54,.6)}
+.methodrow .m,.igservices span{background:var(--surface2);border-color:var(--line)}
+.igav{background:linear-gradient(135deg,#ff8a2b,#ff5a36)}
+.ripple{background:rgba(255,90,54,.3)}
+.prow2.weak .vv{color:var(--orange)}
+.prow2.weak .bar2 i{background:linear-gradient(90deg,var(--orange),var(--orange-deep))}
+
+/* SVG re-map */
+[stroke="#e1e8f1"]{stroke:var(--line)}
+[stroke="#4d6bff"],[fill="#4d6bff"]{stroke:var(--aqua);fill:var(--aqua)}
+polygon[fill="rgba(77,107,255,.18)"]{fill:rgba(255,90,54,.18)}
+[stop-color="#4d6bff"]{stop-color:#ff8a2b}
+[stop-color="#1a36e8"]{stop-color:#ff5a36}
+[stop-color="#ff6a4d"]{stop-color:#f2413d}
+[stop-color="#ef4444"]{stop-color:var(--red)}
+[stroke="#ef4444"],[fill="#ef4444"]{stroke:var(--red);fill:var(--red)}
+[stroke="#ffffff"]{stroke:#fff}
+[stroke="#93a7b6"]{stroke:var(--mute)}
+.chartbox2 .ctag{fill:#fff;font-family:'Outfit',sans-serif}
+.radarcard .rlab,.chartbox2 .cfree{fill:var(--dim);font-family:'Outfit',sans-serif}
+.chartbox2 .caxis{fill:var(--mute);font-family:'Outfit',sans-serif}
+rect[fill="#4d6bff"]{fill:var(--aqua)}

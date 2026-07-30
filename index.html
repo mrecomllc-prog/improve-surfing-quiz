@@ -485,6 +485,10 @@ h1 .red{color:var(--orange)}
 .backlink{position:absolute;left:16px;top:14px;color:#d0d0d8;font-size:24px;cursor:pointer;z-index:6;line-height:1;padding:4px;display:none}
 .backlink.show{display:block}
 </style>
+<!-- design-direction preview: ?theme=a|b|c|d (no param = current design) · ?jump=<stepId> for deep screens -->
+<script>(function(){var q=new URLSearchParams(location.search);var t=(q.get('theme')||'').toLowerCase();
+if(/^[a-d]$/.test(t)){document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="themes/'+t+'.css">');document.documentElement.setAttribute('data-theme',t);}
+if(q.has('jump')){var j=document.createElement('script');j.src='preview-jump.js';j.defer=true;document.head.appendChild(j);}})();</script>
 </head>
 <body>
 <div class="bgfx"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
