@@ -518,7 +518,6 @@ h1 .red{color:var(--coral)}
 .plan .pprice{position:relative;display:flex;align-items:baseline;margin-top:12px;font-size:42px;font-weight:800;line-height:1;letter-spacing:-.045em;color:var(--ink)}
 .plan .pprice i{font-style:normal;font-size:17px;font-weight:800;letter-spacing:0;margin-right:3px;transform:translateY(-12px);color:var(--aq1)}
 .plan .pprice em{font-style:normal;font-size:14px;font-weight:700;letter-spacing:0;margin-left:4px;color:var(--mut)}
-.plan .pday{position:relative;display:inline-block;align-self:flex-start;margin-top:12px;background:#eef7fa;border-radius:99px;padding:6px 12px;font-size:11.5px;font-weight:700;color:var(--mut)}
 .plan .pfeat{position:relative;display:flex;flex-direction:column;gap:8px;margin-top:16px;width:100%}
 .plan .pfeat span{display:flex;align-items:flex-start;gap:8px;font-size:12px;font-weight:700;line-height:1.4;color:var(--ink)}
 .plan .psess{position:relative;display:flex;align-items:center;gap:8px;width:100%;margin-top:auto;padding-top:18px;font-size:13px;font-weight:800;color:var(--ink)}
@@ -924,14 +923,6 @@ const STEPS = [
       stat:['#1',"skill our coaches fix fastest with video analysis"]
     })},
 
-  { id:'q7', type:'single', q:true,
-    eyebrow:'In the lineup', title:'In the lineup, how do you decide where to sit?',
-    options:[
-      {label:'I sit where others sit, or wherever feels safe',val:'follow_crowd',score:1},
-      {label:'I have a rough idea but often end up in the wrong spot',val:'rough_idea',score:2},
-      {label:'I use landmarks and adjust when I drift off position',val:'uses_landmarks',score:3},
-      {label:'I read the peak, track my position, move with the sets',val:'reads_peak',score:4},
-    ]},
 
   { id:'q8', type:'single', q:true,
     eyebrow:'On the wave', title:"Once you're on your feet, what does a typical ride look like?",
@@ -975,14 +966,6 @@ const STEPS = [
       {label:'I drive through turns and link them into the next section',val:'linked_turns',score:4},
     ]},
 
-  { id:'q11', type:'single', q:true,
-    eyebrow:'On the wave', title:'When a section closes out in front of you, what usually happens?',
-    options:[
-      {label:"I straighten out or fall — no time to react",val:'falls',score:1},
-      {label:'I try to get around it, sometimes make it',val:'tries',score:2},
-      {label:'I redirect or climb the foam to stay on the wave',val:'redirects',score:3},
-      {label:'I see it early and choose how to hit or use the section',val:'anticipates',score:4},
-    ]},
 
   { id:'q12', type:'single', q:true,
     eyebrow:'The real blocker', title:"What's the single biggest thing holding your surfing back right now?",
@@ -1007,14 +990,6 @@ const STEPS = [
     }[state.q12]||{title:'Noted.',body:'Your programme starts exactly here.'}),
     },
 
-  { id:'q13', type:'single', q:true,
-    eyebrow:'Adaptability', title:'How does your surfing hold up in unfamiliar or more challenging conditions?',
-    options:[
-      {label:'It falls apart — I revert to basics or get out',val:'falls_apart',score:1},
-      {label:'It gets messy but I stay in it',val:'messy_stays',score:2},
-      {label:'It drops a level but I adapt after a while',val:'drops_adapts',score:3},
-      {label:'I adjust quickly and surf close to my usual level',val:'adapts_well',score:4},
-    ]},
 
   { id:'q14', type:'single', q:true,
     eyebrow:'Your best waves', title:'On your better waves, what do your rides usually look like?',
@@ -1061,32 +1036,8 @@ const STEPS = [
     ]},
 
   /* ═══ Section 4 · Habits & direction ═══ */
-  { id:'q17', type:'multi', q:true,
-    eyebrow:'Your habits', title:'What do you usually do after a surf?',
-    sub:'Select all that apply.',
-    options:[
-      {label:"Think about what worked and what I'd change",val:'reflects'},
-      {label:'Watch video of myself',val:'video_review'},
-      {label:'Talk it through with a friend or coach',val:'discusses'},
-      {label:'Nothing — I enjoy it and move on',val:'nothing',solo:true},
-      {label:"I don't surf often enough to have a routine",val:'infrequent',solo:true},
-    ]},
 
-  { id:'sn17', type:'snippet', cond:()=>true,
-    content:()=>({
-      title:"The fastest improvers all share one habit.",
-      body:(state.q17&&(state.q17.includes('video_review'))?"You already review footage — huge. Now imagine that review <b>with a coach's eyes</b> on it, every week.":"They <b>review</b>. Surfers who watch themselves back progress about twice as fast — that's why video analysis is core to how we coach."),
-      stat:['2×',"faster progression when sessions get reviewed"]
-    })},
 
-  { id:'q18', type:'single', q:true,
-    eyebrow:'Six months out', title:'Six months from now, what would success in your surfing look like?',
-    options:[
-      {label:'Surfing consistently, feeling confident in the water',val:'confidence'},
-      {label:'Linking turns and understanding the wave better',val:'technical'},
-      {label:'Surfing with flow, style and my own expression',val:'expression'},
-      {label:'Handling bigger or more demanding surf',val:'progression'},
-    ]},
 
   { id:'ms2', type:'milestone', stage:4, confetti:70,
     title:'{nm}your surf profile is complete.',
@@ -1094,14 +1045,6 @@ const STEPS = [
     btn:'Match my programme →' },
 
   /* ═══ Section 5 · Programme match ═══ */
-  { id:'missing', type:'single', q:true,
-    eyebrow:'Programme match', title:"What's <span class='hl'>missing</span> from your surfing today?",
-    options:[
-      {label:'A structured plan',val:'plan',emoji:'🗺️'},
-      {label:'Expert feedback & video analysis',val:'analysis',emoji:'🎥'},
-      {label:'Accountability & routine',val:'routine',emoji:'⏱️'},
-      {label:'A crew to surf & progress with',val:'crew',emoji:'🤙'},
-    ]},
 
   { id:'sessions', type:'single', q:true,
     eyebrow:'Programme match', title:'How many coached sessions a week feel right?',
@@ -1153,14 +1096,14 @@ const STEPS = [
 
 /* ---------- scoring (20-point diagnostic, Yugen-style 1–4 scale) ---------- */
 function scOf(id){ return (state._sc&&state._sc[id]!=null)?state._sc[id]:null; }
-const LEVEL_QS=['q5','q6','q7','q8','q9','q9b','q10','q11','q12','q13','q14','q14b'];
+const LEVEL_QS=['q5','q6','q8','q9','q9b','q10','q12','q14','q14b'];
 function levelAvg(){ let t=0,c=0; LEVEL_QS.forEach(q=>{const s=scOf(q); if(s!=null){t+=s;c++}}); return c?t/c:1; }
 const LEVELS={1:'Foundation',2:'Directional Control',3:'Flow & Manoeuvring',4:'Mastery & Expression'};
 const PILLARS={
-  skill:{label:'Skill',qs:['q5','q8','q10','q11','q14','q14b']},
-  theory:{label:'Wave IQ',qs:['q6','q7','q10','q11','q13','q14','q14b']},
-  mindset:{label:'Mindset',qs:['q9','q9b','q11','q12','q13','q14']},
-  ocean:{label:'Ocean Sense',qs:['q5','q6','q7','q9','q13']},
+  skill:{label:'Skill',qs:['q5','q8','q10','q14','q14b']},
+  theory:{label:'Wave IQ',qs:['q6','q10','q14','q14b']},
+  mindset:{label:'Mindset',qs:['q9','q9b','q12','q14']},
+  ocean:{label:'Ocean Sense',qs:['q5','q6','q9']},
   fitness:{label:'Fitness',qs:['q3','q4']},
   equipment:{label:'Equipment',qs:['q15','q16']},
 };
@@ -1191,18 +1134,19 @@ function computeProjection(s){
   return {weeks, stuck:YEARS_STUCK[s.q2]||'3 years'};
 }
 const TIERS={
-  elite:{key:'elite',tag:'Performance track',name:'Elite Surf Training',price:'A$159',lock:'12-month',sessions:'2 sessions / week',
+  /* copy lifted verbatim from improvesurfing.com/membership (30-jul-2026) */
+  elite:{key:'elite',tag:'Performance track',name:'Elite Surf Training',price:'A$159',lock:'12-month',sessions:'2 per week — surf, surf skate, surf analysis or mobility',
     url:'#stripe-elite',
-    inc:['2 coached sessions every week — surf, surfskate, analysis or mobility','30% OFF all Surf Shop products — double the standard perk','30% OFF trips, events & wave-pool sessions','$200 OFF Yugen & Ryan surfboards · $30 OFF surf filming','Partner perks (Ding Shop, LivMotus, Elementa) + monthly gatherings & free coffee','Exclusive nutritionist pricing + priority event access']},
-  consistency:{key:'consistency',tag:'Shortest commitment',name:'Consistency Check',price:'A$129',lock:'3-month',sessions:'1 session / week',
+    inc:['30% OFF trips and events (Surfing Day, wave pool sessions)','30% OFF all Improve Surf Shop products','15% OFF at The Ding Shop, Miami, Queensland','15% OFF at LivMotus, Physiotherapy &amp; Osteopathy in Tweed Heads','15% OFF at Elementa Massage Therapy in Currumbin','$200 OFF Yugen and Ryan surfboards','$30 OFF on SURF Filming Services','Casual Improve Surfing Community Gathering (bring up to 2 friends)','1x FREE coffee per month at Barefoot Bowls at Duranbah Beach','Priority on the list to join any Improve Surfing events: National / International Surf trips, Wave Pool sessions, Surfing Day, and more.','Exclusive Access: Our nutritionist at Improve Surfing (exclusive prices for members only)','Monthly updates via the Improve Surfing Club on events, promotions, and more.']},
+  consistency:{key:'consistency',tag:'Shortest commitment',name:'Consistency Check Program',price:'A$129',lock:'3-month',sessions:'1 per week — surf, surf skate, surf analysis or mobility',
     url:'#stripe-consistency',
-    inc:['1 coached session every week — surf, surfskate, analysis or mobility','The shortest commitment we offer','30% OFF trips, events & wave-pool sessions','20% OFF all Surf Shop products','$200 OFF Yugen & Ryan surfboards · $30 OFF surf filming','Partner perks (Ding Shop, LivMotus, Elementa) + monthly gatherings & free coffee']},
-  swell:{key:'swell',tag:'The sweet spot',name:'Swell Seeker',price:'A$109',lock:'6-month',sessions:'1 session / week',
+    inc:['30% OFF trips and events (Surfing Day, wave pool sessions)','20% OFF all Surf Shop products','15% OFF at The Ding Shop, Miami, Queensland','15% OFF at LivMotus, Physiotherapy &amp; Osteopathy in Tweed Heads','15% OFF at Elementa Massage Therapy in Currumbin','$200 OFF Yugen and Ryan surfboards','$30 OFF on SURF Filming Services','Casual Improve Surfing Community Gathering (bring up to 2 friends)','1x FREE coffee per month at Barefoot Bowls at Duranbah Beach','Priority on the list to join any Improve Surfing events: National / International Surf trips, Wave Pool sessions, Surfing Day, and more.','Exclusive Access: Our nutritionist at Improve Surfing (exclusive prices for members only)','Monthly updates via the Improve Surfing Club on events, promotions, and more.']},
+  swell:{key:'swell',tag:'The sweet spot',name:'Swell Seeker',price:'A$109',lock:'6-month',sessions:'1 per week — surf, surf skate, surf analysis or mobility',
     url:'#stripe-swell',
-    inc:['1 coached session every week — surf, surfskate, analysis or mobility','Balanced rate — enough runway to build a real habit','30% OFF trips, events & wave-pool sessions','20% OFF all Surf Shop products','$200 OFF Yugen & Ryan surfboards · $30 OFF surf filming','Partner perks (Ding Shop, LivMotus, Elementa) + monthly gatherings & free coffee']},
-  foundation:{key:'foundation',tag:'Best weekly rate',name:'Foundation Training',price:'A$99',lock:'12-month',sessions:'1 session / week',
+    inc:['30% OFF trips and events (Surfing Day, wave pool sessions)','20% OFF all Surf Shop products','15% OFF at The Ding Shop, Miami, Queensland','15% OFF at LivMotus, Physiotherapy &amp; Osteopathy in Tweed Heads','15% OFF at Elementa Massage Therapy in Currumbin','$200 OFF Yugen and Ryan surfboards','$30 OFF on SURF Filming Services','Casual Improve Surfing Community Gathering (bring up to 2 friends)','1x FREE coffee per month at Barefoot Bowls at Duranbah Beach','Priority on the list to join any Improve Surfing events: National / International Surf trips, Wave Pool sessions, Surfing Day, and more.','Exclusive Access: Our nutritionist at Improve Surfing (exclusive prices for members only)','Monthly updates via the Improve Surfing Club on events, promotions, and more.']},
+  foundation:{key:'foundation',tag:'Best weekly rate',name:'Foundation Training',price:'A$99',lock:'12-month',sessions:'1 per week — surf, surf skate, surf analysis or mobility',
     url:'#stripe-foundation',
-    inc:['1 coached session every week — surf, surfskate, analysis or mobility','Our lowest weekly rate','30% OFF trips, events & wave-pool sessions','20% OFF all Surf Shop products','$200 OFF Yugen & Ryan surfboards · $30 OFF surf filming','Partner perks (Ding Shop, LivMotus, Elementa) + monthly gatherings & free coffee']},
+    inc:['30% OFF trips and events (Surfing Day, wave pool sessions)','20% OFF all Surf Shop products','15% OFF at The Ding Shop, Miami, Queensland','15% OFF at LivMotus, Physiotherapy &amp; Osteopathy in Tweed Heads','15% OFF at Elementa Massage Therapy in Currumbin','$200 OFF Yugen and Ryan surfboards','$30 OFF on SURF Filming Services','Casual Improve Surfing Community Gathering (bring up to 2 friends)','1x FREE coffee per month at Barefoot Bowls at Duranbah Beach','Priority on the list to join any Improve Surfing events: National / International Surf trips, Wave Pool sessions, Surfing Day, and more.','Exclusive Access: Our nutritionist at Improve Surfing (exclusive prices for members only)','Monthly updates via the Improve Surfing Club on events, promotions, and more.']},
 };
 function pickTier(s){
   const lvl=levelAvg();
@@ -1370,7 +1314,6 @@ function interp(t){ if(!t)return t; const nm=firstName();
 /* ── pricing + founding discount (scratch) ── */
 function tierWk(t){ return parseFloat(t.price.replace('A$','')); }
 function wkNow(t){ return tierWk(t)*(1-(state._discount||0)); }
-function dayNow(t){ return wkNow(t)/7; }
 function money(n){ return 'A$'+(Number.isInteger(+n.toFixed(2))? n.toFixed(0): n.toFixed(2)); }
 function buzz(ms){ try{ if(navigator.vibrate)navigator.vibrate(ms); }catch(e){} }
 function fx(node,e,score){ /* ripple inside the card + emoji floating up from the tap point */
@@ -1760,7 +1703,7 @@ function renderResult(el){
       <h1 style="text-align:center">Based on your answers, this is <span class="hl">your programme.</span></h1>
       <!-- describe what the TIER delivers, not what the user asked for: the two never
            had to match, and quoting state.sessions promised "1–2 a week" on a 1-a-week plan -->
-      <div class="sub" style="text-align:center">To ${goalLine} — starting with your #1 limiter, <b>${lim.label}</b> — this is your best-fit tier, at <b>${t.sessions.replace(' / ',' a ')}</b>.</div>
+      <div class="sub" style="text-align:center">To ${goalLine} — starting with your #1 limiter, <b>${lim.label}</b> — this is your best-fit tier, at <b>${t.sessions.split(' — ')[0]}</b>.</div>
       <div class="tiercard">
         <div class="tier-tag">${t.tag} · your match</div>
         <div class="tier-name">${t.name}</div>
@@ -1787,7 +1730,7 @@ function paintTierPrice(){
   const pw=document.getElementById('tcPrice'), pd=document.getElementById('tcDay'), pb=document.getElementById('tcBadge');
   if(!pw)return;
   pw.innerHTML=(d?`<span class="was">${t.price}</span>`:'')+`<b>${money(wkNow(t))}</b><span>/week</span>`;
-  pd.innerHTML=`<b>${t.sessions}</b> · ≈ ${money(dayNow(t))}/day`;
+  pd.innerHTML=`<b>${t.sessions}</b>`;
   pb.innerHTML=d?`<span class="disc-badge">✓ 10% founding discount applied</span>`:'';
 }
 function openScratchModal(){
@@ -1890,7 +1833,6 @@ function planCard(k,rec,d){
       <span class="pname">${t.name}</span>
       ${d?`<span class="pold">was ${t.price}/wk</span>`:''}
       <span class="pprice"><i>A$</i>${money(wkNow(t)).slice(2)}<em>/wk</em></span>
-      <span class="pday">≈ ${money(dayNow(t))} / day</span>
       <span class="pfeat">${t.inc.slice(0,3).map(f=>`<span>${TICK_SVG}<em style="font-style:normal">${f}</em></span>`).join('')}</span>
       <span class="psess">${WAVE_SVG}${t.sessions}</span>
     </div>`;
