@@ -1193,16 +1193,16 @@ function computeProjection(s){
 const TIERS={
   elite:{key:'elite',tag:'Performance track',name:'Elite Surf Training',price:'A$159',lock:'12-month',sessions:'2 sessions / week',
     url:'#stripe-elite',
-    inc:['2 coached sessions every week (1:1, surfskate, analysis or mobility)','Full video surf analysis on rotation','30% OFF trips, events & wave-pool sessions','30% OFF all Surf Shop products','$200 OFF Yugen & Ryan surfboards','Nutritionist access + priority event registration']},
-  consistency:{key:'consistency',tag:'Best to start',name:'Consistency Check',price:'A$129',lock:'3-month',sessions:'1–2 sessions / week',
+    inc:['2 coached sessions every week — surf, surfskate, analysis or mobility','30% OFF all Surf Shop products — double the standard perk','30% OFF trips, events & wave-pool sessions','$200 OFF Yugen & Ryan surfboards · $30 OFF surf filming','Partner perks (Ding Shop, LivMotus, Elementa) + monthly gatherings & free coffee','Exclusive nutritionist pricing + priority event access']},
+  consistency:{key:'consistency',tag:'Shortest commitment',name:'Consistency Check',price:'A$129',lock:'3-month',sessions:'1 session / week',
     url:'#stripe-consistency',
-    inc:['1–2 coached sessions a week, your pick','Perfect to start and build momentum','30% OFF trips & events','20% OFF all Surf Shop products','Partner perks (Ding Shop, LivMotus, Elementa)','Monthly community gatherings + free coffee']},
-  swell:{key:'swell',tag:'The sweet spot',name:'Swell Seeker',price:'A$109',lock:'6-month',sessions:'1–2 sessions / week',
+    inc:['1 coached session every week — surf, surfskate, analysis or mobility','The shortest commitment we offer','30% OFF trips, events & wave-pool sessions','20% OFF all Surf Shop products','$200 OFF Yugen & Ryan surfboards · $30 OFF surf filming','Partner perks (Ding Shop, LivMotus, Elementa) + monthly gatherings & free coffee']},
+  swell:{key:'swell',tag:'The sweet spot',name:'Swell Seeker',price:'A$109',lock:'6-month',sessions:'1 session / week',
     url:'#stripe-swell',
-    inc:['1–2 coached sessions a week','Build a real, lasting surf habit','30% OFF trips & events','20% OFF all Surf Shop products','Partner perks + board discounts','Monthly community gatherings + free coffee']},
-  foundation:{key:'foundation',tag:'Build the base',name:'Foundation Training',price:'A$99',lock:'12-month',sessions:'1 session / week',
+    inc:['1 coached session every week — surf, surfskate, analysis or mobility','Balanced rate — enough runway to build a real habit','30% OFF trips, events & wave-pool sessions','20% OFF all Surf Shop products','$200 OFF Yugen & Ryan surfboards · $30 OFF surf filming','Partner perks (Ding Shop, LivMotus, Elementa) + monthly gatherings & free coffee']},
+  foundation:{key:'foundation',tag:'Best weekly rate',name:'Foundation Training',price:'A$99',lock:'12-month',sessions:'1 session / week',
     url:'#stripe-foundation',
-    inc:['1 coached session every week','Master the fundamentals, step by step','30% OFF trips & events','20% OFF all Surf Shop products','Partner perks + board discounts','Monthly community gatherings + free coffee']},
+    inc:['1 coached session every week — surf, surfskate, analysis or mobility','Our lowest weekly rate','30% OFF trips, events & wave-pool sessions','20% OFF all Surf Shop products','$200 OFF Yugen & Ryan surfboards · $30 OFF surf filming','Partner perks (Ding Shop, LivMotus, Elementa) + monthly gatherings & free coffee']},
 };
 function pickTier(s){
   const lvl=levelAvg();
@@ -1758,7 +1758,9 @@ function renderResult(el){
     <div class="scratch-wrap">
       <div class="eyebrow" style="justify-content:center">${nm?nm+', your match':'Your match'}</div>
       <h1 style="text-align:center">Based on your answers, this is <span class="hl">your programme.</span></h1>
-      <div class="sub" style="text-align:center">To ${goalLine} — starting with your #1 limiter, <b>${lim.label}</b> — this is your best-fit tier at ${state.sessions==='2+'?'2+':state.sessions==='1-2'?'1–2':'1'} session${state.sessions==='1'?'':'s'} a week.</div>
+      <!-- describe what the TIER delivers, not what the user asked for: the two never
+           had to match, and quoting state.sessions promised "1–2 a week" on a 1-a-week plan -->
+      <div class="sub" style="text-align:center">To ${goalLine} — starting with your #1 limiter, <b>${lim.label}</b> — this is your best-fit tier, at <b>${t.sessions.replace(' / ',' a ')}</b>.</div>
       <div class="tiercard">
         <div class="tier-tag">${t.tag} · your match</div>
         <div class="tier-name">${t.name}</div>
