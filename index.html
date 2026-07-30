@@ -458,7 +458,14 @@ h1 .red{color:var(--coral)}
 .tiercard .tier-price span{font-size:13px;color:var(--mut);font-weight:700}
 .tiercard .tier-meta{position:relative;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:14px}
 .tiercard .tier-meta b{color:var(--aq1);font-weight:800}
-.tier-inc{position:relative;list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.tier-body{position:relative;display:grid;grid-template-rows:0fr;transition:grid-template-rows .42s var(--spring)}
+.tiercard.open .tier-body{grid-template-rows:1fr}
+.tier-body>div{overflow:hidden;min-height:0}
+.tier-toggle{position:relative;display:flex;align-items:center;gap:6px;margin-top:14px;font-size:12.5px;font-weight:800;color:var(--aq1)}
+.tier-toggle svg{width:15px;height:15px;transition:transform .35s var(--spring)}
+.tiercard.open .tier-toggle svg{transform:rotate(180deg)}
+.tiercard{cursor:pointer}
+.tier-inc{position:relative;list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(15,37,48,.08)}
 .tier-inc li{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.4}
 /* signature #8 on the commercial screens: a drawn check in a soft filled circle,
    not a font glyph whose optical weight changes per platform (see TICK_SVG in the JS) */
@@ -472,58 +479,52 @@ h1 .red{color:var(--coral)}
 .guar{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12px;font-weight:600;color:var(--mut);margin-top:14px}
 .guar svg{width:15px;height:15px;fill:var(--aq1);flex-shrink:0}
 
-/* ---------- plans / payment — scroll-snap carousel ---------- */
-/* the track bleeds to the shell edges; the side padding is exactly what centres card #1.
-   overflow-x:auto forces overflow-y to compute to auto, so the bottom padding has to
-   clear .plan.sel's --sh3 (0 32px 64px -16px ≈ 48px) or the shadow is sliced flat. */
-.plans{
-  display:flex;flex-direction:row;align-items:stretch;gap:14px;
-  margin:16px -22px 2px;padding:26px calc(50% - 100px) 46px;
-  overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
-  scrollbar-width:none;-ms-overflow-style:none;
-}
-.plans::-webkit-scrollbar{display:none}
+/* ---------- plans / payment — vertical accordion ---------- */
+/* every plan visible at once, cheapest first; the body collapses so the list stays
+   scannable and the 12 verbatim inclusions only unfold for the plan being considered */
+.plans{display:flex;flex-direction:column;gap:12px;margin:18px 0 2px}
 .plan{
-  position:relative;flex:0 0 244px;scroll-snap-align:center;
-  display:flex;flex-direction:column;align-items:flex-start;text-align:left;
-  background:var(--card);border:2px solid rgba(15,37,48,.05);border-radius:26px;
-  padding:22px 18px 18px;cursor:pointer;box-shadow:var(--sh1);
-  transition:transform .35s var(--spring),box-shadow .35s,border-color .35s;
+  position:relative;width:100%;display:block;text-align:left;
+  background:var(--card);border:2px solid rgba(15,37,48,.06);border-radius:22px;
+  padding:18px 18px 16px;cursor:pointer;box-shadow:var(--sh1);
+  transition:box-shadow .3s,border-color .3s,transform .2s var(--spring);
 }
-.plan:before{content:"";position:absolute;inset:0;border-radius:24px;pointer-events:none;background:radial-gradient(140% 70% at 50% -20%,rgba(14,165,233,.10),transparent 60%)}
-.plan:hover{transform:translateY(-3px);box-shadow:var(--sh2)}
-.plan:active{transform:scale(.985)}
+.plan:before{content:"";position:absolute;inset:0;border-radius:20px;pointer-events:none;background:radial-gradient(140% 70% at 50% -20%,rgba(14,165,233,.09),transparent 60%)}
+.plan:hover{box-shadow:var(--sh2)}
+.plan:active{transform:scale(.99)}
 .plan.sel{
-  transform:translateY(-6px);border-color:transparent;
+  border-color:transparent;
   background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
-  box-shadow:var(--sh3),var(--ring);
+  box-shadow:var(--sh2),var(--ring);
 }
-/* springing check */
-.plan .psel{position:absolute;top:15px;right:15px;width:28px;height:28px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.3);box-shadow:0 8px 18px -6px rgba(8,145,178,.55);transition:opacity .25s,transform .4s var(--over)}
-.plan .psel:after{content:"";width:11px;height:6px;border:2.4px solid #fff;border-top:0;border-right:0;border-radius:1px;transform:rotate(-45deg) translate(1px,-1px)}
+.plan .psel{position:absolute;top:16px;right:16px;width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.3);box-shadow:0 8px 18px -6px rgba(8,145,178,.55);transition:opacity .25s,transform .4s var(--over)}
+.plan .psel:after{content:"";width:10px;height:5.5px;border:2.4px solid #fff;border-top:0;border-right:0;border-radius:1px;transform:rotate(-45deg) translate(1px,-1px)}
 .plan.sel .psel{opacity:1;transform:scale(1)}
-/* legacy row bits — kept defined, unused by the carousel markup */
-.plan .pradio{width:24px;height:24px;border-radius:50%;border:2px solid rgba(15,37,48,.34);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
-.plan.sel .pradio{border-color:transparent;background:var(--grad);box-shadow:0 6px 14px -5px rgba(8,145,178,.55);animation:pop .35s var(--over)}
-.plan.sel .pradio:after{content:"";width:10px;height:5.5px;border:2.4px solid #fff;border-top:0;border-right:0;border-radius:1px;transform:rotate(-45deg) translate(1px,-1px)}
-.plan .pinfo{flex:1;text-align:left;min-width:0}
-.plan .pn2{font-size:15px;font-weight:800;color:var(--ink);line-height:1.15;letter-spacing:-.02em}
-.plan .pm{font-size:11px;font-weight:600;color:var(--mut);margin-top:4px}
-.plan .pweekbig{white-space:nowrap}
-.plan .pweekbig b{font-size:21px;font-weight:800;line-height:1;letter-spacing:-.03em;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-.plan .pweekbig span{font-size:11px;color:var(--mut);font-weight:700}
-/* card contents */
-.plan .pname{position:relative;display:block;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);line-height:1.3;padding-right:30px}
-.plan .pold{display:block;font-size:11px;font-weight:700;color:var(--mute);text-decoration:line-through;margin:9px 0 -4px}
-.plan .pprice{position:relative;display:flex;align-items:baseline;margin-top:12px;font-size:42px;font-weight:800;line-height:1;letter-spacing:-.045em;color:var(--ink)}
-.plan .pprice i{font-style:normal;font-size:17px;font-weight:800;letter-spacing:0;margin-right:3px;transform:translateY(-12px);color:var(--aq1)}
-.plan .pprice em{font-style:normal;font-size:14px;font-weight:700;letter-spacing:0;margin-left:4px;color:var(--mut)}
-.plan .pfeat{position:relative;display:flex;flex-direction:column;gap:8px;margin-top:16px;width:100%}
-.plan .pfeat span{display:flex;align-items:flex-start;gap:8px;font-size:12px;font-weight:700;line-height:1.4;color:var(--ink)}
-.plan .psess{position:relative;display:flex;align-items:center;gap:8px;width:100%;margin-top:auto;padding-top:18px;font-size:13px;font-weight:800;color:var(--ink)}
-.plan .psess svg{flex:0 0 18px;width:18px;height:18px}
+/* header — always visible */
+.plan .pname{position:relative;display:block;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);line-height:1.3;padding-right:34px}
+.plan .pold{display:block;font-size:11px;font-weight:700;color:var(--mute);text-decoration:line-through;margin:8px 0 -4px}
+.plan .pprice{position:relative;display:flex;align-items:baseline;margin-top:8px;font-size:36px;font-weight:800;line-height:1;letter-spacing:-.045em;color:var(--ink)}
+.plan .pprice i{font-style:normal;font-size:15px;font-weight:800;letter-spacing:0;margin-right:3px;transform:translateY(-10px);color:var(--aq1)}
+.plan .pprice em{font-style:normal;font-size:13px;font-weight:700;letter-spacing:0;margin-left:4px;color:var(--mut)}
+.plan .psess{position:relative;display:flex;align-items:flex-start;gap:8px;width:100%;margin-top:9px;font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.35}
+.plan .psess svg{flex:0 0 17px;width:17px;height:17px;margin-top:1px}
+/* collapsible body */
+.plan .pbody{position:relative;display:grid;grid-template-rows:0fr;transition:grid-template-rows .42s var(--spring)}
+.plan.open .pbody{grid-template-rows:1fr}
+.plan .pbody>div{overflow:hidden;min-height:0}
+.plan .pfeat{display:flex;flex-direction:column;gap:9px;padding-top:14px;margin-top:13px;border-top:1px solid rgba(15,37,48,.08)}
+.plan .pfeat span{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;font-weight:600;line-height:1.45;color:var(--ink)}
+.plan .pfeat span svg{flex:0 0 15px;width:15px;height:15px;margin-top:2px}
+.plan .ptoggle{position:relative;display:flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;font-weight:800;color:var(--aq1);letter-spacing:.01em}
+.plan .ptoggle svg{width:14px;height:14px;transition:transform .35s var(--spring)}
+.plan.open .ptoggle svg{transform:rotate(180deg)}
+.plan .pbadge{position:absolute;top:-11px;left:18px;background:var(--grad-ink);color:#fff;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:99px;white-space:nowrap;box-shadow:0 8px 18px -4px rgba(8,145,178,.55);z-index:2}
 .plan .pweek{font-size:11px;font-weight:600;color:var(--mut);margin-top:5px}
-.plan .pbadge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad-ink);color:#fff;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:99px;white-space:nowrap;box-shadow:0 8px 18px -4px rgba(8,145,178,.55);z-index:2}
+/* legacy row bits — kept defined, unused by the accordion markup */
+.plan .pradio{width:24px;height:24px;border-radius:50%;border:2px solid rgba(15,37,48,.34);background:#fff;flex-shrink:0}
+.plan .pinfo{flex:1;text-align:left;min-width:0}
+.plan .pn2{font-size:15px;font-weight:800;color:var(--ink)}
+.plan .pm{font-size:11px;font-weight:600;color:var(--mut);margin-top:4px}
 .disc-banner{text-align:center;margin:0 0 12px}
 .paytrust{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:600;color:var(--mut);margin-top:12px}
 
@@ -1704,13 +1705,15 @@ function renderResult(el){
       <!-- describe what the TIER delivers, not what the user asked for: the two never
            had to match, and quoting state.sessions promised "1–2 a week" on a 1-a-week plan -->
       <div class="sub" style="text-align:center">To ${goalLine} — starting with your #1 limiter, <b>${lim.label}</b> — this is your best-fit tier, at <b>${t.sessions.split(' — ')[0]}</b>.</div>
-      <div class="tiercard">
+      <!-- header only; the 12 inclusions unfold on tap so the card stays short -->
+      <div class="tiercard" id="tcCard" role="button" tabindex="0" aria-expanded="false" onclick="toggleTier(this)">
         <div class="tier-tag">${t.tag} · your match</div>
         <div class="tier-name">${t.name}</div>
         <div class="tier-price" id="tcPrice"></div>
         <div class="tier-perday" id="tcDay"></div>
         <div id="tcBadge"></div>
-        <ul class="tier-inc" style="margin-top:12px">${t.inc.map(i=>`<li>${TICK_SVG}<span>${i}</span></li>`).join('')}</ul>
+        <div class="tier-toggle">${CHEV}<span class="ttxt">See everything included</span></div>
+        <div class="tier-body"><div><ul class="tier-inc">${t.inc.map(i=>`<li>${TICK_SVG}<span>${i}</span></li>`).join('')}</ul></div></div>
       </div>
 
       <button class="cta" id="claimBtn" style="display:none;margin-top:16px" onclick="next()">See all plans → join now</button>
@@ -1808,6 +1811,12 @@ function reveal(){
   const c=document.getElementById('mClaim'); if(c)c.style.display='block';
   burstConfetti(); buzz(18);
 }
+function toggleTier(node){
+  const open=node.classList.toggle('open');
+  node.setAttribute('aria-expanded',open?'true':'false');
+  const t=node.querySelector('.ttxt'); if(t)t.textContent=open?'Hide details':'See everything included';
+  buzz(6);
+}
 function claimDiscount(){
   state._discount=0.10;
   closeScratchModal();          /* unhides #claimBtn / #guar and restores focus */
@@ -1825,25 +1834,26 @@ const IG_WIDGET_ID='';
 /* the Glasswater check: a drawn mark inside a soft filled circle (glasswater.html:575) */
 const TICK_SVG='<svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="rgba(8,145,178,.16)"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#0891b2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const WAVE_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c2.2 0 2.2-1.8 4.5-1.8S9.8 14 12 14s2.2-1.8 4.5-1.8S18.8 14 21 14"/><path d="M3 19c2.2 0 2.2-1.8 4.5-1.8S9.8 19 12 19s2.2-1.8 4.5-1.8S18.8 19 21 19"/></svg>';
+const CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 function planCard(k,rec,d){
   const t=TIERS[k]; const sel=state._sel===k;
-  return `<div class="plan${sel?' sel':''}" data-k="${k}" role="button" tabindex="0" onclick="selectPlan(this,'${k}',1)">
+  /* the whole 12-item list ships in the DOM; .pbody keeps it at 0fr until opened,
+     so the list of four stays scannable but nothing is hidden from the buyer */
+  return `<div class="plan${sel?' sel open':''}" data-k="${k}" role="button" tabindex="0"
+       aria-expanded="${sel?'true':'false'}" onclick="selectPlan(this,'${k}',1)">
       ${rec===k?`<span class="pbadge">★ Your match</span>`:''}
       <span class="psel"></span>
       <span class="pname">${t.name}</span>
       ${d?`<span class="pold">was ${t.price}/wk</span>`:''}
       <span class="pprice"><i>A$</i>${money(wkNow(t)).slice(2)}<em>/wk</em></span>
-      <span class="pfeat">${t.inc.slice(0,3).map(f=>`<span>${TICK_SVG}<em style="font-style:normal">${f}</em></span>`).join('')}</span>
       <span class="psess">${WAVE_SVG}${t.sessions}</span>
+      <span class="ptoggle">${CHEV}<span class="ptxt">${sel?'Hide details':"What's included"}</span></span>
+      <div class="pbody"><div><span class="pfeat">${
+        t.inc.map(f=>`<span>${TICK_SVG}<em style="font-style:normal">${f}</em></span>`).join('')
+      }</span></div></div>
     </div>`;
 }
-function centerPlan(card,smooth){
-  if(!card)return; const track=card.parentElement; if(!track)return;
-  const left=card.offsetLeft-(track.clientWidth-card.offsetWidth)/2;
-  const rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(smooth&&!rm&&track.scrollTo){ try{ track.scrollTo({left:left,behavior:'smooth'}); return; }catch(e){} }
-  track.scrollLeft=left;
-}
+
 function clearCtaBar(){ const b=document.getElementById('ctabar'); if(b)b.remove(); document.body.classList.remove('has-bar'); }
 function mountCtaBar(){
   clearCtaBar();
@@ -1880,22 +1890,8 @@ function renderPlans(el){
     </div>`;
   mountIgFeed(el);
   mountCtaBar();
-  /* carousel: centre the matched card on entry, keep the bar in sync while swiping */
-  const track=el.querySelector('.plans'), from=idx;
-  if(track){
-    setTimeout(()=>{ if(idx===from) centerPlan(track.querySelector('.plan.sel'),false); },70);
-    let st=null;
-    track.addEventListener('scroll',()=>{
-      clearTimeout(st);
-      st=setTimeout(()=>{
-        const cards=[].slice.call(track.querySelectorAll('.plan'));
-        const mid=track.scrollLeft+track.clientWidth/2; let bi=0,bd=1e9;
-        cards.forEach((c,i)=>{const dd=Math.abs(c.offsetLeft+c.offsetWidth/2-mid); if(dd<bd){bd=dd;bi=i;}});
-        const c=cards[bi]; if(c&&c.dataset.k&&c.dataset.k!==state._sel) selectPlan(c,c.dataset.k);
-      },110);
-    },{passive:true});
-  }
 }
+
 function mountIgFeed(root){
   /* `root` is the still-detached .step: getElementById can't see it yet */
   const box=(root||document).querySelector('#igFeed'); if(!box)return;
@@ -1912,12 +1908,16 @@ function mountIgFeed(root){
 }
 function selectPlan(node,k,fromTap){
   state._sel=k;
-  document.querySelectorAll('.plan').forEach(p=>p.classList.remove('sel'));
-  node.classList.add('sel');
+  document.querySelectorAll('.plan').forEach(p=>{
+    p.classList.remove('sel','open'); p.setAttribute('aria-expanded','false');
+    const tx=p.querySelector('.ptxt'); if(tx)tx.textContent="What's included";
+  });
+  node.classList.add('sel','open'); node.setAttribute('aria-expanded','true');
+  const tx=node.querySelector('.ptxt'); if(tx)tx.textContent='Hide details';
   const t=TIERS[k];
   const pp=document.getElementById('payprice'); if(pp)pp.textContent=money(wkNow(t));
   const pn=document.getElementById('payname');  if(pn)pn.textContent=t.name;
-  if(fromTap){ buzz(9); centerPlan(node,true); }
+  if(fromTap) buzz(9);
   updateDebug();
 }
 function payTier(){ const t=TIERS[state._sel]; alert('(prototype) Opens the Stripe checkout for '+t.name+' — '+money(wkNow(t))+'/week.\nURL: '+t.url); }
