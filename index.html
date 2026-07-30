@@ -753,26 +753,85 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .modal-ov{position:fixed;inset:0;z-index:100;background:rgba(9,38,50,.4);backdrop-filter:blur(10px) saturate(1.1);-webkit-backdrop-filter:blur(10px) saturate(1.1);display:flex;align-items:center;justify-content:center;padding:22px;animation:ovin .3s ease}
 @keyframes ovin{from{opacity:0}to{opacity:1}}
 .modal-card{width:100%;max-width:360px;background:var(--card);border-radius:30px;padding:26px 22px 26px;text-align:center;box-shadow:var(--sh3);position:relative;animation:modin .45s var(--over)}
+/* the card is a tabindex="-1" landing spot for screen readers, not a control — it must
+   not paint the global focus ring. The ring belongs on ×, the mute toggle and the CTA. */
+.modal-card:focus,.modal-card:focus-visible{outline:none;box-shadow:var(--sh3)}
 @keyframes modin{from{opacity:0;transform:translateY(26px) scale(.92)}to{opacity:1;transform:none}}
-.modal-kick{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--aq1);font-weight:800}
+/* the two 36px corner buttons live in this row — reserve their width or the kicker
+   runs underneath them on a 320px phone */
+.modal-kick{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--aq1);font-weight:800;padding:0 40px;line-height:1.35;min-height:36px;display:flex;align-items:center;justify-content:center}
 .modal-h{font-size:23px;font-weight:800;letter-spacing:-.03em;color:var(--ink);margin:9px 0 5px}
 .modal-sub{font-size:13px;font-weight:600;color:var(--mut);margin-bottom:18px;line-height:1.45}
-.m-scratch{position:relative;width:100%;aspect-ratio:16/9;border-radius:20px;overflow:hidden;box-shadow:var(--sh2)}
-.m-prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,#0e7490,#0b2a38)}
-.m-prize .pk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#fbbf24;font-weight:800}
-.m-prize .pt{font-size:34px;font-weight:800;color:#fff;line-height:1;letter-spacing:-.03em;margin:6px 0}
-.m-prize .ps{font-size:11.5px;font-weight:600;color:#cfe8f3}
-#mScratchCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
-.m-hint{font-size:12px;color:var(--aq1);margin-top:14px;font-weight:700;animation:hintB 1.6s infinite}
+/* the stage — a real card edge (inner hairline + layered shadow), so the foil reads as
+   something physically laid ON the prize instead of a flat grey rectangle */
+.m-scratch{position:relative;width:100%;aspect-ratio:16/10;border-radius:20px;overflow:hidden;isolation:isolate;
+  box-shadow:var(--sh2),inset 0 0 0 1px rgba(255,255,255,.18)}
+.m-scratch:focus-visible{outline:3px solid #0e7490;outline-offset:3px;border-radius:20px;box-shadow:var(--sh2),0 0 0 7px rgba(14,165,233,.18)}
+
+/* the prize — a deep aqua→ink field, not a flat radial: a cool top light, a blue floor
+   bounce and a diagonal body ramp, so the number sits in a lit space */
+.m-prize{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:
+    radial-gradient(115% 85% at 50% 4%,rgba(56,189,248,.40),rgba(56,189,248,0) 58%),
+    radial-gradient(95% 75% at 50% 120%,rgba(2,132,199,.34),rgba(2,132,199,0) 62%),
+    linear-gradient(162deg,#0b6f8c 0%,#0a5270 40%,#072b3d 76%,#05202e 100%)}
+/* the radial bloom that sits behind the headline number */
+.m-prize:before{content:"";position:absolute;left:50%;top:50%;width:250px;height:250px;margin:-125px 0 0 -125px;
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(125,211,252,.34),rgba(125,211,252,.10) 42%,rgba(125,211,252,0) 68%)}
+/* one-shot shine sweep — armed only once the foil is off */
+.m-prize:after{content:"";position:absolute;top:-40%;left:0;width:46%;height:180%;pointer-events:none;
+  background:linear-gradient(100deg,rgba(255,255,255,0) 14%,rgba(255,255,255,.40) 50%,rgba(255,255,255,0) 86%);
+  transform:translateX(-200%) skewX(-16deg);opacity:0}
+.m-prize.revealed:after{opacity:1;animation:prizeSweep 1.05s .14s var(--spring) forwards}
+@keyframes prizeSweep{from{transform:translateX(-200%) skewX(-16deg)}to{transform:translateX(330%) skewX(-16deg)}}
+.m-prize.revealed:before{animation:prizeGlow 1.5s ease-out}
+@keyframes prizeGlow{0%{opacity:.3;transform:scale(.68)}38%{opacity:1;transform:scale(1.14)}100%{opacity:1;transform:scale(1)}}
+/* the reveal gets a moment: the whole prize block settles in on --over */
+.m-prize .pwrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 14px;text-align:center}
+.m-prize.revealed .pwrap{animation:prizeIn .62s var(--over) both}
+@keyframes prizeIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+/* warm gold kicker, flanked by two fading hairlines */
+.m-prize .pk{display:flex;align-items:center;gap:9px;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:#f6cf7a;font-weight:800;text-shadow:0 1px 10px rgba(245,178,42,.45)}
+.m-prize .pk:before,.m-prize .pk:after{content:"";width:17px;height:1px;flex:none;background:linear-gradient(90deg,rgba(246,207,122,0),rgba(246,207,122,.85))}
+.m-prize .pk:after{background:linear-gradient(90deg,rgba(246,207,122,.85),rgba(246,207,122,0))}
+/* THE element — pushed as large as the stage allows, tracking pulled tight */
+.m-prize .pt{font-size:clamp(38px,13.5vw,52px);font-weight:800;line-height:.96;letter-spacing:-.055em;margin:9px 0 8px;
+  color:#fff;background:linear-gradient(178deg,#ffffff 0%,#eaf8ff 46%,#a9dcf6 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.m-prize .ps{font-size:11.5px;font-weight:600;color:#bfdfee;line-height:1.4;max-width:236px}
+
+#mScratchCanvas{position:absolute;inset:0;z-index:2;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+/* slow shimmer travelling over the untouched foil — pure CSS, killed on reveal */
+.m-foilshine{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.m-foilshine:after{content:"";position:absolute;top:-40%;left:0;width:38%;height:180%;
+  background:linear-gradient(100deg,rgba(255,255,255,0) 12%,rgba(255,255,255,.5) 50%,rgba(255,255,255,0) 88%);
+  transform:translateX(-200%) skewX(-16deg);animation:foilSweep 3.1s ease-in-out infinite}
+@keyframes foilSweep{0%,44%{transform:translateX(-200%) skewX(-16deg)}84%,100%{transform:translateX(330%) skewX(-16deg)}}
+.m-foilshine.off{display:none}
+
+.m-hint{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--aq1);margin-top:14px;font-weight:700;animation:hintB 1.6s infinite}
 /* it *is* the .cta component — the hand-copied version had drifted (no press feedback,
    56px instead of 58px, no shine sweep). Now it only adds the hidden-until-revealed state. */
 .m-claim{display:none;margin-top:18px}
-/* the modal must never be a dead end: an always-reachable dismiss, keyboard included */
-.m-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;
-  background:#eef4f8;color:var(--mut);font-size:20px;font-weight:700;line-height:1;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s var(--spring)}
-.m-close:hover{background:#e2edf3}
-.m-close:active{transform:scale(.92)}
+.m-claim.in{animation:childIn .5s var(--spring) both}
+.m-claim:focus-visible{border-radius:99px;outline:3px solid #0e7490;outline-offset:3px;box-shadow:0 0 0 7px rgba(14,165,233,.18)}
+/* the modal must never be a dead end: an always-reachable dismiss, keyboard included.
+   The mute toggle is its mirror on the left, so the header stays optically balanced. */
+/* 44px: the smallest reliable touch target — the visual circle stays 36px via the inset ring */
+.m-close,.m-mute{position:absolute;top:8px;width:44px;height:44px;border-radius:50%;border:0;
+  background-clip:content-box;padding:4px;
+  background:#eef4f8;color:var(--mut);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s var(--spring),color .2s}
+.m-close{right:8px;font-size:20px;font-weight:700;line-height:1}
+.m-mute{left:8px}
+.m-mute svg{width:17px;height:17px;fill:currentColor;display:block;pointer-events:none}
+.m-close:hover,.m-mute:hover{background:#e2edf3;color:var(--ink)}
+.m-close:active,.m-mute:active{transform:scale(.92)}
+/* the muted state reads as dimmed but stays ≥3:1 on #eef4f8 (AA non-text) */
+.m-mute[aria-pressed="true"]{color:#6b8492}
+.m-close:focus-visible,.m-mute:focus-visible{border-radius:50%;outline:3px solid #0e7490;outline-offset:2px;box-shadow:0 0 0 7px rgba(14,165,233,.18)}
 
 .tag-debug{position:fixed;bottom:8px;left:10px;font-size:10px;font-family:monospace;z-index:50;color:#7b96a4;display:none} /* hidden in production; add ?debug to the URL to show */
 
@@ -795,6 +854,14 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
   .tiercard .tier-price b{font-size:30px}
   .gauge{width:208px;height:208px}
   .bignum{font-size:60px}
+  /* the scratch modal loses ~55px of inner width here: shrink the corner controls and
+     tighten the kicker so "Founding member bonus" still clears them on one line */
+  .modal-card{padding:22px 18px}
+  .modal-h{font-size:21px}
+  .m-close,.m-mute{width:32px;height:32px;top:10px}
+  .m-close{right:10px}.m-mute{left:10px}
+  .modal-kick{font-size:9.5px;letter-spacing:.1em;padding:0 34px;min-height:32px}
+  .m-prize .ps{font-size:11px}
 }
 
 /* ---------- back control ---------- */
@@ -1317,6 +1384,105 @@ function tierWk(t){ return parseFloat(t.price.replace('A$','')); }
 function wkNow(t){ return tierWk(t)*(1-(state._discount||0)); }
 function money(n){ return 'A$'+(Number.isInteger(+n.toFixed(2))? n.toFixed(0): n.toFixed(2)); }
 function buzz(ms){ try{ if(navigator.vibrate)navigator.vibrate(ms); }catch(e){} }
+
+/* ── procedural sound — Web Audio only, zero asset files ─────────────────────
+   The AudioContext is created on the FIRST user gesture (every autoplay policy
+   rejects it before that), then reused and resume()'d if the OS suspended it.
+   Every entry point is try/catch'd end to end: a blocked, missing or throttled
+   AudioContext must never be able to break the reveal.
+   No animation-frame callbacks — Web Audio schedules on its own clock. */
+const SFX=(function(){
+  let ctx=null, noise=null, muted=false;
+  /* default ON — but a reduced-motion user gets silence unless they ask for it */
+  try{ muted=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches); }catch(e){}
+  try{ const s=sessionStorage.getItem('isq_sfx_muted'); if(s!==null)muted=(s==='1'); }catch(e){}
+  function ac(){
+    try{
+      if(!ctx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return null; ctx=new AC(); }
+      if(ctx.state==='suspended'&&ctx.resume)ctx.resume();
+      return ctx;
+    }catch(e){ return null; }
+  }
+  /* 60ms of decaying white noise, built once and re-triggered per tick */
+  function noiseBuf(c){
+    if(noise)return noise;
+    const n=Math.max(1,Math.floor(c.sampleRate*.06)), b=c.createBuffer(1,n,c.sampleRate), d=b.getChannelData(0);
+    for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
+    noise=b; return b;
+  }
+  function note(c,out,freq,at,dur,peak,type){
+    const o=c.createOscillator(); o.type=type||'triangle'; o.frequency.setValueAtTime(freq,at);
+    const g=c.createGain();
+    /* ramps on both edges — a bare start/stop clicks on every device */
+    g.gain.setValueAtTime(.0001,at);
+    g.gain.exponentialRampToValueAtTime(peak,at+.018);
+    g.gain.exponentialRampToValueAtTime(.0001,at+dur);
+    o.connect(g); g.connect(out); o.start(at); o.stop(at+dur+.02);
+  }
+  /* a single quiet grain of filtered noise — the caller throttles it to ~90ms */
+  function scratch(){
+    try{
+      if(muted)return; const c=ac(); if(!c)return;
+      const src=c.createBufferSource(); src.buffer=noiseBuf(c);
+      src.playbackRate.value=.85+Math.random()*.5;
+      const bp=c.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1500+Math.random()*1400; bp.Q.value=.9;
+      const hp=c.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=700;
+      const g=c.createGain(), t=c.currentTime;
+      g.gain.setValueAtTime(.0001,t);
+      g.gain.exponentialRampToValueAtTime(.032,t+.008);
+      g.gain.exponentialRampToValueAtTime(.0001,t+.075);
+      src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(c.destination);
+      src.start(t); src.stop(t+.09);
+    }catch(e){}
+  }
+  /* the payoff — a D-major add9 arpeggio (D5 F#5 A5 D6) climbing over 255ms, then two
+     sine partials as a shimmer tail. Rendered offline it peaks at .077 and is inaudible
+     by 0.95s, so it clears both budgets (< .2 peak, < 1.2s) with room to spare. */
+  function revealSfx(){
+    try{
+      if(muted)return; const c=ac(); if(!c)return;
+      const t=c.currentTime+.02;
+      const master=c.createGain(); master.gain.setValueAtTime(.13,t); master.connect(c.destination);
+      /* a gentle roll-off so the triangles don't sound brittle on phone speakers */
+      const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=5200; lp.connect(master);
+      [587.33,739.99,880.00,1174.66].forEach((f,i)=>note(c,lp,f,t+i*.085,.40,.55,'triangle'));
+      note(c,lp,1760.00,t+.34,.90,.16,'sine');
+      note(c,lp,2349.32,t+.42,.84,.10,'sine');
+      master.gain.setValueAtTime(.13,t+1.0);
+      master.gain.exponentialRampToValueAtTime(.0001,t+1.18);
+    }catch(e){}
+  }
+  return{
+    unlock:function(){ try{ ac(); }catch(e){} },
+    scratch:scratch, reveal:revealSfx,
+    isMuted:function(){ return muted; },
+    setMuted:function(v){ muted=!!v; try{ sessionStorage.setItem('isq_sfx_muted',muted?'1':'0'); }catch(e){} }
+  };
+})();
+function sfxScratch(){ try{ SFX.scratch(); }catch(e){} }
+function sfxReveal(){ try{ SFX.reveal(); }catch(e){} }
+/* arm the context on the first gesture of the session — by the time the scratch modal
+   opens (auto, 850ms after the result screen) the user has tapped ~25 screens already */
+(function(){
+  const ev=['pointerdown','touchstart','keydown','click'];
+  const arm=function(){ try{ SFX.unlock(); }catch(e){}
+    try{ ev.forEach(t=>document.removeEventListener(t,arm,true)); }catch(e){} };
+  try{ ev.forEach(t=>document.addEventListener(t,arm,true)); }catch(e){}
+})();
+const SPK_ON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.4 6.5 8.2H3.3v7.6h3.2L11 19.6z"/><path d="M15.1 8.7a4.6 4.6 0 0 1 0 6.6M17.9 5.9a8.4 8.4 0 0 1 0 12.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
+const SPK_OFF='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.4 6.5 8.2H3.3v7.6h3.2L11 19.6z"/><path d="m15.2 9.4 5.4 5.2M20.6 9.4l-5.4 5.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
+function paintMuteBtn(b){
+  if(!b)return; const m=SFX.isMuted();
+  b.innerHTML=m?SPK_OFF:SPK_ON;
+  b.setAttribute('aria-pressed',m?'true':'false');
+  b.setAttribute('aria-label',m?'Turn sound on':'Turn sound off');
+  b.setAttribute('title',m?'Sound off':'Sound on');
+}
+function toggleSfx(b){
+  SFX.setMuted(!SFX.isMuted());
+  paintMuteBtn(b); buzz(6);
+  if(!SFX.isMuted()) sfxScratch();   /* one tick confirms sound is back */
+}
 function fx(node,e,score){ /* ripple inside the card + emoji floating up from the tap point */
   buzz(9);
   const b=node.getBoundingClientRect();
@@ -1740,29 +1906,49 @@ function openScratchModal(){
   if(document.getElementById('scratchModal'))return;
   const ov=document.createElement('div'); ov.className='modal-ov'; ov.id='scratchModal';
   ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-labelledby','mTitle');
+  /* copy note: the funnel calls the product a "programme" on every other screen
+     ("choose your programme", "this is your programme") — so this card says it too. */
   ov.innerHTML=`
     <div class="modal-card" tabindex="-1">
+      <button class="m-mute" id="mMute" type="button" onclick="toggleSfx(this)"></button>
       <button class="m-close" id="mClose" type="button" aria-label="Close" onclick="closeScratchModal()">×</button>
       <div class="modal-kick">Founding member bonus</div>
-      <div class="modal-h" id="mTitle">Scratch to reveal your bonus</div>
-      <div class="modal-sub">Only this intake's founding members get it. Scratch the panel 👇</div>
-      <div class="m-scratch">
-        <div class="m-prize"><div class="pk">You unlocked</div><div class="pt">10% OFF</div><div class="ps">your membership — for as long as you stay</div></div>
+      <div class="modal-h" id="mTitle">Scratch to reveal what you've earned</div>
+      <div class="modal-sub">Reserved for this intake's 15 founding members. Scratch the foil 👇</div>
+      <div class="m-scratch" id="mStage" role="button" tabindex="0" aria-label="Scratch panel — activate to reveal your founding member bonus">
+        <div class="m-prize" id="mPrize">
+          <div class="pwrap">
+            <div class="pk">You've earned</div>
+            <div class="pt">10% OFF</div>
+            <div class="ps">your programme — locked in for as long as you stay</div>
+          </div>
+        </div>
         <canvas id="mScratchCanvas"></canvas>
+        <div class="m-foilshine" id="mFoilShine"></div>
       </div>
-      <div class="m-hint" id="mHint">👆 Scratch the silver panel</div>
-      <button class="cta m-claim" id="mClaim" onclick="claimDiscount()">Claim my 10% off →</button>
+      <div class="m-hint" id="mHint">👆 Scratch the foil to reveal it</div>
+      <button class="cta m-claim" id="mClaim" onclick="claimDiscount()">Lock in my 10% off →</button>
     </div>`;
   document.body.appendChild(ov);
+  paintMuteBtn(ov.querySelector('#mMute'));
   const card=ov.firstElementChild; if(card&&card.focus)card.focus();
   ov.addEventListener('click',e=>{ if(e.target===ov) closeScratchModal(); });
   ov.__esc=e=>{ if(e.key==='Escape'){ e.preventDefault(); closeScratchModal(); } };
   document.addEventListener('keydown',ov.__esc);
+  /* the foil is a pointer gesture; Enter/Space on the focused stage reveals it instead,
+     so keyboard and switch-control users get the same payoff rather than the 8s fallback */
+  const stage=ov.querySelector('#mStage');
+  if(stage) stage.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'){ e.preventDefault(); reveal(); }
+  });
   setTimeout(()=>initScratch(),60);
   /* nobody may be dead-ended one step before checkout: if the pointer gesture never
-     lands (keyboard, switch control, a canvas that failed to size), reveal anyway. */
-  setTimeout(()=>{ const c=document.getElementById('mClaim');
-    if(c&&document.getElementById('scratchModal')&&c.style.display!=='block') reveal(); },8000);
+     lands (keyboard, switch control, a canvas that failed to size), reveal anyway.
+     Scoped to THIS overlay — if the user dismissed it and a later render opened a fresh
+     one, the stale timer must not reach across and pop the new card's prize. */
+  setTimeout(()=>{ if(!ov.parentNode||!document.body.contains(ov))return;
+    const c=ov.querySelector('#mClaim');
+    if(c&&c.style.display!=='block') reveal(); },8000);
 }
 function closeScratchModal(){
   const ov=document.getElementById('scratchModal'); if(!ov)return;
@@ -1784,32 +1970,135 @@ function initScratch(){
   const dpr=Math.min(2,window.devicePixelRatio||1);
   cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
   const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
-  const g=ctx.createLinearGradient(0,0,w,h); g.addColorStop(0,'#c7d2da'); g.addColorStop(.5,'#9fb0bd'); g.addColorStop(1,'#c7d2da');
-  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
-  ctx.fillStyle='rgba(11,42,68,.75)'; ctx.font="700 15px 'Plus Jakarta Sans', sans-serif"; ctx.textAlign='center';
-  ctx.fillText('SCRATCH HERE', w/2, h/2-4);
-  ctx.font='22px serif'; ctx.fillText('🏄 ✦ 🏄', w/2, h/2+24);
+  paintFoil(ctx,w,h);
   ctx.globalCompositeOperation='destination-out';
-  let drawing=false, done=false, lastBz=0;
+  let drawing=false, done=false, lastBz=0, lastP=null, touched=false;
   function pos(e){const t=e.touches?e.touches[0]:e;const b=cv.getBoundingClientRect();return{x:t.clientX-b.left,y:t.clientY-b.top}}
-  function scratch(e){ if(!drawing)return; const p=pos(e); ctx.beginPath(); ctx.arc(p.x,p.y,22,0,7); ctx.fill();
+  function scratch(e){ if(!drawing)return; const p=pos(e);
+    /* the shimmer is an invitation to scratch — once the gesture starts it has done its
+       job, and leaving it on would sweep a white band across the exposed prize */
+    if(!touched){ touched=true; const sh=document.getElementById('mFoilShine'); if(sh)sh.classList.add('off'); }
+    /* a feathered edge (wide soft pass + solid core) reads as foil coming away;
+       the connecting stroke stops fast drags leaving a dotted trail */
+    ctx.globalAlpha=.35; ctx.beginPath(); ctx.arc(p.x,p.y,27,0,7); ctx.fill();
+    ctx.globalAlpha=1;   ctx.beginPath(); ctx.arc(p.x,p.y,21,0,7); ctx.fill();
+    if(lastP){ ctx.lineWidth=42; ctx.lineCap='round'; ctx.lineJoin='round';
+      ctx.beginPath(); ctx.moveTo(lastP.x,lastP.y); ctx.lineTo(p.x,p.y); ctx.stroke(); }
+    lastP=p;
     /* throttled: this fires on every pointermove, and 60 vibrate() calls a second get
-       dropped by Android anyway while keeping the haptic driver awake */
-    const now=Date.now(); if(now-lastBz>90){ lastBz=now; buzz(4); }
-    if(!done&&cleared()>0.45){ done=true; reveal(); } }
+       dropped by Android anyway while keeping the haptic driver awake. The tick sfx and
+       the getImageData sample ride the same 90ms cadence — both are expensive per-move. */
+    const now=Date.now();
+    if(now-lastBz>90){ lastBz=now; buzz(4); sfxScratch();
+      if(!done&&cleared()>0.45){ done=true; reveal(); } } }
   function cleared(){ const d=ctx.getImageData(0,0,cv.width,cv.height).data; let c=0; for(let i=3;i<d.length;i+=40){if(d[i]===0)c++;} return c/(d.length/40); }
-  cv.addEventListener('mousedown',e=>{drawing=true;scratch(e)});
+  cv.addEventListener('mousedown',e=>{drawing=true;lastP=null;scratch(e)});
   cv.addEventListener('mousemove',scratch);
-  window.addEventListener('mouseup',()=>drawing=false);
-  cv.addEventListener('touchstart',e=>{drawing=true;scratch(e);e.preventDefault()},{passive:false});
+  window.addEventListener('mouseup',()=>{drawing=false;lastP=null});
+  cv.addEventListener('touchstart',e=>{drawing=true;lastP=null;scratch(e);e.preventDefault()},{passive:false});
   cv.addEventListener('touchmove',e=>{scratch(e);e.preventDefault()},{passive:false});
-  cv.addEventListener('touchend',()=>drawing=false);
+  cv.addEventListener('touchend',()=>{drawing=false;lastP=null});
+}
+/* ── the foil ───────────────────────────────────────────────────────────────
+   Brushed metal, painted once: a diagonal ramp (cool silver with one warm stop),
+   a specular band laid across it, a 4px hatch, five swirl arcs and a top/bottom
+   vignette. ~150 draw ops, no assets, no rAF. */
+function paintFoil(ctx,w,h){
+  const g=ctx.createLinearGradient(0,0,w,h);
+  g.addColorStop(0,'#aab9c6');  g.addColorStop(.14,'#dde5eb'); g.addColorStop(.28,'#95a7b5');
+  g.addColorStop(.44,'#eef3f7'); g.addColorStop(.55,'#c3ced8'); g.addColorStop(.66,'#d9d2c6');
+  g.addColorStop(.78,'#9dafbd'); g.addColorStop(.90,'#ced9e1'); g.addColorStop(1,'#a3b3c1');
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+
+  /* specular highlight band, rotated off the horizontal */
+  ctx.save();
+  ctx.translate(w/2,h/2); ctx.rotate(-.42); ctx.translate(-w/2,-h/2);
+  const s=ctx.createLinearGradient(0,h*.16,0,h*.64);
+  s.addColorStop(0,'rgba(255,255,255,0)'); s.addColorStop(.5,'rgba(255,255,255,.5)'); s.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=s; ctx.fillRect(-w*.6,h*.16,w*2.2,h*.48);
+  ctx.restore();
+
+  /* brushed hatch — alternating light/dark hairlines on a 4px diagonal pitch */
+  ctx.save(); ctx.lineWidth=1; let k=0;
+  for(let i=-h;i<w+h;i+=4){
+    ctx.strokeStyle=(k++%2)?'rgba(255,255,255,.16)':'rgba(20,44,58,.07)';
+    ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i-h,h); ctx.stroke();
+  }
+  ctx.restore();
+
+  /* wide swirl arcs — the circular grain a struck foil actually has */
+  ctx.save(); ctx.lineWidth=1.4;
+  for(let i=0;i<5;i++){
+    ctx.strokeStyle=(i%2)?'rgba(255,255,255,.14)':'rgba(20,44,58,.06)';
+    ctx.beginPath(); ctx.arc(w/2,h*(1.9+i*.22),h*(1.5+i*.2),Math.PI*1.18,Math.PI*1.82); ctx.stroke();
+  }
+  ctx.restore();
+
+  /* seat it in the card: light at the top edge, shade at the bottom */
+  const v=ctx.createLinearGradient(0,0,0,h);
+  v.addColorStop(0,'rgba(255,255,255,.28)'); v.addColorStop(.5,'rgba(255,255,255,0)'); v.addColorStop(1,'rgba(12,36,48,.17)');
+  ctx.fillStyle=v; ctx.fillRect(0,0,w,h);
+
+  paintFoilLabel(ctx,w,h);
+}
+/* canvas has no letter-spacing on every engine we ship to (Safari only shipped
+   ctx.letterSpacing in 17.4), so track the label by hand. Returns the drawn width. */
+function trackedText(ctx,txt,cx,y,tr){
+  let total=0,i;
+  for(i=0;i<txt.length;i++) total+=ctx.measureText(txt[i]).width+tr;
+  total-=tr;
+  let x=cx-total/2;
+  for(i=0;i<txt.length;i++){ ctx.fillText(txt[i],x,y); x+=ctx.measureText(txt[i]).width+tr; }
+  return total;
+}
+function paintFoilLabel(ctx,w,h){
+  const cx=w/2, cy=h/2;
+  /* a struck coin, drawn — an emoji glyph re-renders differently on every platform */
+  const r=Math.max(13,Math.min(19,h*.11)), coinY=cy-h*.13;
+  ctx.save();
+  const cg=ctx.createLinearGradient(cx-r,coinY-r,cx+r,coinY+r);
+  cg.addColorStop(0,'#f6f9fb'); cg.addColorStop(.48,'#bfccd7'); cg.addColorStop(1,'#eef3f7');
+  ctx.beginPath(); ctx.arc(cx,coinY,r,0,Math.PI*2); ctx.fillStyle=cg; ctx.fill();
+  ctx.lineWidth=1.6; ctx.strokeStyle='rgba(14,60,80,.30)'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,coinY,r-4,0,Math.PI*2); ctx.lineWidth=1; ctx.strokeStyle='rgba(14,60,80,.18)'; ctx.stroke();
+  /* the brand mark inside the coin: one wave */
+  ctx.beginPath();
+  ctx.moveTo(cx-r*.48,coinY+r*.12);
+  ctx.bezierCurveTo(cx-r*.20,coinY-r*.26,cx-r*.02,coinY+r*.36,cx+r*.22,coinY+r*.02);
+  ctx.bezierCurveTo(cx+r*.34,coinY-r*.14,cx+r*.40,coinY-r*.12,cx+r*.50,coinY-r*.04);
+  ctx.lineWidth=2; ctx.lineCap='round'; ctx.strokeStyle='rgba(12,86,112,.72)'; ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.textAlign='left'; ctx.textBaseline='middle';
+  /* embossed: a light pass one pixel low, the dark pass on top */
+  const ly=cy+h*.12;
+  ctx.font="800 13px 'Plus Jakarta Sans',system-ui,-apple-system,sans-serif";
+  ctx.fillStyle='rgba(255,255,255,.6)'; trackedText(ctx,'SCRATCH HERE',cx,ly+1,1.6);
+  ctx.fillStyle='rgba(13,46,62,.74)';
+  const lw=trackedText(ctx,'SCRATCH HERE',cx,ly,1.6);
+  /* hairlines flanking the label */
+  ctx.strokeStyle='rgba(13,46,62,.22)'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(cx-lw/2-26,ly); ctx.lineTo(cx-lw/2-11,ly);
+  ctx.moveTo(cx+lw/2+11,ly); ctx.lineTo(cx+lw/2+26,ly);
+  ctx.stroke();
+  ctx.font="700 8.5px 'Plus Jakarta Sans',system-ui,-apple-system,sans-serif";
+  ctx.fillStyle='rgba(13,46,62,.45)'; trackedText(ctx,'DRAG ACROSS THE PANEL',cx,ly+h*.11,1.4);
+  ctx.restore();
 }
 function reveal(){
+  const c=document.getElementById('mClaim');
+  /* per-modal guard: the gesture, the keyboard path and the 8s fallback can all race */
+  if(!c||c.__done)return; c.__done=true;
   const cv=document.getElementById('mScratchCanvas'); if(cv){cv.style.transition='opacity .5s';cv.style.opacity=0;setTimeout(()=>cv.remove(),500);}
+  const sh=document.getElementById('mFoilShine'); if(sh)sh.classList.add('off');
+  const pz=document.getElementById('mPrize'); if(pz)pz.classList.add('revealed');
   const h=document.getElementById('mHint'); if(h)h.style.display='none';
-  const c=document.getElementById('mClaim'); if(c)c.style.display='block';
-  burstConfetti(); buzz(18);
+  c.style.display='block'; c.classList.add('in');
+  burstConfetti(); buzz(18); sfxReveal();
+  /* the payoff must be one Tab away — but only once it has settled */
+  setTimeout(()=>{ try{ if(document.getElementById('mClaim')===c&&c.focus)c.focus(); }catch(e){} },420);
 }
 function toggleTier(node){
   const open=node.classList.toggle('open');
@@ -1823,6 +2112,11 @@ function claimDiscount(){
   paintTierPrice();
   const cb=document.getElementById('claimBtn'); if(cb)cb.classList.add('snipin');
   const pw=document.getElementById('tcPrice'); if(pw){pw.classList.remove('settled');void pw.offsetWidth;pw.classList.add('settled');}
+  /* claiming the discount is the buyer saying yes — take them straight to the full list
+     with it applied, instead of parking them on the single matched tier behind one more tap.
+     (Dismissing the modal without claiming still leaves them on the result screen.) */
+  const from=idx;
+  setTimeout(()=>{ if(idx===from&&STEPS[idx].type==='result') next(); },560);
 }
 function claimTier(){
   const t=TIERS[state._tier];
