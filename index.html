@@ -2,503 +2,816 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>What's Your Surf Score? — Improve Surfing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ============================================================
+   GLASSWATER — soft premium light design system
+   Layered white cards · aqua gradient · coral reserved for loss
+   Every selector name is preserved; only the appearance changed.
+   ============================================================ */
 :root{
-  --bg:#f4f7fb; --bg2:#eaeff6; --bg3:#dfe6f0;
-  --surface:#ffffff; --surface2:#f3f6fc;
-  --line:#e1e8f1; --line2:#eef2f8;
-  --text:#0e1424; --dim:#5b6577; --mute:#98a2b3;
-  --aqua:#4d6bff; --aqua-deep:#3552e0; --blue:#1a36e8; --blue-deep:#1329c4; --navy:#0e1424;
-  --orange:#ff6a4d; --orange-deep:#ee5334;
-  --green:#10b981; --green-deep:#059669; --red:#ef4444; --red-deep:#dc2626;
-  --gold:#e0a020; --ink:#ffffff;
-  --f:'Poppins',system-ui,-apple-system,sans-serif;
-  --track:rgba(14,20,36,.10);
-  --shadow:0 22px 55px -22px rgba(14,20,36,.22);
-  --shadow-card:0 8px 24px -14px rgba(14,20,36,.14);
-  --shadow-btn:0 16px 34px -12px rgba(26,54,232,.4);
+  /* — Glasswater core —
+     Two aqua ramps on purpose:
+       --grad     → fills / icons  (white on it ≥ 3.7 : passes AA non-text)
+       --grad-ink → gradient TEXT  (≥ 5.3 on white   : passes AA text)
+     --aq1 is the accent *text* aqua, so it is a stop darker than the fill ramp. */
+  --ink:#0f2530; --mut:#4f6774; --aq1:#0e7490; --aq2:#0ea5e9;
+  --grad:linear-gradient(135deg,#0891b2,#0284c7);
+  --grad-ink:linear-gradient(135deg,#0e7490,#0369a1);
+  --coral:#ea580c; --coral-deep:#c2410c; --coral-ink:#9a3412; --coral-bg:#fff1ea; --coral-line:#ffd9c6;
+  --card:#ffffff;
+  --sh1:0 1px 2px rgba(15,37,48,.05),0 10px 28px -8px rgba(15,37,48,.12);
+  --sh2:0 2px 4px rgba(15,37,48,.06),0 22px 48px -12px rgba(15,37,48,.18);
+  --sh3:0 3px 6px rgba(15,37,48,.07),0 32px 64px -16px rgba(15,37,48,.24);
+  --spring:cubic-bezier(.22,1.1,.36,1);
+  --over:cubic-bezier(.34,1.7,.5,1);
+  --ring:0 0 0 4px rgba(14,165,233,.14);
+  --soft:linear-gradient(135deg,#e0f5fb,#d2ebfa);
+  /* — legacy token names, re-pointed at the Glasswater palette — */
+  --bg:#eef7fa; --bg2:#e7f0f7; --bg3:#dceaf3;
+  --surface:#ffffff; --surface2:#f1f8fb;
+  --line:rgba(15,37,48,.08); --line2:rgba(15,37,48,.055);
+  --text:#0f2530; --dim:#4f6774; --mute:#5f7987;  /* --mute is the *tertiary text* grey: still AA on a white card */
+  --aqua:#0891b2; --aqua-deep:#0e7490; --blue:#0ea5e9; --blue-deep:#0284c7; --navy:#0b2a38;
+  --orange:#ea580c; --orange-deep:#c2410c;
+  --green:#22c55e; --green-deep:#16a34a;
+  --red:#ea580c; --red-deep:#9a3412;            /* the JS sets an invalid field to var(--red) */
+  --gold:#b45309;                               /* amber: ★ glyphs are text-sized, so they need 4.5:1 — #b45309 is 4.7 on white, 4.4 on the wash */
+  --f:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  --track:rgba(15,37,48,.09);
+  --shadow:var(--sh3); --shadow-card:var(--sh1);
+  --shadow-btn:inset 0 1.5px 0 rgba(255,255,255,.35),0 14px 32px -8px rgba(8,145,178,.5);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#f4f7fb;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{height:100%;background:#eef7fa;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 button,.opt,.plan,.gcard,.acard,.cta,.skiplink{touch-action:manipulation} /* kill double-tap zoom delay on mobile */
-body{font-family:var(--f);background:radial-gradient(130% 80% at 50% -12%,#e6ecfb 0%,var(--bg) 55%);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;justify-content:center;min-height:100%}
-#shell{width:100%;max-width:460px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative}
+body{font-family:var(--f);font-weight:500;color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;justify-content:center;min-height:100%}
+/* fixed mist layer — two radial washes over a cool vertical gradient */
+body:before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 88% -8%, rgba(14,165,233,.17), transparent 62%),
+    radial-gradient(720px 520px at -12% 34%, rgba(251,146,60,.11), transparent 60%),
+    linear-gradient(180deg,#eef7fa,#e7f0f7);
+}
+img{max-width:100%}
+button{font:inherit;color:inherit}
+:focus{outline:none}
+/* opaque aqua — the old rgba(8,145,178,.45) composited to #90cddc (1.75:1) on the light card */
+:focus-visible{outline:3px solid #0e7490;outline-offset:2px;border-radius:14px;box-shadow:0 0 0 7px rgba(14,165,233,.18)}
+#shell{width:100%;max-width:460px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative;z-index:1}
 
-/* top bar */
-#topbar{padding:calc(16px + env(safe-area-inset-top)) 22px 12px;background:#0a0a0d;box-shadow:0 6px 18px -10px rgba(0,0,0,.45)} /* not sticky — scrolls with the page */
-#topbar .bar{background:rgba(255,255,255,.15)}
-#topbar .qcount{color:#c7c7d0}
-.brand{display:flex;align-items:center;gap:9px;justify-content:center;margin-bottom:13px}
+/* desktop — the column becomes a floating rounded panel */
+@media(min-width:768px){
+  body{padding:28px 0}
+  #shell{
+    min-height:calc(100vh - 56px);
+    background:linear-gradient(180deg,#f6fbfd,#edf4f9);
+    border-radius:44px;overflow:hidden;
+    box-shadow:0 4px 10px rgba(15,37,48,.05),0 50px 100px -20px rgba(15,37,48,.28);
+  }
+}
+
+/* ---------- top bar (light) ---------- */
+/* the header sits directly on the page wash — no surface, no blur layer (nothing scrolls under it) */
+#topbar{padding:calc(16px + env(safe-area-inset-top)) 22px 10px;background:transparent}
+#topbar .bar{background:var(--track)}
+#topbar .qcount{color:var(--mut)}
+.brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:14px}
 .brand .mark{width:30px;height:30px;object-fit:contain;display:block}
-.brand .wm{font-size:10.5px;letter-spacing:.24em;font-weight:600;color:#b8b8c4;text-transform:uppercase}
-.brand .wm b{color:#fff}
-.progress-wrap{display:flex;align-items:center;gap:10px}
-.bar{flex:1;height:6px;background:var(--track);border-radius:99px;overflow:hidden}
-.bar>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
-.qcount{font-size:10.5px;font-weight:600;color:var(--dim);white-space:nowrap;letter-spacing:.02em}
+.brand .wm{font-size:10.5px;letter-spacing:.22em;font-weight:700;color:var(--mut);text-transform:uppercase}
+.brand .wm b{color:var(--ink);font-weight:800}
+.progress-wrap{display:flex;flex-direction:column;gap:9px}
+/* Glasswater signature: a dot rail whose live section stretches into a 28px pill */
+.dots{display:flex;gap:7px;justify-content:center}
+.dots i{width:8px;height:8px;border-radius:99px;background:#c2d6e1;transition:width .45s var(--spring),background .45s}
+.dots i.on{width:28px;background:var(--grad)}
+.barrow{display:flex;align-items:center;gap:0}
+/* demoted to a hairline sub-rail — the dots now carry the signal */
+.bar{flex:1;height:4px;background:var(--track);border-radius:99px;box-shadow:inset 0 1px 2px rgba(15,37,48,.07)}
+.bar>i{display:block;height:100%;width:0%;background:var(--grad);border-radius:99px;transition:width .5s var(--spring)}
+.qcount{font-size:10.5px;font-weight:700;color:var(--mut);white-space:nowrap;letter-spacing:.04em}
+.qcount:not(:empty){margin-left:10px}   /* collapse the gap while the counter is blank */
 
-#app{flex:1;padding:6px 22px 38px;display:flex;flex-direction:column}
+#app{flex:1;padding:10px 22px 42px;display:flex;flex-direction:column}
 .step{animation:stepIn .35s ease both;display:flex;flex-direction:column;flex:1}
 @keyframes stepIn{from{opacity:0}to{opacity:1}}
 /* staggered entrance — every screen cascades in */
-.step>*{animation:childIn .5s cubic-bezier(.22,1,.36,1) backwards}
+.step>*{animation:childIn .62s var(--spring) backwards}
 .step>*:nth-child(2){animation-delay:.05s}.step>*:nth-child(3){animation-delay:.10s}
 .step>*:nth-child(4){animation-delay:.15s}.step>*:nth-child(5){animation-delay:.20s}
 .step>*:nth-child(6){animation-delay:.25s}.step>*:nth-child(7){animation-delay:.30s}
 .step>*:nth-child(8){animation-delay:.35s}.step>*:nth-child(9){animation-delay:.40s}
-@keyframes childIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.opts .opt{animation:optIn .45s cubic-bezier(.22,1,.36,1) backwards}
+@keyframes childIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+/* loader / score / projection / result wrap their whole screen in one element,
+   so the .step>* ladder above only ever matched a single node — cascade inside them too */
+.loader-wrap>*,.reveal-wrap>*,.scratch-wrap>*{animation:childIn .62s var(--spring) backwards}
+.loader-wrap>*:nth-child(2),.reveal-wrap>*:nth-child(2),.scratch-wrap>*:nth-child(2){animation-delay:.05s}
+.loader-wrap>*:nth-child(3),.reveal-wrap>*:nth-child(3),.scratch-wrap>*:nth-child(3){animation-delay:.10s}
+.loader-wrap>*:nth-child(4),.reveal-wrap>*:nth-child(4),.scratch-wrap>*:nth-child(4){animation-delay:.15s}
+.loader-wrap>*:nth-child(5),.reveal-wrap>*:nth-child(5),.scratch-wrap>*:nth-child(5){animation-delay:.20s}
+.loader-wrap>*:nth-child(6),.reveal-wrap>*:nth-child(6),.scratch-wrap>*:nth-child(6){animation-delay:.25s}
+.loader-wrap>*:nth-child(7),.reveal-wrap>*:nth-child(7){animation-delay:.30s}
+.loader-wrap>*:nth-child(8),.reveal-wrap>*:nth-child(8){animation-delay:.35s}
+.loader-wrap>*:nth-child(9),.reveal-wrap>*:nth-child(9){animation-delay:.40s}
+.loader-wrap>*:nth-child(10),.reveal-wrap>*:nth-child(10){animation-delay:.45s}
+.opts .opt{animation:optIn .55s var(--spring) backwards}
 .opts .opt:nth-child(1){animation-delay:.12s}.opts .opt:nth-child(2){animation-delay:.19s}
 .opts .opt:nth-child(3){animation-delay:.26s}.opts .opt:nth-child(4){animation-delay:.33s}
 .opts .opt:nth-child(5){animation-delay:.40s}.opts .opt:nth-child(6){animation-delay:.47s}
-@keyframes optIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
-.gcard,.acard{animation:optIn .45s cubic-bezier(.22,1,.36,1) backwards}
+@keyframes optIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.gcard,.acard{animation:optIn .55s var(--spring) backwards}
 .gcards .gcard:nth-child(2),.acards .acard:nth-child(2){animation-delay:.08s}
 .acards .acard:nth-child(3){animation-delay:.16s}.acards .acard:nth-child(4){animation-delay:.24s}
-.plans .plan{animation:optIn .45s cubic-bezier(.22,1,.36,1) backwards}
+.plans .plan{animation:optIn .55s var(--spring) backwards}
 .plans .plan:nth-child(2){animation-delay:.08s}.plans .plan:nth-child(3){animation-delay:.16s}.plans .plan:nth-child(4){animation-delay:.24s}
-/* ambient ocean background */
+
+/* ambient ocean drift (kept, retuned to the aqua/peach wash) */
 .bgfx{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.bgfx i{position:absolute;border-radius:50%;filter:blur(46px);opacity:.55}
-.bgfx .b1{width:340px;height:340px;background:radial-gradient(circle,rgba(77,107,255,.17),transparent 70%);top:-80px;left:-90px;animation:drift1 16s ease-in-out infinite alternate}
-.bgfx .b2{width:300px;height:300px;background:radial-gradient(circle,rgba(43,143,214,.14),transparent 70%);bottom:-70px;right:-80px;animation:drift2 19s ease-in-out infinite alternate}
-.bgfx .b3{width:230px;height:230px;background:radial-gradient(circle,rgba(255,106,77,.08),transparent 70%);top:38%;right:-60px;animation:drift3 22s ease-in-out infinite alternate}
+/* three blurred, permanently-compositing layers were running on phones for no visible gain —
+   body::before already paints the specified page wash. Desktop keeps the ambience. */
+.bgfx i{display:none;position:absolute;border-radius:50%;filter:blur(50px);opacity:.5}
+@media(min-width:768px) and (prefers-reduced-motion:no-preference){.bgfx i{display:block}}
+.bgfx .b1{width:340px;height:340px;background:radial-gradient(circle,rgba(14,165,233,.16),transparent 70%);top:-80px;left:-90px;animation:drift1 16s ease-in-out infinite alternate}
+.bgfx .b2{width:300px;height:300px;background:radial-gradient(circle,rgba(8,145,178,.13),transparent 70%);bottom:-70px;right:-80px;animation:drift2 19s ease-in-out infinite alternate}
+.bgfx .b3{width:230px;height:230px;background:radial-gradient(circle,rgba(251,146,60,.10),transparent 70%);top:38%;right:-60px;animation:drift3 22s ease-in-out infinite alternate}
 @keyframes drift1{to{transform:translate(70px,50px) scale(1.15)}}
 @keyframes drift2{to{transform:translate(-60px,-45px) scale(1.1)}}
 @keyframes drift3{to{transform:translate(-45px,60px) scale(1.2)}}
 
-.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--aqua);font-weight:700;margin-bottom:13px;display:flex;align-items:center;gap:8px}
-.eyebrow:before{content:"";width:16px;height:2px;background:var(--orange);border-radius:2px}
-h1{font-size:25px;line-height:1.2;font-weight:800;letter-spacing:-.02em;margin-bottom:11px;color:var(--text)}
-h1 .hl{color:var(--aqua)}
-h1 .red{color:var(--orange)}
-.sub{font-size:14.5px;line-height:1.5;color:var(--dim);margin-bottom:24px}
-.sub b{color:var(--text);font-weight:600}
+/* ---------- type ---------- */
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--aq1);font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.eyebrow:before{content:"";width:18px;height:3px;background:var(--grad);border-radius:99px;flex-shrink:0}
+h1{font-size:30px;line-height:1.14;font-weight:800;letter-spacing:-.028em;margin-bottom:12px;color:var(--ink)}
+h1 .hl,.intro-h .hl,.reveal-headline .hl{
+  background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+h1 .red{color:var(--coral)}
+.sub{font-size:14.5px;line-height:1.55;color:var(--mut);font-weight:500;margin-bottom:24px}
+.sub b{color:var(--ink);font-weight:700}
 
-/* options */
-.opts{display:flex;flex-direction:column;gap:10px;margin-top:2px}
-.opt{display:flex;align-items:center;gap:13px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;text-align:left;box-shadow:var(--shadow-card);transition:transform .15s,border-color .15s,background .15s}
-.opt:hover{border-color:var(--aqua);transform:translateY(-1px)}
-.opt:active{transform:scale(.99)}
-.opt.sel{border-color:var(--aqua);background:linear-gradient(180deg,rgba(77,107,255,.10),rgba(59,130,246,.05))}
-.opt .tick{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s}
-.opt.sel .tick{border-color:var(--aqua);background:var(--aqua)}
-.opt.sel .tick:after{content:"";width:7px;height:7px;border-radius:50%;background:var(--ink)}
-.opt .txt{font-size:14.5px;font-weight:600;line-height:1.3;color:var(--text)}
-.opt .emoji{font-size:18px}
+/* ---------- options ---------- */
+.opts{display:flex;flex-direction:column;gap:11px;margin-top:2px}
+.opt{display:flex;align-items:center;gap:13px;background:var(--card);border:2px solid rgba(15,37,48,.05);border-radius:22px;padding:16px 18px;min-height:66px;cursor:pointer;text-align:left;box-shadow:var(--sh1);transition:transform .3s var(--spring),box-shadow .3s,border-color .3s}
+.opt:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.opt:active{transform:scale(.985)}
+.opt.sel{
+  transform:translateY(-3px);border-color:transparent;
+  background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
+  box-shadow:var(--sh2),var(--ring);
+}
+.opt .tick{width:24px;height:24px;border-radius:50%;border:2px solid rgba(15,37,48,.34);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
+.opt.sel .tick{border-color:transparent;background:var(--grad);box-shadow:0 6px 14px -5px rgba(8,145,178,.55)}
+.opt.sel .tick:after{content:"";width:10px;height:5.5px;border:2.4px solid #fff;border-top:0;border-right:0;border-radius:1px;transform:rotate(-45deg) translate(1px,-1px)}
+.opt .txt{font-size:14.5px;font-weight:700;line-height:1.38;color:var(--ink)}
+/* Glasswater signature #8 — the 46px soft icon circle, on the funnel's most-repeated element */
+.opt .emoji{flex:0 0 46px;width:46px;height:46px;border-radius:50%;background:var(--soft);box-shadow:inset 0 0 0 1px rgba(8,145,178,.14);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;transition:background .25s}
+.opt.sel .emoji{background:linear-gradient(135deg,#cdeefa,#bfe3f8);box-shadow:inset 0 0 0 1px rgba(8,145,178,.3)}
+.opt .emoji.ic svg{display:block}
 
-/* gender cards */
+/* multi select */
+.opt .box{width:24px;height:24px;border-radius:9px;border:2px solid rgba(15,37,48,.34);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
+.opt.sel .box{border-color:transparent;background:var(--grad);box-shadow:0 6px 14px -5px rgba(8,145,178,.55)}
+.opt.sel .box:after{content:"✓";color:#fff;font-weight:800;font-size:13px;line-height:1}
+
+/* ---------- gender cards ---------- */
 .gcards{display:flex;gap:12px;margin-top:4px}
-.gcard{flex:1;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:0 0 14px;cursor:pointer;overflow:hidden;box-shadow:var(--shadow-card);transition:.15s;text-align:center}
-.gcard:hover{transform:translateY(-2px);border-color:var(--aqua)}
-.gcard.sel{border-color:var(--aqua);background:linear-gradient(180deg,rgba(77,107,255,.08),transparent)}
-.gcard .gbadge{width:78px;height:78px;border-radius:50%;margin:26px auto 0;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,rgba(77,107,255,.16),rgba(43,143,214,.10));border:1px solid rgba(77,107,255,.32);transition:.15s}
-.gcard.sel .gbadge{background:linear-gradient(135deg,rgba(77,107,255,.28),rgba(43,143,214,.16));border-color:var(--aqua)}
-.gcard .gname{font-size:15px;font-weight:700;margin-top:13px;color:var(--text)}
-.gcard.alt{flex:none;width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:15px;margin-top:11px;color:var(--dim);font-weight:600}
+.gcard{flex:1;background:var(--card);border:2px solid rgba(15,37,48,.05);border-radius:24px;padding:0 0 15px;cursor:pointer;overflow:hidden;box-shadow:var(--sh1);transition:transform .3s var(--spring),box-shadow .3s,border-color .3s;text-align:center}
+.gcard:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.gcard.sel{
+  transform:translateY(-3px);border-color:transparent;
+  background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
+  box-shadow:var(--sh2),var(--ring);
+}
+.gcard .gbadge{width:78px;height:78px;border-radius:50%;margin:26px auto 0;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--soft);box-shadow:inset 0 0 0 1px rgba(8,145,178,.14);transition:.25s}
+.gcard.sel .gbadge{background:linear-gradient(135deg,#cdeefa,#bfe3f8);box-shadow:inset 0 0 0 1px rgba(8,145,178,.3)}
+.gcard .gname{font-size:15px;font-weight:800;margin-top:13px;color:var(--ink);letter-spacing:-.01em}
+.gcard.alt{flex:none;width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:16px;margin-top:11px;color:var(--mut);font-weight:700;font-size:14px;border-radius:20px}
 
-/* buttons */
-.cta{margin-top:auto;width:100%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;font-weight:700;font-size:16px;padding:17px;border-radius:14px;box-shadow:var(--shadow-btn);transition:transform .15s,box-shadow .15s}
-.cta:hover{transform:translateY(-2px)}
-.cta:active{transform:scale(.98)}
-.cta:disabled{opacity:.4;filter:grayscale(.3);cursor:not-allowed;box-shadow:none;transform:none}
-.cta.green{background:linear-gradient(135deg,var(--aqua),var(--aqua-deep));color:#04302c;box-shadow:0 16px 34px -12px rgba(77,107,255,.5)}
-.btnnote{text-align:center;font-size:11.5px;color:var(--dim);margin-top:11px}
-.btnnote b{color:var(--aqua)}
+/* Glasswater signature #4 — the springing gradient check, on the photo cards too.
+   Both screens auto-advance in 430ms, so this badge is the tap's only confirmation. */
+.gcard:after,.acard:after{content:"";position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:var(--grad);box-shadow:0 8px 18px -6px rgba(8,145,178,.55);opacity:0;transform:scale(.3);transition:opacity .25s,transform .4s var(--over);z-index:2}
+.gcard:before,.acard:before{content:"";position:absolute;top:22px;right:20px;width:11px;height:6px;border:2.4px solid #fff;border-top:0;border-right:0;border-radius:1px;opacity:0;transform:rotate(-45deg) scale(.3);transition:opacity .25s,transform .4s var(--over);z-index:3}
+.gcard.sel:after,.acard.sel:after{opacity:1;transform:scale(1)}
+.gcard.sel:before,.acard.sel:before{opacity:1;transform:rotate(-45deg) scale(1)}
 
-/* image slots */
-.imgslot{width:100%;border-radius:16px;object-fit:cover;display:block}
-.imgslot.ph{background:linear-gradient(135deg,var(--bg3),var(--surface2));border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mute);font-size:11px;letter-spacing:.05em;padding:10px;line-height:1.4;font-weight:600;min-height:120px}
-.ar-hero{aspect-ratio:16/10}.ar-port{aspect-ratio:3/4}.ar-wide{aspect-ratio:16/9}.ar-sq{aspect-ratio:1/1}.ar-card{aspect-ratio:4/5}
+/* ---------- buttons ---------- */
+.cta{
+  display:block;margin-top:auto;width:100%;border:0;cursor:pointer;text-align:center;
+  min-height:58px;padding:18px 20px;border-radius:99px;
+  /* the .24 scrim is load-bearing: it drags white-on-aqua from 3.5 up to 4.9 (AA at 17px) */
+  background:linear-gradient(rgba(3,50,70,.24),rgba(3,50,70,.24)),var(--grad);
+  color:#fff;font-weight:800;font-size:17px;letter-spacing:-.01em;
+  box-shadow:var(--shadow-btn);
+  transition:transform .25s var(--spring),box-shadow .25s;
+}
+.cta:hover{transform:translateY(-2px);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),0 20px 40px -10px rgba(8,145,178,.55)}
+.cta:active{transform:scale(.97)}
+.cta:disabled{opacity:.42;filter:grayscale(.4);cursor:not-allowed;box-shadow:none;transform:none}
+/* secondary treatment — kept for screens that already have a gradient primary.
+   The ring is now .55 alpha: at .22 it resolved to ~#c6e3ec, ~1.2:1 on the wash. */
+.cta.green{
+  background:var(--card);color:var(--aq1);
+  box-shadow:var(--sh2),inset 0 0 0 2px rgba(8,145,178,.55);
+}
+.cta.green:hover{box-shadow:var(--sh2),inset 0 0 0 2px rgba(8,145,178,.75)}
+.btnnote{text-align:center;font-size:11.5px;color:var(--mut);font-weight:600;margin-top:12px}
+.btnnote b{color:var(--aq1);font-weight:800}
 
-/* age image cards (2x2) */
-.acards{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:2px}
-.acard{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:0 0 11px;cursor:pointer;overflow:hidden;box-shadow:var(--shadow-card);transition:.15s;text-align:center}
-.acard:hover{transform:translateY(-2px);border-color:var(--aqua)}
-.acard.sel{border-color:var(--aqua);background:linear-gradient(180deg,rgba(77,107,255,.08),transparent)}
-.acard .imgslot{border-radius:0}
-.acard .imgslot.ph{font-size:10px;min-height:96px}
-.acard .aname{font-size:13.5px;font-weight:700;margin-top:8px;color:var(--text)}
+/* ---------- image slots ---------- */
+.imgslot{width:100%;border-radius:22px;object-fit:cover;display:block;box-shadow:var(--sh2);filter:saturate(1.03) contrast(1.02)}
+.imgslot.ph{background:linear-gradient(135deg,#e3eff6,var(--surface2));border:1.5px dashed rgba(15,37,48,.12);box-shadow:none;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mut);font-size:11px;letter-spacing:.05em;padding:10px;line-height:1.4;font-weight:700}
+.ar-hero{aspect-ratio:16/10;border-radius:26px;margin:2px -6px 0;width:calc(100% + 12px)}
+.ar-port{aspect-ratio:3/4}.ar-wide{aspect-ratio:16/9}.ar-sq{aspect-ratio:1/1}.ar-card{aspect-ratio:4/5}
+.imgslot.ph.ar-hero{min-height:150px}
+.imgslot.ph.ar-wide{min-height:120px}
 
-/* intro */
-.intro-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:7px;background:rgba(77,107,255,.12);border:1px solid rgba(77,107,255,.3);color:var(--aqua);font-size:11px;font-weight:700;padding:6px 12px;border-radius:99px;margin-bottom:16px;letter-spacing:.05em;text-transform:uppercase}
-.intro-h{font-size:33px;line-height:1.08;font-weight:800;letter-spacing:-.025em;margin:6px 0 14px;color:var(--text)}
-.intro-h .red{color:var(--orange)}
-.intro-h .hl{color:var(--aqua)}
-.trust{display:flex;gap:16px;margin:18px 0 6px}
-.trust .t b{font-size:24px;font-weight:800;color:var(--text);display:block;line-height:1}
-.trust .t span{font-size:10.5px;color:var(--dim)}
+/* ---------- age image cards (2x2) ---------- */
+.acards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2px}
+.acard{background:var(--card);border:2px solid rgba(15,37,48,.05);border-radius:24px;padding:0 0 12px;cursor:pointer;overflow:hidden;box-shadow:var(--sh1);transition:transform .3s var(--spring),box-shadow .3s,border-color .3s;text-align:center}
+.acard:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.acard.sel{
+  transform:translateY(-3px);border-color:transparent;
+  background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
+  box-shadow:var(--sh2),var(--ring);
+}
+.acard .imgslot{border-radius:0;box-shadow:none;margin:0;width:100%}
+.acard .imgslot.ph{font-size:10px;min-height:96px;border:0}
+.acard .aname{font-size:13.5px;font-weight:800;margin-top:10px;color:var(--ink)}
+
+/* ---------- intro (layered depth: headline → hero → floating stats) ---------- */
+.intro-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:var(--card);color:var(--aq1);font-size:11px;font-weight:800;padding:9px 15px;border-radius:99px;margin-bottom:10px;letter-spacing:.13em;text-transform:uppercase;box-shadow:var(--sh1)}
+.intro-badge:before{content:"";width:7px;height:7px;border-radius:99px;background:var(--grad);flex-shrink:0}
+.intro-h{font-size:36px;line-height:1.1;font-weight:800;letter-spacing:-.03em;margin:6px 0 14px;color:var(--ink)}
+.intro-h .red{color:var(--coral)}
+/* the headline block reserves the space the hero photo climbs into — 30px against the
+   card's -36px climb gives the reference's real -6px overlap (56px only left a gap) */
+/* the hero climbs -36px and the pill sits -15px above that, so the pill's top edge lands
+   51px into this block — reserve enough room or it prints over the sub copy */
+.intro-head{padding-bottom:58px}
+.intro-head .sub{margin-bottom:0}
+.herocard{position:relative;margin-top:-36px;z-index:2}
+/* light placeholder — the old #0f2530 painted a near-black slab while hero.jpg loaded */
+.heroph{position:relative;border-radius:28px;overflow:hidden;box-shadow:var(--sh3);background:linear-gradient(135deg,#e3eff6,var(--surface2))}
+.heroph:after{content:"";position:absolute;inset:0;border-radius:28px;pointer-events:none;border:1px solid rgba(255,255,255,.55)}
+.heroph>.imgslot{border-radius:0;box-shadow:none;margin:0;width:100%}
+.herocard .imgslot.ar-hero{margin:0;width:100%;border-radius:0;box-shadow:none;aspect-ratio:16/10}
+.herocard .imgslot.ph.ar-hero{border:0;box-shadow:none;background:linear-gradient(135deg,#e3eff6,var(--surface2))}
+/* rotated glass pill riding the photo's top-right corner */
+.scorepill{position:absolute;top:-15px;right:14px;z-index:3;transform:rotate(3deg);text-align:center;background:rgba(255,255,255,.84);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.9);border-radius:18px;padding:9px 14px;box-shadow:var(--sh2);animation:pillPop .7s var(--spring) .5s backwards}
+.scorepill small{display:block;font-size:9.5px;font-weight:800;letter-spacing:.1em;color:var(--mut);text-transform:uppercase}
+.scorepill strong{font-size:23px;font-weight:800;letter-spacing:-.02em;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+@keyframes pillPop{0%{opacity:0;transform:rotate(3deg) scale(.5)}70%{transform:rotate(3deg) scale(1.07)}100%{opacity:1;transform:rotate(3deg) scale(1)}}
+/* the three stat cards overlap the bottom edge of the photo */
+.trust{display:grid;grid-template-columns:1fr 1.16fr 1fr;gap:9px;margin:-28px 0 0;padding:0 6px;position:relative;z-index:3}
+.trust .t{flex:1;background:var(--card);border-radius:20px;padding:13px 8px 12px;text-align:center;box-shadow:var(--sh2)}
+.trust .t:nth-child(1),.trust .t:nth-child(3){transform:translateY(6px)}
+.trust .t b{font-size:21px;font-weight:800;color:var(--ink);display:block;line-height:1;letter-spacing:-.02em}
+.trust .t span{font-size:10px;color:var(--mut);font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:block;margin-top:4px}
+.avs{display:flex;justify-content:center;margin-bottom:5px}
+.avs img{width:21px;height:21px;border-radius:50%;object-fit:cover;border:2px solid #fff;margin-left:-7px;box-shadow:0 2px 5px rgba(15,37,48,.16)}
+.avs img:first-child{margin-left:0}
+.sub2{margin-top:16px;color:var(--ink);font-weight:600}
 .spacer{flex:1;min-height:14px}
 
-/* text inputs */
+/* ---------- text inputs ---------- */
 .bigfield{margin-top:6px}
-.bigfield input{width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:17px;color:var(--text);font-size:17px;font-family:inherit;font-weight:600;box-shadow:var(--shadow-card);transition:.15s}
-.bigfield input:focus{outline:none;border-color:var(--aqua)}
+.bigfield input{width:100%;background:var(--card);border:2px solid rgba(15,37,48,.06);border-radius:20px;padding:18px;color:var(--ink);font-size:17px;font-family:inherit;font-weight:700;box-shadow:var(--sh1);transition:border-color .2s,box-shadow .2s}
+.bigfield input:focus{outline:none;border-color:transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;box-shadow:var(--sh2),var(--ring)}
 .bigfield input::placeholder{color:var(--mute);font-weight:500}
 .field{margin-bottom:13px}
-.field label{display:block;font-size:11px;letter-spacing:.04em;font-weight:700;color:var(--dim);margin-bottom:7px;text-transform:uppercase}
-.field input{width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:13px;padding:15px;color:var(--text);font-size:16px;font-family:inherit;box-shadow:var(--shadow-card);transition:.15s} /* ≥16px: iOS won't auto-zoom on focus */
-.field input:focus{outline:none;border-color:var(--aqua)}
-.field input::placeholder{color:var(--mute)}
-.suggest{margin-top:7px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-card);display:none}
-.sugg{padding:11px 14px;font-size:14.5px;cursor:pointer;color:var(--dim);border-bottom:1px solid var(--line2)}
+.field label{display:block;font-size:10.5px;letter-spacing:.12em;font-weight:800;color:var(--mut);margin-bottom:8px;text-transform:uppercase}
+.field input{width:100%;background:var(--card);border:2px solid rgba(15,37,48,.06);border-radius:18px;padding:16px;color:var(--ink);font-size:16px;font-weight:700;font-family:inherit;box-shadow:var(--sh1);transition:border-color .2s,box-shadow .2s} /* ≥16px: iOS won't auto-zoom on focus */
+.field input:focus{outline:none;border-color:transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;box-shadow:var(--sh2),var(--ring)}
+.field input::placeholder{color:var(--mute);font-weight:500}
+.suggest{margin-top:8px;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:var(--sh2);display:none}
+.sugg{padding:13px 16px;font-size:14.5px;font-weight:600;cursor:pointer;color:var(--mut);border-bottom:1px solid var(--line2)}
 .sugg:last-child{border-bottom:none}
-.sugg:hover{background:var(--bg2)}
-.sugg b{color:var(--text);font-weight:600}
-.phonewrap{display:flex;align-items:stretch;gap:8px}
-.ccode{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1.5px solid var(--line);border-radius:13px;padding:0 13px;font-size:15px;font-weight:700;color:var(--text);box-shadow:var(--shadow-card);white-space:nowrap}
-.flag{width:23px;height:16px;border-radius:3px;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.12)}
-.phonewrap input{flex:1;min-width:0;background:var(--surface);border:1.5px solid var(--line);border-radius:13px;padding:15px;color:var(--text);font-size:16px;font-family:inherit;box-shadow:var(--shadow-card);transition:.15s}
-.phonewrap input:focus{outline:none;border-color:var(--aqua)}
-.phonewrap input::placeholder{color:var(--mute)}
-.privacy{display:flex;align-items:center;gap:8px;justify-content:center;font-size:11.5px;color:var(--dim);margin-top:13px}
-.privacy svg{width:14px;height:14px;fill:var(--green)}
+.sugg:hover{background:#f2f9fc}
+.sugg b{color:var(--ink);font-weight:800}
+.phonewrap{display:flex;align-items:stretch;gap:9px}
+.ccode{display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid rgba(15,37,48,.06);border-radius:18px;padding:0 14px;font-size:15px;font-weight:800;color:var(--ink);box-shadow:var(--sh1);white-space:nowrap}
+.flag{width:23px;height:16px;border-radius:4px;object-fit:cover;box-shadow:0 0 0 1px rgba(15,37,48,.08)}
+.phonewrap input{flex:1;min-width:0;background:var(--card);border:2px solid rgba(15,37,48,.06);border-radius:18px;padding:16px;color:var(--ink);font-size:16px;font-weight:700;font-family:inherit;box-shadow:var(--sh1);transition:border-color .2s,box-shadow .2s}
+.phonewrap input:focus{outline:none;border-color:transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;box-shadow:var(--sh2),var(--ring)}
+.phonewrap input::placeholder{color:var(--mute);font-weight:500}
+/* invalid state as a class, not an inline style — an inline border-color outranked
+   the :focus rule and the field could never show the gradient focus border again */
+.bigfield input.err,.field input.err,.phonewrap input.err{border-color:var(--red)}
+.privacy{display:flex;align-items:center;gap:8px;justify-content:center;font-size:11.5px;font-weight:600;color:var(--mut);margin-top:14px}
+.privacy svg{width:14px;height:14px;fill:var(--aq1)}
 
-/* loader */
-.loader-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center}
-.lstat{font-size:21px;font-weight:800;margin-bottom:6px;color:var(--text)}
-.lsub{font-size:13px;color:var(--dim);margin-bottom:26px}
+/* ---------- loader ---------- */
+/* the loader's content is ~615px tall; on a 667px viewport (or any IG/FB webview) a
+   centred column overflowed in BOTH directions and the block-start spill is unreachable
+   (html,body are height-capped, #shell is overflow:hidden on desktop).
+   auto margins centre when there is room and pin to the top when there is not. */
+.loader-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-start;text-align:center}
+.lstat{font-size:21px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;color:var(--ink)}
+.lsub{font-size:13px;font-weight:600;color:var(--mut);margin-bottom:26px}
 .checks{display:flex;flex-direction:column;gap:12px;text-align:left;max-width:300px;margin:0 auto}
-.chk{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;color:var(--mute);opacity:.45;transition:.35s}
-.chk.active,.chk.done{opacity:1;color:var(--text)}
-.chk .cb{width:23px;height:23px;border-radius:7px;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.3s}
-.chk.done .cb{background:var(--green);border-color:var(--green)}
-.chk.done .cb:after{content:"✓";color:#04121d;font-weight:800;font-size:12px}
-.chk.active .cb{border-color:var(--aqua);background:transparent}
-.chk.active .cb:after{content:"";width:11px;height:11px;border:2px solid var(--aqua);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+/* pending rows carry their state in the colour + checkbox, not in opacity —
+   the old opacity:.45 dropped them to ~1.5:1 */
+.chk{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:700;color:var(--mut);opacity:1;transition:.35s}
+.chk.active,.chk.done{opacity:1;color:var(--ink)}
+.chk .cb{width:24px;height:24px;border-radius:9px;border:2px solid rgba(15,37,48,.34);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.3s}
+.chk.done .cb{background:var(--grad);border-color:transparent;box-shadow:0 6px 14px -5px rgba(8,145,178,.55)}
+.chk.done .cb:after{content:"✓";color:#fff;font-weight:800;font-size:13px}
+.chk.active .cb{border-color:rgba(8,145,178,.35);background:#fff}
+.chk.active .cb:after{content:"";width:11px;height:11px;border:2px solid var(--aq1);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 /* circular ring */
 .ring-wrap{position:relative;width:122px;height:122px;margin:0 auto 22px}
-.ring-wrap:before{content:"";position:absolute;inset:10px;border-radius:50%;background:radial-gradient(circle,rgba(77,107,255,.18),transparent 70%);animation:pulse 1.8s ease-in-out infinite}
-.ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:29px;font-weight:800;color:var(--text)}
+.ring-wrap:before{content:"";position:absolute;inset:10px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.24),transparent 70%);animation:pulse 1.8s ease-in-out infinite}
+.ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:29px;font-weight:800;letter-spacing:-.03em;color:var(--ink)}
 @keyframes pulse{0%,100%{opacity:.45;transform:scale(.95)}50%{opacity:1;transform:scale(1.06)}}
-.testi{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:12.5px;color:var(--dim);min-height:62px;display:flex;align-items:flex-start;gap:11px;box-shadow:var(--shadow-card);text-align:left}
-.testi .av{width:38px;height:38px;border-radius:50%;flex-shrink:0;object-fit:cover}
-.testi .avph{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--aqua),var(--blue));display:flex;align-items:center;justify-content:center;font-weight:700;color:#04121d;font-size:14px;flex-shrink:0}
+.testi{margin-top:24px;background:var(--card);border-radius:20px;padding:15px;font-size:12.5px;font-weight:600;color:var(--mut);min-height:62px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--sh1);text-align:left}
+.testi .av{width:40px;height:40px;border-radius:50%;flex-shrink:0;object-fit:cover;border:2px solid #fff;box-shadow:var(--sh1)}
+.testi .avph{width:40px;height:40px;border-radius:50%;background:var(--grad-ink);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;flex-shrink:0;box-shadow:0 6px 14px -5px rgba(8,145,178,.5)}
 .tbody{display:flex;flex-direction:column;gap:3px}
-.tbody span{font-style:italic;line-height:1.4}
-.tbody b{color:var(--text);font-size:11.5px}
+.tbody span{font-style:italic;line-height:1.45}
+.tbody b{color:var(--ink);font-size:11.5px;font-weight:800}
 .stars{color:var(--gold);font-size:11px;letter-spacing:1.5px}
-.trustline{margin-top:16px;font-size:11.5px;color:var(--dim);text-align:center}
-.trustline b{color:var(--text)}
+.trustline{margin-top:16px;font-size:11.5px;font-weight:600;color:var(--mut);text-align:center}
+.trustline b{color:var(--ink);font-weight:800}
 .trustline .stars{display:inline}
 /* loader — richer */
 .ring-wrap.big{width:150px;height:150px;margin:0 auto 20px}
-.ring-wrap.big:before{content:"";position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle,rgba(77,107,255,.28),transparent 68%);animation:pulse 1.8s ease-in-out infinite}
-.ring-wrap.big svg{width:150px;height:150px}
+.ring-wrap.big:before{content:"";position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.3),transparent 68%);filter:blur(4px);animation:pulse 1.8s ease-in-out infinite}
+.ring-wrap.big svg{width:150px;height:150px;position:relative}
+.loader-wrap>.ring-wrap.big{margin-top:auto}
+.loader-wrap>.trustline{margin-bottom:auto}
 .ring-orbit{position:absolute;inset:0;animation:spin 3.2s linear infinite}
-.ring-orbit i{position:absolute;top:-3px;left:50%;width:9px;height:9px;margin-left:-4px;border-radius:50%;background:var(--aqua);box-shadow:0 0 10px var(--aqua)}
-.ring-orbit i:nth-child(2){top:auto;bottom:-3px;background:var(--blue);box-shadow:0 0 10px var(--blue)}
-.ldata{font-size:12px;color:var(--dim);font-weight:600;margin:-14px 0 16px}
-.ldata b{color:var(--aqua);font-variant-numeric:tabular-nums}
-.lpills{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;max-width:320px;margin:2px auto 6px}
-.lpill{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;color:var(--dim)}
-.lpill .lpb{flex:1;height:5px;background:var(--track);border-radius:99px;overflow:hidden}
-.lpill .lpb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:99px;transition:width .6s ease}
-.lpill.on{color:var(--text)}
+/* the 150px wrap scales the 120-unit viewBox by 1.25: the r=52/sw=9 stroke lands
+   4.4–15.6px in, so the bead centre belongs at 5.5px, not at the old 122px-wrap -3px */
+.ring-orbit i{position:absolute;top:5.5px;left:50%;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--aq1);box-shadow:0 0 12px rgba(8,145,178,.9)}
+.ring-orbit i:nth-child(2){top:auto;bottom:5.5px;background:var(--aq2);box-shadow:0 0 12px rgba(14,165,233,.9)}
+.ldata{font-size:12px;color:var(--mut);font-weight:700;margin:-14px 0 16px}
+.ldata b{color:var(--aq1);font-weight:800;font-variant-numeric:tabular-nums}
+.lpills{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px;max-width:320px;margin:2px auto 6px}
+.lpill{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:var(--mut)}
+.lpill .lpb{flex:1;height:6px;background:var(--track);border-radius:99px;overflow:hidden}
+.lpill .lpb i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .6s ease}
+.lpill.on{color:var(--ink)}
 
-/* reveal */
+/* ---------- score reveal ---------- */
 .reveal-wrap{text-align:center;display:flex;flex-direction:column;flex:1}
-.gauge{position:relative;width:240px;height:138px;margin:4px auto 0}
-.bignum{font-size:56px;font-weight:800;letter-spacing:-.02em;color:var(--orange);line-height:1;margin-top:2px}
-.bignum .of{font-size:22px;color:var(--mute);font-weight:700}
-.reveal-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-top:12px}
-.reveal-headline{font-size:22px;font-weight:800;line-height:1.24;margin:14px 4px 9px;color:var(--text)}
-.reveal-headline .red{color:var(--orange)}
-.reveal-body{font-size:14px;line-height:1.55;color:var(--dim);margin-bottom:6px}
-.reveal-body b{color:var(--text)}
-.tenyr{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.28);border-radius:14px;padding:14px;margin:16px 0;font-size:13.5px;color:var(--red-deep)}
-.tenyr b{color:var(--red);font-weight:800;font-size:16px}
+/* liquid ring — 224px circle, thick rounded gradient stroke, pulsing halo */
+.gauge{position:relative;width:224px;height:224px;margin:12px auto 2px;z-index:1}
+.gauge svg{position:relative;z-index:1;width:100%;height:100%;display:block}
+.ghalo{position:absolute;inset:-22px;border-radius:50%;z-index:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(14,165,233,.28),rgba(14,165,233,0) 68%);filter:blur(6px);
+  animation:haloPulse 3.2s ease-in-out infinite}
+@keyframes haloPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.13);opacity:.95}}
+.gauge .gtrack{fill:none;stroke:#dceaf2;stroke-width:19} /* was #ffffff — invisible now the page is light */
+.gauge #gf{fill:none;stroke:url(#gg);stroke-width:19;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;filter:drop-shadow(0 4px 10px rgba(8,145,178,.32))}
+.bignum{position:absolute;inset:0;z-index:2;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:66px;font-weight:800;letter-spacing:-.045em;line-height:1;color:var(--ink);
+  background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:var(--ink)}
+.bignum .of{font-size:14px;font-weight:700;letter-spacing:0;margin-top:5px;color:var(--mut);-webkit-text-fill-color:var(--mut)}
+.reveal-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-weight:800;margin-top:12px}
+.reveal-headline{font-size:23px;font-weight:800;line-height:1.22;letter-spacing:-.025em;margin:14px 4px 9px;color:var(--ink)}
+.reveal-headline .red{color:var(--coral)}
+.reveal-body{font-size:14px;line-height:1.55;font-weight:500;color:var(--mut);margin-bottom:6px}
+.reveal-body b{color:var(--ink);font-weight:700}
+.tenyr{background:var(--coral-bg);border:1px solid var(--coral-line);border-radius:20px;padding:15px 16px;margin:16px 0;font-size:13.5px;font-weight:600;line-height:1.5;color:var(--coral-ink);box-shadow:0 1px 2px rgba(154,52,21,.05),0 10px 28px -10px rgba(234,88,12,.2)}
+.tenyr b{color:var(--coral-deep);font-weight:800;font-size:16px} /* 16px is below the AA "large" cut-off — needs the deep coral */
 
-/* projection */
-.legend{display:flex;justify-content:center;gap:18px;margin-top:4px;font-size:11.5px;font-weight:600;color:var(--text)}
+/* radar + pillar breakdown (Glasswater card grid) */
+.radarcard{background:var(--card);border-radius:26px;padding:16px 8px 4px;margin:16px 0 0;box-shadow:var(--sh1)}
+.radarcard .rlab{font:700 10px 'Plus Jakarta Sans',sans-serif;fill:var(--mut)}
+.pillrows{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0 2px;text-align:left}
+@media(min-width:392px){.pillrows{grid-template-columns:repeat(3,1fr)}}
+.prow2{position:relative;display:block;margin:0;background:var(--card);border-radius:18px;padding:12px 12px 13px;box-shadow:var(--sh1);font-size:12px;font-weight:700;color:var(--ink)}
+.prow2 .nm2{display:block;width:auto;text-align:left;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);line-height:1.25}
+.prow2 .vv{display:block;width:auto;text-align:left;font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-top:4px;line-height:1}
+.prow2 .vv i{font-style:normal;font-size:11px;font-weight:700;color:var(--mut);letter-spacing:0}
+.prow2 .bar2{display:block;flex:none;height:5px;background:#e8f1f6;border-radius:99px;overflow:hidden;margin-top:9px}
+.prow2 .bar2 i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width 1.1s var(--spring)}
+.prow2.weak{background:var(--coral-bg);box-shadow:0 1px 2px rgba(154,52,21,.06),0 10px 28px -8px rgba(234,88,12,.22)}
+.prow2.weak .vv{color:var(--coral-ink)}
+.prow2.weak .bar2{background:#ffe0d1}
+.prow2.weak .bar2 i{background:linear-gradient(135deg,#f97316,#ea580c)}
+.prow2 .pflag{position:absolute;top:-8px;right:8px;background:linear-gradient(135deg,#d1490b,#a8380c);color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:99px;padding:5px 9px;box-shadow:0 6px 14px -4px rgba(234,88,12,.5)}
+.limbox{background:var(--coral-bg);border:1px solid var(--coral-line);border-radius:20px;padding:15px 16px;margin:12px 0 2px;text-align:left;box-shadow:0 1px 2px rgba(154,52,21,.05),0 10px 28px -10px rgba(234,88,12,.22)}
+.limbox .lk{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--coral-ink);font-weight:800;margin-bottom:6px}
+.limbox .ln2{font-size:19px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-bottom:6px}
+.limbox p{font-size:12.5px;font-weight:600;color:var(--coral-ink);line-height:1.5}
+.limbox p b{color:var(--ink);font-weight:800}
+.lvl-line{font-size:12px;font-weight:600;color:var(--mut);margin-top:14px}
+.lvl-line b{color:var(--ink);font-weight:800}
+
+/* ---------- projection ---------- */
+.legend{display:flex;justify-content:center;gap:18px;margin-top:4px;font-size:11.5px;font-weight:700;color:var(--ink)}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
 .proj-row{display:flex;gap:11px;margin:12px 0}
-.proj-card{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px;text-align:center;box-shadow:var(--shadow-card)}
-.proj-card.bad{border-color:rgba(244,63,94,.32)}
-.proj-card.good{border-color:rgba(77,107,255,.5);background:linear-gradient(180deg,rgba(77,107,255,.08),transparent)}
-.proj-card .pn{font-size:34px;line-height:1;font-weight:800}
-.proj-card.bad .pn{color:var(--red)}
-.proj-card.good .pn{color:var(--aqua)}
-.proj-card .pl{font-size:10.5px;color:var(--dim);margin-top:5px;line-height:1.3}
-.chartbox2{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 10px 8px;margin:6px 0 14px;box-shadow:var(--shadow-card)}
-.chartbox2 .ctag{fill:#fff;font:700 11px 'Poppins',sans-serif;text-anchor:middle}
-.chartbox2 .cfree{fill:var(--dim);font:600 10px 'Poppins',sans-serif}
-.chartbox2 .caxis{fill:var(--mute);font:500 9.5px 'Poppins',sans-serif}
-.savedpill{display:block;background:linear-gradient(135deg,rgba(77,107,255,.16),rgba(59,130,246,.10));border:1px solid rgba(77,107,255,.45);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--text);font-weight:600;margin:0 0 14px;text-align:center;line-height:1.4}
-.savedpill b{color:var(--aqua)}
+.proj-card{flex:1;background:var(--card);border:2px solid rgba(15,37,48,.05);border-radius:20px;padding:14px 12px;text-align:center;box-shadow:var(--sh1)}
+.proj-card.bad{background:var(--coral-bg);border-color:var(--coral-line)}
+.proj-card.good{border-color:transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;box-shadow:var(--sh2),var(--ring)}
+.proj-card .pn{font-size:32px;line-height:1;font-weight:800;letter-spacing:-.035em}
+.proj-card.bad .pn{color:var(--coral)}
+.proj-card.good .pn{background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.proj-card .pl{font-size:10.5px;font-weight:600;color:var(--mut);margin-top:6px;line-height:1.35}
+.proj-card.bad .pl{color:var(--coral-ink)}
+.chartbox2{background:var(--card);border-radius:24px;padding:14px 10px 8px;margin:6px 0 14px;box-shadow:var(--sh1)}
+.chartbox2 .ctag{fill:#fff;font:800 11px 'Plus Jakarta Sans',sans-serif;text-anchor:middle}
+.chartbox2 .cfree{fill:var(--mut);font:700 10px 'Plus Jakarta Sans',sans-serif}
+.chartbox2 .caxis{fill:var(--mute);font:600 9.5px 'Plus Jakarta Sans',sans-serif}
+.savedpill{display:block;background:linear-gradient(135deg,#f0fafd,#e8f4fb);border:1px solid rgba(8,145,178,.16);border-radius:20px;padding:14px 16px;font-size:13.5px;color:var(--ink);font-weight:700;margin:0 0 14px;text-align:center;line-height:1.45;box-shadow:var(--sh1)}
+.savedpill b{background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;font-weight:800}
 
-/* bridge */
-.auth-grid{display:flex;gap:9px;margin:16px 0}
-.auth-grid .a{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:12px 6px;text-align:center;box-shadow:var(--shadow-card)}
-.auth-grid .a b{display:block;font-size:23px;font-weight:800;color:var(--aqua)}
-.auth-grid .a span{font-size:10px;color:var(--dim);line-height:1.2;display:block;margin-top:3px}
-.methodrow{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
-.methodrow .m{background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:8px 13px;font-size:12px;font-weight:600;color:var(--text)}
-.methodrow .m b{color:var(--aqua)}
+/* ---------- bridge ---------- */
+/* signature #1 — the same three-stat component as the intro's .trust, so it gets the
+   same climb over the photo above it (the translateY(6px) tell below only reads as a
+   layer when the row actually overlaps something) */
+.auth-grid{display:flex;gap:10px;margin:-28px 0 4px;padding:0 6px;position:relative;z-index:3}
+.auth-grid .a{flex:1;background:var(--card);border-radius:20px;padding:13px 6px 12px;text-align:center;box-shadow:var(--sh2)}
+.auth-grid .a:nth-child(1),.auth-grid .a:nth-child(3){transform:translateY(6px)}
+.auth-grid .a b{display:block;font-size:21px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+.auth-grid .a span{font-size:10px;color:var(--mut);font-weight:700;letter-spacing:.06em;text-transform:uppercase;line-height:1.25;display:block;margin-top:4px}
+.methodrow{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
+.methodrow .m{background:var(--card);border-radius:99px;padding:9px 14px;font-size:12px;font-weight:700;color:var(--mut);box-shadow:var(--sh1)}
+.methodrow .m b{color:var(--ink);font-weight:800}
 
-/* tier result */
-.tiercard{background:linear-gradient(160deg,#1b2352,#0c0f26);border:1.5px solid rgba(77,107,255,.5);border-radius:20px;padding:20px;margin:6px 0 14px;position:relative;overflow:hidden;box-shadow:var(--shadow);text-align:left}
-.tiercard:before{content:"";position:absolute;top:-50px;right:-50px;width:150px;height:150px;background:radial-gradient(circle,rgba(77,107,255,.3),transparent 70%)}
-.tiercard .tier-tag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua);font-weight:700;margin-bottom:7px}
-.tiercard .tier-name{font-size:26px;font-weight:800;line-height:1.05;margin-bottom:8px;color:#fff;letter-spacing:-.01em}
-.tiercard .tier-price{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
-.tiercard .tier-price b{font-size:34px;font-weight:800;color:#2fd4e6;line-height:1}
-.tiercard .tier-price span{font-size:13px;color:var(--dim);font-weight:600}
-.tiercard .tier-meta{font-size:12px;color:#a9c3da;margin-bottom:14px}
-.tiercard .tier-meta b{color:var(--aqua)}
-.tier-inc{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:4px}
-.tier-inc li{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:#dcebf7;line-height:1.35}
-.tier-inc li:before{content:"✓";color:var(--aqua);font-weight:800;flex-shrink:0}
-.scarce{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:600;color:#fca5b5;margin:2px 0 12px}
-.scarce .dotr{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px rgba(244,63,94,.2);animation:pulse 1.6s infinite}
-.guar{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12px;color:var(--dim);margin-top:12px}
-.guar svg{width:15px;height:15px;fill:var(--green);flex-shrink:0}
+/* ---------- tier result ---------- */
+.tiercard{
+  position:relative;overflow:hidden;text-align:left;
+  border:2px solid transparent;border-radius:26px;padding:22px;margin:8px 0 14px;
+  background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
+  box-shadow:var(--sh3),var(--ring);
+}
+.tiercard:before{content:"";position:absolute;top:-60px;right:-50px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.14),transparent 70%);pointer-events:none}
+.tiercard .tier-tag{position:relative;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--aq1);font-weight:800;margin-bottom:8px}
+.tiercard .tier-name{position:relative;font-size:26px;font-weight:800;line-height:1.06;margin-bottom:10px;color:var(--ink);letter-spacing:-.03em}
+.tiercard .tier-price{position:relative;display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
+.tiercard .tier-price b{font-size:36px;font-weight:800;line-height:1;letter-spacing:-.04em;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.tiercard .tier-price span{font-size:13px;color:var(--mut);font-weight:700}
+.tiercard .tier-meta{position:relative;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:14px}
+.tiercard .tier-meta b{color:var(--aq1);font-weight:800}
+.tier-inc{position:relative;list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.tier-inc li{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.4}
+/* signature #8 on the commercial screens: a drawn check in a soft filled circle,
+   not a font glyph whose optical weight changes per platform (see TICK_SVG in the JS) */
+.tier-inc li svg,.plan .pfeat span svg{flex:0 0 15px;width:15px;height:15px;margin-top:2px}
+.tier-price .was{font-size:16px;color:var(--mute);text-decoration:line-through;font-weight:700;-webkit-text-fill-color:var(--mute)}  /* the flex gap already spaces it */
+.tier-perday{position:relative;font-size:12.5px;font-weight:600;color:var(--mut);margin-top:2px}
+.tier-perday b{color:var(--aq1);font-weight:800}
+.disc-badge{display:inline-flex;align-items:center;gap:6px;background:#e9f7fc;border:1px solid rgba(8,145,178,.28);color:var(--aq1);font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:99px;margin-top:10px;position:relative}
+.scarce{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:800;color:var(--coral-ink);margin:2px 0 12px}
+.scarce .dotr{width:8px;height:8px;border-radius:50%;background:#f97316;box-shadow:0 0 0 4px rgba(234,88,12,.14);animation:pulse 1.6s infinite;flex-shrink:0}
+.guar{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12px;font-weight:600;color:var(--mut);margin-top:14px}
+.guar svg{width:15px;height:15px;fill:var(--aq1);flex-shrink:0}
 
-/* plans / payment */
-.plans{display:flex;flex-direction:column;gap:11px;margin:8px 0 4px}
-.plan{display:flex;align-items:center;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:15px 16px;cursor:pointer;box-shadow:var(--shadow-card);transition:.15s;position:relative}
-.plan:hover{border-color:var(--aqua)}
-.plan.sel{border-color:var(--aqua);background:linear-gradient(180deg,rgba(77,107,255,.09),transparent)}
-.plan .pradio{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s}
-.plan.sel .pradio{border-color:var(--aqua);background:var(--aqua)}
-.plan.sel .pradio:after{content:"";width:7px;height:7px;border-radius:50%;background:var(--ink)}
+/* ---------- plans / payment — scroll-snap carousel ---------- */
+/* the track bleeds to the shell edges; the side padding is exactly what centres card #1.
+   overflow-x:auto forces overflow-y to compute to auto, so the bottom padding has to
+   clear .plan.sel's --sh3 (0 32px 64px -16px ≈ 48px) or the shadow is sliced flat. */
+.plans{
+  display:flex;flex-direction:row;align-items:stretch;gap:14px;
+  margin:16px -22px 2px;padding:26px calc(50% - 100px) 46px;
+  overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.plans::-webkit-scrollbar{display:none}
+.plan{
+  position:relative;flex:0 0 244px;scroll-snap-align:center;
+  display:flex;flex-direction:column;align-items:flex-start;text-align:left;
+  background:var(--card);border:2px solid rgba(15,37,48,.05);border-radius:26px;
+  padding:22px 18px 18px;cursor:pointer;box-shadow:var(--sh1);
+  transition:transform .35s var(--spring),box-shadow .35s,border-color .35s;
+}
+.plan:before{content:"";position:absolute;inset:0;border-radius:24px;pointer-events:none;background:radial-gradient(140% 70% at 50% -20%,rgba(14,165,233,.10),transparent 60%)}
+.plan:hover{transform:translateY(-3px);box-shadow:var(--sh2)}
+.plan:active{transform:scale(.985)}
+.plan.sel{
+  transform:translateY(-6px);border-color:transparent;
+  background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
+  box-shadow:var(--sh3),var(--ring);
+}
+/* springing check */
+.plan .psel{position:absolute;top:15px;right:15px;width:28px;height:28px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.3);box-shadow:0 8px 18px -6px rgba(8,145,178,.55);transition:opacity .25s,transform .4s var(--over)}
+.plan .psel:after{content:"";width:11px;height:6px;border:2.4px solid #fff;border-top:0;border-right:0;border-radius:1px;transform:rotate(-45deg) translate(1px,-1px)}
+.plan.sel .psel{opacity:1;transform:scale(1)}
+/* legacy row bits — kept defined, unused by the carousel markup */
+.plan .pradio{width:24px;height:24px;border-radius:50%;border:2px solid rgba(15,37,48,.34);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
+.plan.sel .pradio{border-color:transparent;background:var(--grad);box-shadow:0 6px 14px -5px rgba(8,145,178,.55);animation:pop .35s var(--over)}
+.plan.sel .pradio:after{content:"";width:10px;height:5.5px;border:2.4px solid #fff;border-top:0;border-right:0;border-radius:1px;transform:rotate(-45deg) translate(1px,-1px)}
 .plan .pinfo{flex:1;text-align:left;min-width:0}
-.plan .pn2{font-size:15px;font-weight:800;color:var(--text);line-height:1.15}
-.plan .pm{font-size:11px;color:var(--dim);margin-top:3px}
-.plan .pprice{text-align:right;flex-shrink:0}
-.plan .pday b{font-size:23px;font-weight:800;color:var(--aqua);line-height:1}
-.plan .pday span{font-size:11px;color:var(--dim);font-weight:600}
-.plan .pweek{font-size:11px;color:var(--dim);margin-top:4px}
-.plan .pbadge{position:absolute;top:-9px;left:14px;background:var(--orange);color:#fff;font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:99px}
+.plan .pn2{font-size:15px;font-weight:800;color:var(--ink);line-height:1.15;letter-spacing:-.02em}
+.plan .pm{font-size:11px;font-weight:600;color:var(--mut);margin-top:4px}
 .plan .pweekbig{white-space:nowrap}
-.plan .pweekbig b{font-size:20px;font-weight:800;color:var(--aqua);line-height:1}
-.plan .pweekbig span{font-size:11px;color:var(--dim);font-weight:600}
-.disc-banner{text-align:center;margin:0 0 10px}
-.paytrust{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;color:var(--dim);margin-top:12px}
+.plan .pweekbig b{font-size:21px;font-weight:800;line-height:1;letter-spacing:-.03em;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.plan .pweekbig span{font-size:11px;color:var(--mut);font-weight:700}
+/* card contents */
+.plan .pname{position:relative;display:block;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);line-height:1.3;padding-right:30px}
+.plan .pold{display:block;font-size:11px;font-weight:700;color:var(--mute);text-decoration:line-through;margin:9px 0 -4px}
+.plan .pprice{position:relative;display:flex;align-items:baseline;margin-top:12px;font-size:42px;font-weight:800;line-height:1;letter-spacing:-.045em;color:var(--ink)}
+.plan .pprice i{font-style:normal;font-size:17px;font-weight:800;letter-spacing:0;margin-right:3px;transform:translateY(-12px);color:var(--aq1)}
+.plan .pprice em{font-style:normal;font-size:14px;font-weight:700;letter-spacing:0;margin-left:4px;color:var(--mut)}
+.plan .pday{position:relative;display:inline-block;align-self:flex-start;margin-top:12px;background:#eef7fa;border-radius:99px;padding:6px 12px;font-size:11.5px;font-weight:700;color:var(--mut)}
+.plan .pfeat{position:relative;display:flex;flex-direction:column;gap:8px;margin-top:16px;width:100%}
+.plan .pfeat span{display:flex;align-items:flex-start;gap:8px;font-size:12px;font-weight:700;line-height:1.4;color:var(--ink)}
+.plan .psess{position:relative;display:flex;align-items:center;gap:8px;width:100%;margin-top:auto;padding-top:18px;font-size:13px;font-weight:800;color:var(--ink)}
+.plan .psess svg{flex:0 0 18px;width:18px;height:18px}
+.plan .pweek{font-size:11px;font-weight:600;color:var(--mut);margin-top:5px}
+.plan .pbadge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad-ink);color:#fff;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:99px;white-space:nowrap;box-shadow:0 8px 18px -4px rgba(8,145,178,.55);z-index:2}
+.disc-banner{text-align:center;margin:0 0 12px}
+.paytrust{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:600;color:var(--mut);margin-top:12px}
+
+/* ---------- sticky frosted checkout bar (plans screen only) ---------- */
+.step.padbar{padding-bottom:148px}   /* bar is 114px at 375, 134px at 320 (trust line wraps) */
+.ctabar{
+  position:fixed;left:0;right:0;bottom:0;margin:0 auto;z-index:50;
+  width:min(460px,100%);
+  background:rgba(255,255,255,.74);
+  backdrop-filter:blur(18px) saturate(1.1);-webkit-backdrop-filter:blur(18px) saturate(1.1);
+  border-top:1px solid rgba(255,255,255,.9);
+  border-radius:26px 26px 0 0;
+  box-shadow:0 -12px 40px -8px rgba(15,37,48,.18);
+  padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+  transform:translateY(118%);visibility:hidden;
+  transition:transform .55s var(--spring),visibility 0s .55s;
+}
+body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
+@media(min-width:768px){.ctabar{bottom:18px;border-radius:26px;width:min(436px,calc(100% - 24px));border:1px solid rgba(255,255,255,.9)}}
+.ctabar .cta{margin-top:0;white-space:nowrap}   /* a label regression must show, not silently wrap */
+.ctabar .paytrust{margin-top:9px;flex-wrap:wrap}
+.ctabar .paytrust #payname{color:var(--ink);font-weight:800}
+.ctabar .spots{color:var(--coral-deep);font-weight:800}
+
 /* IG real card */
 .igservices{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 4px}
-.igservices span{background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:5px 11px;font-size:11.5px;font-weight:600;color:var(--text)}
-.igreal{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0 0;box-shadow:var(--shadow-card)}
-.igreal-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text);font-weight:600;padding:4px 0}
-.igreal-note{font-size:11.5px;color:var(--mute);margin-top:6px;font-style:italic}
+.igservices span{background:var(--card);border-radius:99px;padding:6px 12px;font-size:11.5px;font-weight:700;color:var(--mut);box-shadow:var(--sh1)}
+.igreal{background:var(--card);border-radius:20px;padding:15px 16px;margin:12px 0 0;box-shadow:var(--sh1)}
+.igreal-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink);font-weight:700;padding:5px 0}
+.igreal-note{font-size:11.5px;color:var(--mute);font-weight:600;margin-top:8px;font-style:italic}
 
 /* instagram grid */
-.igsec{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
-.ighead{display:flex;align-items:center;gap:11px;margin-bottom:14px}
-.igav{width:46px;height:46px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--aqua);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;background:linear-gradient(135deg,var(--aqua),var(--blue))}
-.igav img{width:28px;height:28px;object-fit:contain}
+.igsec{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.ighead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.igav{width:46px;height:46px;border-radius:50%;flex-shrink:0;background:var(--grad);box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(8,145,178,.28),var(--sh1);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px}
+.igav img{width:26px;height:26px;object-fit:contain}
 .igmeta{text-align:left;flex:1;min-width:0}
-.ighandle{font-size:14.5px;font-weight:800;color:var(--text)}
-.igtag{font-size:11.5px;color:var(--dim);margin-top:2px;line-height:1.3}
+.ighandle{font-size:14.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+.igtag{font-size:11.5px;font-weight:600;color:var(--mut);margin-top:3px;line-height:1.35}
 .iggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.igtile{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;display:block;background:linear-gradient(135deg,var(--bg3),var(--surface2));border:1px solid var(--line2)}
+.igtile{position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;display:block;background:linear-gradient(135deg,#e3eff6,var(--surface2));box-shadow:var(--sh1)}
 .igtile img{width:100%;height:100%;object-fit:cover;display:block}
-.igtile .igph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mute);font-size:10px;font-weight:600;letter-spacing:.04em}
-.igbtn{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:14px;width:100%;text-decoration:none;padding:15px;border-radius:14px;font-weight:700;font-size:15px;color:#fff;background:linear-gradient(95deg,#feda75,#fa7e1e,#d62976 55%,#962fbf 80%,#4f5bd5);box-shadow:0 14px 30px -12px rgba(214,41,118,.5)}
+.igtile .igph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:10px;font-weight:700;letter-spacing:.04em}
+/* Instagram ramp trimmed to its magenta→indigo half: the original amber stop left white
+   label text at 2.6:1. Every stop below clears 4.5 on white. */
+.igbtn{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:14px;width:100%;text-decoration:none;padding:16px;border-radius:99px;font-weight:800;font-size:15px;color:#fff;background:linear-gradient(95deg,#d62976,#c13584 32%,#962fbf 66%,#4f5bd5);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.3),0 14px 30px -12px rgba(214,41,118,.5)}
 .igbtn svg{width:20px;height:20px;fill:#fff}
 
-/* SCRATCH */
+/* ---------- scratch ---------- */
 .scratch-wrap{text-align:center;display:flex;flex-direction:column}
-.scratch-stage{position:relative;width:300px;max-width:100%;aspect-ratio:5/3;margin:6px auto 0;border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
-.prize-under{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;background:radial-gradient(circle at 50% 30%,var(--aqua-deep),var(--navy))}
-.prize-kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;font-weight:700;color:var(--gold)}
-.prize-title{font-size:23px;line-height:1.08;font-weight:800;color:#fff;letter-spacing:-.01em}
-.prize-sub{font-size:12px;color:#d3e7f5;margin-top:9px;line-height:1.4;max-width:240px}
+.scratch-stage{position:relative;width:300px;max-width:100%;aspect-ratio:5/3;margin:6px auto 0;border-radius:24px;overflow:hidden;box-shadow:var(--sh3)}
+.prize-under{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;background:radial-gradient(circle at 50% 30%,#0e7490,#0b2a38)}
+.prize-kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;font-weight:800;color:#fbbf24}
+.prize-title{font-size:23px;line-height:1.08;font-weight:800;color:#fff;letter-spacing:-.02em}
+.prize-sub{font-size:12px;font-weight:600;color:#cfe8f3;margin-top:9px;line-height:1.45;max-width:240px}
 #scratchCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
-.scratch-hint{font-size:12px;color:var(--aqua);margin-top:12px;letter-spacing:.02em;font-weight:600}
+.scratch-hint{font-size:12px;color:var(--aq1);margin-top:12px;letter-spacing:.02em;font-weight:700}
 .jackpot-line{font-size:20px;font-weight:800;color:var(--gold);margin:14px 0 2px;display:none}
-.confetti{position:fixed;top:-10px;width:9px;height:14px;z-index:60;pointer-events:none;border-radius:2px;animation:fall linear forwards}
+/* above .modal-ov (z-index 100) — the reveal burst used to paint *under* the scrim's
+   blur, so the one moment of reward in the paywall rendered as nothing */
+.confetti{position:fixed;top:-10px;width:9px;height:14px;z-index:120;pointer-events:none;border-radius:2px;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
 
-/* coaching snippet (coach's note) */
-.snip{background:var(--surface);border:1.5px solid rgba(77,107,255,.4);border-left:4px solid var(--aqua);border-radius:16px;padding:18px;box-shadow:var(--shadow-card);text-align:left;margin-top:4px}
-.snip .sk{display:flex;align-items:center;gap:10px;margin-bottom:11px}
-.snip .sav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--aqua),var(--blue));display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;flex-shrink:0}
-.snip .sav img{width:22px;height:22px;object-fit:contain}
-.snip .skk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua);font-weight:700}
-.snip .skn{font-size:12px;color:var(--dim);font-weight:600;margin-top:2px}
-.snip .st{font-size:16.5px;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:8px}
-.snip .sb{font-size:13.5px;line-height:1.55;color:var(--dim)}
-.snip .sb b{color:var(--text)}
-.snipstat{display:flex;align-items:center;gap:10px;background:rgba(77,107,255,.08);border:1px solid rgba(77,107,255,.25);border-radius:11px;padding:10px 13px;margin-top:12px;font-size:12.5px;font-weight:600;color:var(--text);text-align:left}
-.snipstat b{color:var(--aqua);font-size:17px;flex-shrink:0}
-/* milestone (rich checkpoint) */
-.mile-ck{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--aqua);font-weight:700;text-align:center;margin-bottom:4px}
-.mrecap{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 14px;margin:18px 0 4px;box-shadow:var(--shadow-card)}
-.mrow{display:flex;align-items:center;gap:11px;padding:9px 2px;font-size:13.5px;font-weight:600;border-bottom:1px solid var(--line2)}
+/* ---------- coach's note — chat row: avatar + name label + bubble ---------- */
+.snip{position:relative;display:flex;align-items:flex-start;gap:11px;background:none;box-shadow:none;padding:0;border-radius:0;text-align:left;margin-top:4px}
+.snip .sav{position:relative;width:44px;height:44px;flex:0 0 44px;border-radius:50%;overflow:visible;background:var(--grad-ink);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;box-shadow:0 8px 18px -6px rgba(8,145,178,.5)}
+.snip .sav:after{content:"";position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:var(--green);border:2.5px solid #fff;z-index:2}
+.snip .sav img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid #fff;display:block}
+.snip .sk{flex:1;min-width:0;display:block;margin:0}
+.snip .skk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:800;margin:2px 0 7px}
+/* typing row and note share one grid cell, so the bubble's box never snaps from 34px
+   to full height — the message cross-fades in place (glasswater.html:274-278) */
+.snip .sbub{position:relative;background:var(--card);border-radius:4px 26px 26px 26px;box-shadow:var(--sh2);padding:16px 17px;display:grid}
+.snip .sbub>*{grid-area:1/1}
+.snip .skn{font-size:11px;color:var(--mut);font-weight:600;margin-top:8px;letter-spacing:.02em} /* sits on the page wash, not a card — needs --mut */
+.snip .st{font-size:16px;font-weight:800;line-height:1.35;letter-spacing:-.02em;color:var(--ink);margin-bottom:9px}
+.snip .sb{font-size:13.5px;line-height:1.55;font-weight:500;color:var(--mut)}
+.snip .sb b{color:var(--ink);font-weight:700}
+.snip .typing{min-height:34px;align-items:center;padding:0}
+.snipstat{display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,#f0fafd,#e8f4fb);border:1px solid rgba(8,145,178,.14);border-radius:16px;padding:11px 14px;margin-top:14px;font-size:12.5px;font-weight:600;color:var(--ink);text-align:left}
+.snipstat b{font-size:19px;font-weight:800;letter-spacing:-.03em;flex-shrink:0;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+
+/* ---------- milestone (rich checkpoint) ---------- */
+.mile-ck{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--aq1);font-weight:800;text-align:center;margin-bottom:6px}
+.mrecap{background:var(--card);border-radius:22px;padding:8px 16px;margin:18px 0 4px;box-shadow:var(--sh1)}
+.mrow{display:flex;align-items:center;gap:12px;padding:10px 2px;font-size:13.5px;font-weight:700;border-bottom:1px solid var(--line2)}
 .mrow:last-child{border-bottom:none}
 .mrow .mi{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.mrow.ok .mi{background:var(--green)}
+.mrow.ok .mi{background:var(--grad);box-shadow:0 6px 14px -5px rgba(8,145,178,.5)}
 .mrow.ok .mi:after{content:"✓";color:#fff;font-size:12px;font-weight:800}
-.mrow.now .mi{border:2px solid var(--aqua);background:rgba(77,107,255,.12)}
-.mrow.now .mi:after{content:"";width:9px;height:9px;border-radius:50%;background:var(--aqua)}
-.mrow.wait .mi{border:2px solid var(--line)}
-.mrow.ok .ml{color:var(--text)}.mrow.now .ml{color:var(--text)}.mrow.wait .ml{color:var(--mute)}
+.mrow.now .mi{border:2px solid var(--aq1);background:rgba(14,165,233,.1)}
+.mrow.now .mi:after{content:"";width:9px;height:9px;border-radius:50%;background:var(--aq1)}
+.mrow.wait .mi{border:2px solid rgba(15,37,48,.34)}
+.mrow.ok .ml{color:var(--ink)}.mrow.now .ml{color:var(--ink)}.mrow.wait .ml{color:var(--mute)}
 .mrow .ml{flex:1;text-align:left}
-.mprog{margin:16px 4px 2px}
-.mprog .mpbar{height:8px;background:var(--track);border-radius:99px;overflow:hidden}
-.mprog .mpbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:99px;transition:width 1s cubic-bezier(.22,1,.36,1)}
-.mprog .mpt{display:flex;justify-content:space-between;font-size:11.5px;color:var(--dim);font-weight:600;margin-top:7px}
-.mprog .mpt b{color:var(--aqua)}
+.mprog{margin:18px 0 2px}   /* tracks the .mrecap card edges above it */
+.mprog .mpbar{height:10px;background:var(--track);border-radius:99px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(15,37,48,.07)}
+.mprog .mpbar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width 1s var(--spring)}
+.mprog .mpt{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);font-weight:700;margin-top:9px}
+.mprog .mpt b{color:var(--aq1);font-weight:800}
 .mile{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center}
-.mile .mck{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,var(--aqua),var(--blue));margin:0 auto 18px;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 40px -14px rgba(77,107,255,.55);animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
+.mile .mck{width:74px;height:74px;border-radius:50%;background:var(--grad);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),0 18px 40px -14px rgba(8,145,178,.6);animation:pop .5s var(--over) both}
 .mile .mck svg{width:32px;height:32px;fill:#fff}
 @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
 .mile h1{font-size:26px;margin-top:2px}
 .milebars{display:flex;gap:7px;justify-content:center;margin:16px 0 4px}
 .milebars i{width:34px;height:6px;border-radius:99px;background:var(--track)}
-.milebars i.on{background:linear-gradient(90deg,var(--aqua),var(--blue))}
-/* multi select */
-.opt .box{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s}
-.opt.sel .box{border-color:var(--aqua);background:var(--aqua)}
-.opt.sel .box:after{content:"✓";color:#fff;font-weight:800;font-size:12px}
-/* number inputs */
+.milebars i.on{background:var(--grad)}
+
+/* ---------- number inputs + board card ---------- */
 .numrow{display:flex;gap:11px;margin-top:4px}
 .numrow .field{flex:1;margin-bottom:0}
 .numfield{position:relative}
-.numfield .ni{position:absolute;left:13px;top:34px;font-size:17px;pointer-events:none;opacity:.85}
-.numfield input{padding-left:40px!important}
-.skiplink{text-align:center;margin-top:14px;font-size:13px;color:var(--dim);text-decoration:underline;cursor:pointer}
-.boardcard{background:linear-gradient(160deg,#18204a,#0c1026);border:1px solid rgba(77,107,255,.4);border-radius:16px;padding:16px 18px;margin:18px 0 4px;color:#fff;box-shadow:var(--shadow-card);position:relative;overflow:hidden}
-.boardcard:before{content:"";position:absolute;top:-40px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(77,107,255,.35),transparent 70%)}
-.boardcard .bk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua);font-weight:700;display:flex;align-items:center;gap:7px}
-.boardcard .bv{font-size:30px;font-weight:800;color:#2fd4e6;line-height:1;margin:8px 0 2px}
-.boardcard .bv small{font-size:14px;color:#a9c3da;font-weight:600}
-.boardcard .bd{font-size:12.5px;color:#c7dced;line-height:1.5}
-.boardcard.empty{background:var(--surface);border:1px dashed var(--line);color:var(--dim)}
-.boardcard.empty .bk{color:var(--dim)}
-.numwhy{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--dim);margin-top:12px;line-height:1.45}
-.numwhy svg{width:15px;height:15px;fill:var(--green);flex-shrink:0;margin-top:1px}
-/* radar + pillar breakdown */
-.radarcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 10px 4px;margin:14px 0 4px;box-shadow:var(--shadow-card)}
-.radarcard .rlab{font:600 10px 'Poppins',sans-serif;fill:var(--dim)}
-.pillrows{margin:8px 8px 14px}
-.prow2{display:flex;align-items:center;gap:9px;margin:7px 0;font-size:12px;font-weight:600;color:var(--text)}
-.prow2 .nm2{width:100px;text-align:left;flex-shrink:0}
-.prow2 .bar2{flex:1;height:6px;background:var(--track);border-radius:99px;overflow:hidden}
-.prow2 .bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--aqua),var(--blue));border-radius:99px;transition:width .8s cubic-bezier(.22,1,.36,1)}
-.prow2 .vv{width:30px;text-align:right;color:var(--aqua);font-weight:700;flex-shrink:0}
-.prow2.weak .vv{color:var(--orange)}
-.prow2.weak .bar2 i{background:linear-gradient(90deg,var(--orange),var(--orange-deep))}
-.limbox{background:rgba(255,106,77,.08);border:1px solid rgba(255,106,77,.3);border-radius:14px;padding:14px 15px;margin:12px 0 2px;text-align:left}
-.limbox .lk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:5px}
-.limbox .ln2{font-size:19px;font-weight:800;color:var(--text);margin-bottom:5px}
-.limbox p{font-size:12.5px;color:var(--dim);line-height:1.5}
-.limbox p b{color:var(--text)}
-.lvl-line{font-size:12px;color:var(--dim);margin-top:10px}
-.lvl-line b{color:var(--text)}
-/* tap feedback — ripple, float-up emoji, selection pop */
+.numfield .ni{position:absolute;left:15px;top:37px;font-size:17px;pointer-events:none;opacity:.9;z-index:1}
+.numfield input{padding-left:44px!important}
+.skiplink{display:flex;align-items:center;justify-content:center;min-height:44px;padding:12px;text-align:center;margin-top:8px;font-size:13px;line-height:20px;font-weight:600;color:var(--mut);text-decoration:underline;text-underline-offset:3px;cursor:pointer} /* 44px tap target */
+.boardcard{position:relative;overflow:hidden;background:linear-gradient(160deg,#f2fbfe,#e9f3fa);border:1px solid rgba(8,145,178,.14);border-radius:22px;padding:17px 18px;margin:18px 0 4px;color:var(--ink);box-shadow:var(--sh2)}
+.boardcard:before{content:"";position:absolute;top:-46px;right:-32px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.18),transparent 70%);pointer-events:none}
+.boardcard .bk{position:relative;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--aq1);font-weight:800;display:flex;align-items:center;gap:7px}
+.boardcard .bv{position:relative;font-size:31px;font-weight:800;line-height:1;letter-spacing:-.04em;margin:9px 0 3px;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.boardcard .bv small{font-size:14px;font-weight:700;-webkit-text-fill-color:var(--mut);color:var(--mut)}
+.boardcard .bd{position:relative;font-size:12.5px;font-weight:600;color:var(--mut);line-height:1.5}
+.boardcard .bd b{color:var(--ink);font-weight:800}
+.boardcard.empty{background:var(--card);border:1.5px dashed rgba(15,37,48,.12);color:var(--mut);box-shadow:var(--sh1)}
+.boardcard.empty:before{display:none}
+.boardcard.empty .bk{color:var(--mut)}
+.numwhy{display:flex;align-items:flex-start;gap:9px;font-size:12px;font-weight:600;color:var(--mut);margin-top:14px;line-height:1.45}
+.numwhy svg{width:15px;height:15px;fill:var(--aq1);flex-shrink:0;margin-top:1px}
+
+/* ---------- tap feedback ---------- */
 .opt,.gcard,.acard{position:relative;overflow:hidden}
-.ripple{position:absolute;width:14px;height:14px;border-radius:50%;background:rgba(77,107,255,.35);transform:translate(-50%,-50%) scale(0);animation:rip .55s ease-out forwards;pointer-events:none}
+.ripple{position:absolute;width:14px;height:14px;border-radius:50%;background:rgba(14,165,233,.3);transform:translate(-50%,-50%) scale(0);animation:rip .55s ease-out forwards;pointer-events:none}
 @keyframes rip{to{transform:translate(-50%,-50%) scale(18);opacity:0}}
-.floatup{position:fixed;z-index:80;font-size:21px;transform:translate(-50%,-50%);animation:flup .8s cubic-bezier(.22,1,.36,1) forwards;pointer-events:none}
+.floatup{position:fixed;z-index:80;font-size:21px;transform:translate(-50%,-50%);animation:flup .8s var(--spring) forwards;pointer-events:none}
 @keyframes flup{20%{opacity:1}to{transform:translate(-50%,-190%) scale(1.3);opacity:0}}
-.opt.sel,.gcard.sel,.acard.sel{animation:selPop .35s cubic-bezier(.34,1.56,.64,1)}
-@keyframes selPop{40%{transform:scale(1.025)}}
-.opt.sel .tick{animation:pop .3s cubic-bezier(.34,1.56,.64,1)}
-/* progress bar — shimmer + surfer riding the fill */
+.opt.sel,.gcard.sel,.acard.sel{animation:selPop .38s var(--over)}
+@keyframes selPop{0%,100%{transform:translateY(-3px)}40%{transform:translateY(-3px) scale(1.03)}}
+.opt.sel .tick,.opt.sel .box{animation:ckPop .4s var(--over)}
+@keyframes ckPop{from{transform:scale(.3)}to{transform:scale(1)}}
+
+/* progress rail — the shimmer sweep and the 🏄 emoji are gone with the dot rail.
+   #barsurfer stays in the DOM (setProgress writes to it) but never paints. */
 .bar{position:relative;overflow:visible}
 .bar>i{position:relative;overflow:hidden}
-.bar>i:after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-100%);animation:shim 2s linear infinite}
-@keyframes shim{to{transform:translateX(100%)}}
-#barsurfer{position:absolute;top:50%;left:0%;font-size:15px;transform:translate(-55%,-58%) scaleX(-1);transition:left .5s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 2px 3px rgba(12,42,63,.3));pointer-events:none}
+#barsurfer{display:none}
 .qcount.bump{animation:qbump .35s}
-@keyframes qbump{40%{transform:scale(1.2);color:var(--aqua)}}
+@keyframes qbump{40%{transform:scale(1.2);color:var(--aq1)}}
+
 /* coach's note typing indicator */
 .typing{display:flex;gap:5px;padding:8px 2px 4px}
-.typing i{width:8px;height:8px;border-radius:50%;background:var(--aqua);opacity:.35;animation:tdot 1s infinite}
+.typing i{width:8px;height:8px;border-radius:50%;background:#b6cdd9;animation:tdot 1s infinite}
 .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
-@keyframes tdot{30%{opacity:1;transform:translateY(-3px)}}
-.snipin{animation:childIn .45s cubic-bezier(.22,1,.36,1) both}
+/* both properties are keyframed — animating opacity 1→1→1 left only a bare bob */
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+.snipin{animation:childIn .5s var(--spring) both}
+
 /* score reveal fx */
-.radarg{transform-box:view-box;transform-origin:50% 49%;animation:radarIn .9s .3s cubic-bezier(.34,1.56,.64,1) backwards}
+.radarg{transform-box:view-box;transform-origin:50% 49%;animation:radarIn .9s .3s var(--over) backwards}
 @keyframes radarIn{from{opacity:0;transform:scale(.25)}to{opacity:1;transform:scale(1)}}
-.rdot{transform-box:fill-box;transform-origin:center;animation:dotIn .4s cubic-bezier(.34,1.56,.64,1) backwards}
+.rdot{transform-box:fill-box;transform-origin:center;animation:dotIn .4s var(--over) backwards}
 @keyframes dotIn{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
-.bignum.settled{animation:numSettle .5s cubic-bezier(.34,1.56,.64,1)}
+.bignum.settled,.tier-price.settled{animation:numSettle .5s var(--over)}
 @keyframes numSettle{35%{transform:scale(1.14)}}
 .limbox.attn{animation:attn 1.1s}
-@keyframes attn{35%{box-shadow:0 0 0 8px rgba(255,106,77,.16)}70%,100%{box-shadow:0 0 0 0 rgba(255,106,77,0)}}
-.gauge .bub{position:absolute;bottom:4px;width:9px;height:9px;border-radius:50%;background:rgba(77,107,255,.3);animation:rise 3.4s ease-in infinite}
-.gauge .bub:nth-child(odd){width:6px;height:6px}
-@keyframes rise{0%{transform:translateY(0);opacity:0}12%{opacity:.9}100%{transform:translateY(-118px);opacity:0}}
+@keyframes attn{35%{box-shadow:0 0 0 8px rgba(234,88,12,.14)}70%,100%{box-shadow:0 0 0 0 rgba(234,88,12,0)}}
+.gauge .bub{position:absolute;bottom:2px;z-index:0;width:8px;height:8px;border-radius:50%;background:rgba(14,165,233,.22);animation:rise 3.6s ease-in infinite}
+.gauge .bub:nth-child(odd){width:5px;height:5px}
+@keyframes rise{0%{transform:translateY(0);opacity:0}12%{opacity:.8}100%{transform:translateY(-186px);opacity:0}}
+
 /* CTA shine sweep */
 .cta{position:relative;overflow:hidden}
 .cta:after{content:"";position:absolute;top:0;left:0;width:55%;height:100%;background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,.35) 50%,transparent 80%);transform:translateX(-170%) skewX(-18deg);animation:ctashine 3.4s ease-in-out infinite}
 @keyframes ctashine{0%,55%{transform:translateX(-170%) skewX(-18deg)}90%,100%{transform:translateX(330%) skewX(-18deg)}}
-.cta:disabled:after{display:none}
+.cta:disabled:after,.cta.green:after{display:none}
+
 /* milestone radiating rings */
 .mck{position:relative}
-.mck:before,.mck:after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid rgba(77,107,255,.5);animation:ringx 1.6s ease-out .35s infinite}
+.mck:before,.mck:after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid rgba(14,165,233,.45);animation:ringx 1.6s ease-out .35s infinite}
 .mck:after{animation-delay:.95s}
 @keyframes ringx{from{transform:scale(1);opacity:.8}to{transform:scale(1.95);opacity:0}}
+
 /* loader + result juice */
-.testi.tin{animation:childIn .5s both}
-.chk.done .cb{animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
-.tiercard{animation:cardIn .65s .15s cubic-bezier(.22,1,.36,1) backwards}
+.testi.tin{animation:childIn .5s var(--spring) both}
+.chk.done .cb{animation:pop .35s var(--over)}
+.tiercard{animation:cardIn .7s .15s var(--spring) backwards}
 @keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
 .plan .pbadge{animation:badgeP 2s infinite}
-@keyframes badgeP{50%{transform:scale(1.1)}}
+@keyframes badgeP{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.08)}}
 .scratch-hint{animation:hintB 1.6s infinite}
 @keyframes hintB{50%{transform:translateY(3px)}}
-@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-/* scratch modal */
-.modal-ov{position:fixed;inset:0;z-index:100;background:rgba(6,20,32,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:22px;animation:ovin .3s ease}
-@keyframes ovin{from{opacity:0}to{opacity:1}}
-.modal-card{width:100%;max-width:360px;background:linear-gradient(165deg,#0f2536,#0a1826);border:1px solid rgba(77,107,255,.45);border-radius:22px;padding:24px 22px 26px;text-align:center;box-shadow:0 34px 90px -22px rgba(0,0,0,.7);position:relative;animation:modin .45s cubic-bezier(.34,1.56,.64,1)}
-@keyframes modin{from{opacity:0;transform:translateY(26px) scale(.92)}to{opacity:1;transform:none}}
-.modal-kick{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700}
-.modal-h{font-size:23px;font-weight:800;color:#fff;margin:8px 0 4px;letter-spacing:-.01em}
-.modal-sub{font-size:13px;color:#a9c3da;margin-bottom:16px;line-height:1.45}
-.m-scratch{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
-.m-prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,var(--aqua-deep),var(--navy))}
-.m-prize .pk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
-.m-prize .pt{font-size:34px;font-weight:800;color:#fff;line-height:1;margin:5px 0}
-.m-prize .ps{font-size:11.5px;color:#d3e7f5}
-#mScratchCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
-.m-hint{font-size:12px;color:var(--aqua);margin-top:12px;font-weight:600;animation:hintB 1.6s infinite}
-.m-claim{display:none;width:100%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--aqua),var(--aqua-deep));color:#04302c;font-weight:800;font-size:17px;padding:15px;border-radius:14px;margin-top:16px;letter-spacing:.02em}
-/* discounted price on tier card */
-.tier-price .was{font-size:16px;color:#7c96ad;text-decoration:line-through;font-weight:600;margin-right:6px}
-.tier-perday{font-size:12.5px;color:#a9c3da;margin-top:2px}
-.tier-perday b{color:#2fd4e6}
-.disc-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(52,211,153,.16);border:1px solid rgba(52,211,153,.5);color:#6ee7b7;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px;margin-top:10px}
-.plan .pold{font-size:11px;color:#9aacbb;text-decoration:line-through;margin-right:4px}
-.tag-debug{position:fixed;bottom:8px;left:10px;font-size:10px;font-family:monospace;z-index:50;color:#456;display:none} /* hidden in production; add ?debug to the URL to show */
-/* narrow phones (≤360px): keep plan rows from overflowing */
-@media (max-width:360px){
-  #app{padding:6px 16px 34px}
-  h1{font-size:22px}
-  .intro-h{font-size:28px}
-  .plan{padding:13px 12px;gap:9px}
-  .plan .pn2{font-size:13.5px}
-  .plan .pweekbig b{font-size:17px}
-  .plan .pweek{font-size:10px}
-  .tiercard .tier-price b{font-size:28px}
+
+/* ---------- SVG re-tint (markup is built in JS — restyled here) ---------- */
+.radarcard svg polygon{stroke:#dfeaf1}
+.radarcard svg line{stroke:#e4eef4}
+.radarcard .radarg polygon{fill:rgba(8,145,178,.16);stroke:var(--aq1)}
+.radarcard .rdot{fill:var(--aq1);stroke:#fff}
+.chartbox2 svg line{stroke:#e4eef4}
+.chartbox2 #pfree{stroke:#a8c0cd}
+.chartbox2 #pred{stroke:var(--coral)}
+.chartbox2 #dred{fill:var(--coral);stroke:#fff}
+.chartbox2 #pgreen{stroke:var(--aq1)}
+.chartbox2 #dgreen{fill:var(--aq1);stroke:#fff}
+.chartbox2 #cgreen rect{fill:var(--aq1)}
+.chartbox2 #gArea stop:first-child{stop-color:#0ea5e9;stop-opacity:.28}
+.chartbox2 #gArea stop:last-child{stop-color:#0ea5e9;stop-opacity:0}
+.legend span:nth-child(1) i{background:var(--coral)!important}
+.legend span:nth-child(2) i{background:var(--aq1)!important}
+/* both rings encode a value, so every stop stays ≥3:1 against the light page */
+.gauge #gg stop:first-child{stop-color:#0891b2}
+.gauge #gg stop:last-child{stop-color:#0284c7}
+.ring-wrap.big svg circle{stroke:#dfeef5}
+.ring-wrap.big svg #ringfill{stroke:url(#rg)}
+.ring-wrap.big #rg stop:nth-child(1){stop-color:#0e7490}
+.ring-wrap.big #rg stop:nth-child(2){stop-color:#0891b2}
+.ring-wrap.big #rg stop:nth-child(3){stop-color:#0284c7}
+
+/* ---------- reduced motion ---------- */
+/* delays must go too: several entrances use `backwards`/`both` fill, so a surviving
+   delay = flash-of-invisible-content (radar dots held 1.35s, .step>* held .40s). */
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important}
+  .snip .typing{display:none}   /* nothing to watch — the note is revealed immediately */
 }
-.backlink{position:absolute;left:16px;top:14px;color:#d0d0d8;font-size:24px;cursor:pointer;z-index:6;line-height:1;padding:4px;display:none}
+
+/* ---------- scratch modal ---------- */
+.modal-ov{position:fixed;inset:0;z-index:100;background:rgba(9,38,50,.4);backdrop-filter:blur(10px) saturate(1.1);-webkit-backdrop-filter:blur(10px) saturate(1.1);display:flex;align-items:center;justify-content:center;padding:22px;animation:ovin .3s ease}
+@keyframes ovin{from{opacity:0}to{opacity:1}}
+.modal-card{width:100%;max-width:360px;background:var(--card);border-radius:30px;padding:26px 22px 26px;text-align:center;box-shadow:var(--sh3);position:relative;animation:modin .45s var(--over)}
+@keyframes modin{from{opacity:0;transform:translateY(26px) scale(.92)}to{opacity:1;transform:none}}
+.modal-kick{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--aq1);font-weight:800}
+.modal-h{font-size:23px;font-weight:800;letter-spacing:-.03em;color:var(--ink);margin:9px 0 5px}
+.modal-sub{font-size:13px;font-weight:600;color:var(--mut);margin-bottom:18px;line-height:1.45}
+.m-scratch{position:relative;width:100%;aspect-ratio:16/9;border-radius:20px;overflow:hidden;box-shadow:var(--sh2)}
+.m-prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,#0e7490,#0b2a38)}
+.m-prize .pk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#fbbf24;font-weight:800}
+.m-prize .pt{font-size:34px;font-weight:800;color:#fff;line-height:1;letter-spacing:-.03em;margin:6px 0}
+.m-prize .ps{font-size:11.5px;font-weight:600;color:#cfe8f3}
+#mScratchCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.m-hint{font-size:12px;color:var(--aq1);margin-top:14px;font-weight:700;animation:hintB 1.6s infinite}
+/* it *is* the .cta component — the hand-copied version had drifted (no press feedback,
+   56px instead of 58px, no shine sweep). Now it only adds the hidden-until-revealed state. */
+.m-claim{display:none;margin-top:18px}
+/* the modal must never be a dead end: an always-reachable dismiss, keyboard included */
+.m-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;
+  background:#eef4f8;color:var(--mut);font-size:20px;font-weight:700;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s var(--spring)}
+.m-close:hover{background:#e2edf3}
+.m-close:active{transform:scale(.92)}
+
+.tag-debug{position:fixed;bottom:8px;left:10px;font-size:10px;font-family:monospace;z-index:50;color:#7b96a4;display:none} /* hidden in production; add ?debug to the URL to show */
+
+/* ---------- narrow phones (≤360px) ---------- */
+@media (max-width:360px){
+  #app{padding:8px 16px 36px}
+  h1{font-size:25px}
+  .intro-h{font-size:31px}
+  /* the 46px icon circle gives back a little width on the smallest phones */
+  .opt{gap:11px;padding:16px 14px}
+  .opt .emoji{flex:0 0 40px;width:40px;height:40px;font-size:19px}
+  /* the track bleeds to the narrower app padding; side padding re-centres card #1 */
+  .plans{margin-left:-16px;margin-right:-16px;padding-left:calc(50% - 94px);padding-right:calc(50% - 94px)}
+  .plan{flex:0 0 220px;padding:20px 15px 16px}
+  .plan .pprice{font-size:38px}
+  .plan .pn2{font-size:13.5px}
+  .plan .pweekbig b{font-size:18px}
+  .plan .pweek{font-size:10px}
+  .tiercard{padding:19px}
+  .tiercard .tier-price b{font-size:30px}
+  .gauge{width:208px;height:208px}
+  .bignum{font-size:60px}
+}
+
+/* ---------- back control ---------- */
+.backlink{position:absolute;left:16px;top:calc(9px + env(safe-area-inset-top));width:44px;height:44px;border-radius:16px;background:var(--card);box-shadow:var(--sh1);color:var(--ink);font-size:24px;font-weight:700;cursor:pointer;z-index:6;line-height:41px;text-align:center;display:none;transition:transform .25s var(--spring)} /* 44px tap target */
+.backlink:active{transform:scale(.9)}
 .backlink.show{display:block}
 </style>
-<!-- design-direction preview: ?theme=a|b|c|d (no param = current design) · ?jump=<stepId> for deep screens -->
-<script>(function(){var q=new URLSearchParams(location.search);var t=(q.get('theme')||'').toLowerCase();
-if(/^[a-d]$/.test(t)){document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="themes/'+t+'.css">');document.documentElement.setAttribute('data-theme',t);}
+<!-- preview hook: ?jump=<stepId> jumps straight to a deep screen.
+     (The old ?theme=a|b|c|d loader is gone — themes/*.css were written against the dark
+     design and now fight the Glasswater palette.) -->
+<script>(function(){var q=new URLSearchParams(location.search);
 if(q.has('jump')){var j=document.createElement('script');j.src='preview-jump.js';j.defer=true;document.head.appendChild(j);}})();</script>
 </head>
 <body>
 <div class="bgfx"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
 <div id="shell">
-  <span class="backlink" id="back" onclick="goBack()">‹</span>
+  <span class="backlink" id="back" role="button" tabindex="0" aria-label="Go back" onclick="goBack()">‹</span>
   <div id="topbar">
-    <div class="brand"><img class="mark" src="img/ta-logo.png" alt="TA"><div class="wm">IMPROVE <b>SURFING</b></div></div>
+    <div class="brand"><img class="mark" src="img/ta-logo-dark.png" alt="TA"><div class="wm">IMPROVE <b>SURFING</b></div></div>
     <div class="progress-wrap" id="progwrap" style="visibility:hidden">
-      <div class="bar"><i id="barfill"></i><span id="barsurfer">🏄</span></div>
-      <div class="qcount" id="qcount"></div>
+      <div class="dots" id="dots"><i></i><i></i><i></i><i></i></div>
+      <div class="barrow"><div class="bar"><i id="barfill"></i><span id="barsurfer">🏄</span></div><div class="qcount" id="qcount"></div></div>
     </div>
   </div>
   <div id="app"></div>
@@ -508,7 +821,7 @@ if(q.has('jump')){var j=document.createElement('script');j.src='preview-jump.js'
 <script>
 /* ============================================================
    WHAT'S YOUR SURF SCORE? — Improve Surfing (prototype v1)
-   Dark-ocean theme · Poppins · progressive capture · Stripe end.
+   Glasswater light theme · Plus Jakarta Sans · progressive capture · Stripe end.
    Engine adapted from the JDL Burn Factor quiz.
    ============================================================ */
 
@@ -902,6 +1215,11 @@ const DEBUG=/[?&]debug/.test(location.search);
 const INPUT=['single','gender','imgcards','text','multi','num'];
 function inputSteps(){ return STEPS.filter(s=>INPUT.includes(s.type)&&(!s.cond||s.cond(state))); }
 function qSteps(){ return STEPS.filter(s=>s.q&&(!s.cond||s.cond(state))); }
+/* the four funnel sections the dot rail encodes — the same split the milestone recap uses */
+const DOT_SEC={name:0,gender:0,age:0,q1:0,q2:0,q3:0,q4:0,q5:0,q6:0,q7:0,q8:0,q9:0,q9b:0,
+  q10:1,q11:1,q12:1,q13:1,q14:1,q14b:1,
+  q15:2,q16:2,q17:2,q18:2,
+  missing:3,sessions:3,commit:3,local:3,q19:3,phone:3};
 function setProgress(step){
   const pw=document.getElementById('progwrap');
   const isInput=INPUT.includes(step.type);
@@ -913,13 +1231,27 @@ function setProgress(step){
     document.getElementById('barfill').style.width=pct+'%';
     const surf=document.getElementById('barsurfer'); if(surf)surf.style.left=pct+'%';
     const qc=document.getElementById('qcount'); if(qc)qc.textContent='';   /* no "Question X of Y" — keep it feeling short */
+    /* Glasswater signature #6: the live section's dot stretches into a 28px pill */
+    const dots=document.getElementById('dots');
+    if(dots){
+      const sec=DOT_SEC[step.id]!=null?DOT_SEC[step.id]:Math.min(3,Math.floor((n-1)/all.length*4));
+      [].forEach.call(dots.children,(d,i)=>d.classList.toggle('on',i===sec));
+    }
   } else pw.style.visibility='hidden';
   document.getElementById('back').classList.toggle('show', idx>0&&STEPS[idx].type!=='result'&&STEPS[idx].type!=='plans');
 }
-function next(){ do{idx++}while(idx<STEPS.length&&STEPS[idx].cond&&!STEPS[idx].cond(state)); if(idx>=STEPS.length)idx=STEPS.length-1; render(); }
+/* Skipping a conditional step has to drop whatever it once contributed: q9b/q14b stayed
+   in _sc after the answer that unlocked them changed, poisoning levelAvg()/pillarScores()
+   by up to ~19 Surf Score points. (The test can NOT live in scOf(): q14b's cond calls
+   levelAvg(), which calls scOf('q14b') — infinite recursion.) */
+function next(){ idx++;
+  while(idx<STEPS.length&&STEPS[idx].cond&&!STEPS[idx].cond(state)){
+    delete state._sc[STEPS[idx].id]; delete state[STEPS[idx].id]; idx++;
+  }
+  if(idx>=STEPS.length)idx=STEPS.length-1; render(); }
 function goBack(){ if(idx<=0)return; do{idx--}while(idx>0&&STEPS[idx].cond&&!STEPS[idx].cond(state)); render(); }
 function render(){
-  const step=STEPS[idx]; setProgress(step); app.innerHTML='';
+  const step=STEPS[idx]; setProgress(step); clearCtaBar(); app.innerHTML='';
   const el=document.createElement('div'); el.className='step';
   ({intro:renderIntro,text:renderText,gender:renderGender,imgcards:renderImgCards,single:renderSingle,
     multi:renderMulti,num:renderNum,snippet:renderSnippet,milestone:renderMilestone,
@@ -927,21 +1259,34 @@ function render(){
   app.appendChild(el); window.scrollTo(0,0); updateDebug();
 }
 function imgFallback(el){ const d=document.createElement('div'); d.className='imgslot ph '+el.dataset.ar; d.textContent=el.dataset.label; el.replaceWith(d); }
-function slot(name,ar,label){ return `<img class="imgslot ${ar}" data-ar="${ar}" data-label="${label}" src="img/${name}.jpg" onerror="imgFallback(this)">`; }
-function gslot(base,ar,label){ const g=state.gender==='Woman'?'f':'m'; return slot(base+'-'+g,ar,label); }
+/* HTML-escape anything user-typed before it goes into an attribute or innerHTML:
+   a name containing a quote used to terminate value="" and silently truncate the answer */
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+/* alt is explicit: the gender/age cards are role=button divs whose accessible name comes
+   from their contents, so an unlabelled <img> made screen readers read "img/male.jpg Man" */
+function slot(name,ar,label,alt){ return `<img class="imgslot ${ar}" data-ar="${ar}" data-label="${label}" alt="${esc(alt||'')}" src="img/${name}.jpg" onerror="imgFallback(this)">`; }
+function gslot(base,ar,label,alt){ const g=state.gender==='Woman'?'f':'m'; return slot(base+'-'+g,ar,label,alt); }
 function avFallback(img,ini){ const s=document.createElement('span'); s.className='avph'; s.textContent=ini; img.replaceWith(s); }
 
 function renderIntro(el){
+  /* layered depth: headline block → hero photo climbs over it → stat cards overlap the photo */
+  const av=n=>`<img src="img/${n}.jpg" alt="" onerror="this.style.display='none'">`;
   el.innerHTML=`
     <div class="intro-badge">Free · 3-min surf diagnostic</div>
-    ${slot('hero','ar-hero','HERO — prompt #1 (surfer, Gold Coast wave)')}
-    <div class="intro-h" style="margin-top:16px">There are 2 kinds of surfers: the ones who <span class="hl">keep improving</span> — and the ones <span class="red">stuck at the same level for years.</span></div>
-    <div class="sub">Every session on your own without feedback is a session that <b>doesn't move you forward.</b><br><br>Take the <b>20-point diagnostic</b> — get your <b>Surf Score</b>, your 6-pillar breakdown, and the exact path to your next level.</div>
+    <div class="intro-head">
+      <div class="intro-h">There are 2 kinds of surfers: the ones who <span class="hl">keep improving</span> — and the ones <span class="red">stuck at the same level for years.</span></div>
+      <div class="sub">Every session on your own without feedback is a session that <b>doesn't move you forward.</b></div>
+    </div>
+    <div class="herocard">
+      <div class="heroph">${slot('hero','ar-hero','HERO — prompt #1 (surfer, Gold Coast wave)','A surfer riding a Gold Coast wave')}</div>
+      <div class="scorepill"><small>Surf Score</small><strong>82</strong></div>
+    </div>
     <div class="trust">
-      <div class="t"><b>Since</b><span>2019</span></div>
-      <div class="t"><b>300+</b><span>surfers coached</span></div>
+      <div class="t"><b>2019</b><span>Since</span></div>
+      <div class="t"><div class="avs">${av('t1')}${av('t2')}${av('t3')}</div><b>300+</b><span>surfers coached</span></div>
       <div class="t"><b>99%</b><span>satisfaction</span></div>
     </div>
+    <div class="sub sub2">Take the <b>20-point diagnostic</b> — get your <b>Surf Score</b>, your 6-pillar breakdown, and the exact path to your next level.</div>
     <div class="spacer"></div>
     <button class="cta" onclick="next()">Find my Surf Score →</button>
     <div class="btnnote">No cost · <b>Personalised</b> result at the end</div>`;
@@ -949,16 +1294,16 @@ function renderIntro(el){
 const EMAIL_DOMAINS=['gmail.com','hotmail.com','outlook.com','yahoo.com.au','icloud.com','bigpond.com','live.com.au'];
 function renderText(el,step){
   const type=step.inputType||'text';
-  let title=step.title; const nm=state.name?state.name.split(' ')[0]:'';
+  let title=step.title; const nm=firstName();
   if(title.includes('{nm}')) title = nm ? title.replace('{nm}',nm+', ') : title.replace('{nm}','').replace(/^([a-z])/i,c=>c.toUpperCase());
   let fieldHtml;
   if(step.phone){
     fieldHtml=`<div class="phonewrap">
         <span class="ccode"><img class="flag" src="https://flagcdn.com/au.svg" alt="AU"> +61</span>
-        <input id="tf" type="tel" inputmode="tel" placeholder="${step.placeholder}" value="${state[step.field]||''}" autocomplete="off">
+        <input id="tf" type="tel" inputmode="tel" placeholder="${step.placeholder}" value="${esc(state[step.field]||'')}" autocomplete="off">
       </div>`;
   } else {
-    fieldHtml=`<div class="bigfield"><input id="tf" type="${type}" placeholder="${step.placeholder}" value="${state[step.field]||''}" autocomplete="off"></div>${step.suggest?'<div class="suggest" id="suggest"></div>':''}`;
+    fieldHtml=`<div class="bigfield"><input id="tf" type="${type}" placeholder="${step.placeholder}" value="${esc(state[step.field]||'')}" autocomplete="off"></div>${step.suggest?'<div class="suggest" id="suggest"></div>':''}`;
   }
   el.innerHTML=`
     ${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}
@@ -968,6 +1313,7 @@ function renderText(el,step){
     ${step.privacy?`<div class="privacy"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> Your details are safe and never shared.</div>`:''}`;
   const inp=el.querySelector('#tf'); setTimeout(()=>inp.focus(),120);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')saveText(step.field,type)});
+  inp.addEventListener('input',()=>{ inp.classList.remove('err'); inp.removeAttribute('aria-invalid'); });
   if(step.suggest){ const box=el.querySelector('#suggest'); inp.addEventListener('input',()=>emailSuggest(inp,box)); }
   if(step.phone){ inp.addEventListener('input',()=>{inp.value=inp.value.replace(/[^0-9 ]/g,'');}); }
 }
@@ -983,25 +1329,37 @@ function emailSuggest(inp,box){
 }
 function pickEmail(e,v){ e.preventDefault(); const i=document.getElementById('tf'); if(i){i.value=v;i.focus();} const b=document.getElementById('suggest'); if(b){b.style.display='none';} }
 function saveText(field,type){ let v=val('tf'); const ok = !v ? false : (type==='email' ? /.+@.+\..+/.test(v) : true);
-  if(!ok){const i=document.getElementById('tf');i.style.borderColor='var(--red)';i.focus();return;}
+  const i=document.getElementById('tf');
+  if(!ok){ if(i){ i.classList.add('err'); i.setAttribute('aria-invalid','true'); i.focus(); } return; }
+  if(i){ i.classList.remove('err'); i.removeAttribute('aria-invalid'); }
   if(field==='phone'){ v='+61 '+v.replace(/\s/g,'').replace(/^0/,''); }
   state[field]=v; next(); }
 function renderGender(el,step){
+  /* the stored answer has to paint: gslot() is already using state.gender to pick the
+     female age photos, so a blank-looking gender screen on back-nav was pure regression */
+  const s=v=>state.gender===v?' sel':'', p=v=>state.gender===v?'true':'false';
   el.innerHTML=`
     <div class="eyebrow">${step.eyebrow}</div><h1>${step.title}</h1>
     <div class="gcards">
-      <div class="gcard" onclick="pickGender(this,'Man')">${slot('male','ar-port','MALE SURFER')}<div class="gname">Man</div></div>
-      <div class="gcard" onclick="pickGender(this,'Woman')">${slot('female','ar-port','FEMALE SURFER')}<div class="gname">Woman</div></div>
+      <div class="gcard${s('Man')}" role="button" tabindex="0" aria-pressed="${p('Man')}" onclick="pickGender(this,'Man')">${slot('male','ar-port','MALE SURFER','')}<div class="gname">Man</div></div>
+      <div class="gcard${s('Woman')}" role="button" tabindex="0" aria-pressed="${p('Woman')}" onclick="pickGender(this,'Woman')">${slot('female','ar-port','FEMALE SURFER','')}<div class="gname">Woman</div></div>
     </div>
-    <div class="gcard alt" onclick="pickGender(this,'Prefer not to say')">Prefer not to say</div>`;
+    <div class="gcard alt${s('Prefer not to say')}" role="button" tabindex="0" aria-pressed="${p('Prefer not to say')}" onclick="pickGender(this,'Prefer not to say')">Prefer not to say</div>`;
 }
-function pickGender(node,v){ state.gender=v; fx(node,window.event,null); const from=idx; document.querySelectorAll('.gcard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},430); }
+function pickGender(node,v){ state.gender=v; fx(node,window.event,null); const from=idx;
+  document.querySelectorAll('.gcard').forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-pressed','false');});
+  node.classList.add('sel'); node.setAttribute('aria-pressed','true');
+  setTimeout(()=>{if(idx===from)next()},430); }
 function renderImgCards(el,step){
   el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${step.title}</h1>${step.sub?`<div class="sub">${step.sub}</div>`:''}
-    <div class="acards">${step.options.map(o=>`<div class="acard${state[step.id]===o.val?' sel':''}" onclick="pickCard(this,'${step.id}','${o.val}')">${gslot(o.img,'ar-card',o.label)}<div class="aname">${o.label}</div></div>`).join('')}</div>`;
+    <div class="acards">${step.options.map(o=>`<div class="acard${state[step.id]===o.val?' sel':''}" role="button" tabindex="0" aria-pressed="${state[step.id]===o.val?'true':'false'}" onclick="pickCard(this,'${step.id}','${o.val}')">${gslot(o.img,'ar-card',o.label,'')}<div class="aname">${o.label}</div></div>`).join('')}</div>`;
 }
-function pickCard(node,id,v){ state[id]=v; fx(node,window.event,null); const from=idx; document.querySelectorAll('.acard').forEach(x=>x.classList.remove('sel')); node.classList.add('sel'); setTimeout(()=>{if(idx===from)next()},430); }
-function firstName(){ let nm=state.name?String(state.name).trim().split(' ')[0]:''; return (nm && /[a-zA-Z]/.test(nm)) ? nm : ''; }
+function pickCard(node,id,v){ state[id]=v; fx(node,window.event,null); const from=idx;
+  document.querySelectorAll('.acard').forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-pressed','false');});
+  node.classList.add('sel'); node.setAttribute('aria-pressed','true');
+  setTimeout(()=>{if(idx===from)next()},430); }
+/* every consumer drops this into innerHTML, so it escapes here once */
+function firstName(){ let nm=state.name?String(state.name).trim().split(' ')[0]:''; return (nm && /[a-zA-Z]/.test(nm)) ? esc(nm) : ''; }
 function interp(t){ if(!t)return t; const nm=firstName();
   return t.replace('{nm}', nm?nm+', ':'').replace(/^([a-z])/,c=>c.toUpperCase()); }
 /* ── pricing + founding discount (scratch) ── */
@@ -1022,15 +1380,30 @@ function fx(node,e,score){ /* ripple inside the card + emoji floating up from th
   f.style.left=cx+'px'; f.style.top=cy+'px';
   document.body.appendChild(f); setTimeout(()=>f.remove(),850);
 }
+/* Glasswater signature #8 on the funnel's most-repeated element: every option row carries
+   a 46px soft circle. Scored options get a scale bar built from the score already in
+   STEPS (no copy change); the rest get the wave mark, so the silhouette stays uniform. */
+const OPT_WAVE='<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#0e7490" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13c2.2 0 2.2-1.8 4.5-1.8S9.8 13 12 13s2.2-1.8 4.5-1.8S18.8 13 21 13"/><path d="M3 18c2.2 0 2.2-1.8 4.5-1.8S9.8 18 12 18s2.2-1.8 4.5-1.8S18.8 18 21 18"/></svg>';
+function optIcon(o){
+  if(o.emoji) return `<span class="emoji">${o.emoji}</span>`;
+  if(o.score!=null){
+    const H=[5,9,13,17];
+    return `<span class="emoji ic"><svg width="21" height="21" viewBox="0 0 21 21" aria-hidden="true">${
+      H.map((h,i)=>`<rect x="${1+i*5}" y="${18-h}" width="3.4" height="${h}" rx="1.7" fill="${i<o.score?'#0e7490':'rgba(14,116,144,.22)'}"/>`).join('')}</svg></span>`;
+  }
+  return `<span class="emoji ic">${OPT_WAVE}</span>`;
+}
 function renderSingle(el,step){
-  el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}<div class="opts"></div>`;
+  el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}<div class="opts" role="radiogroup"></div>`;
   const opts=el.querySelector('.opts');
   step.options.forEach(o=>{
-    const b=document.createElement('button'); b.className='opt'+(state[step.id]===o.val?' sel':'');
-    b.innerHTML=`<span class="tick"></span>${o.emoji?`<span class="emoji">${o.emoji}</span>`:''}<span class="txt">${o.label}</span>`;
+    const b=document.createElement('button'); b.type='button'; b.className='opt'+(state[step.id]===o.val?' sel':'');
+    b.setAttribute('role','radio'); b.setAttribute('aria-checked',state[step.id]===o.val?'true':'false');
+    b.innerHTML=`<span class="tick"></span>${optIcon(o)}<span class="txt">${o.label}</span>`;
     b.onclick=(e)=>{ state[step.id]=o.val; if(o.score!=null)state._sc[step.id]=o.score;
       fx(b,e,o.score);
-      opts.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+      opts.querySelectorAll('.opt').forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-checked','false');});
+      b.classList.add('sel'); b.setAttribute('aria-checked','true');
       const from=idx; setTimeout(()=>{if(idx===from)next()},430); };
     opts.appendChild(b);
   });
@@ -1041,16 +1414,20 @@ function renderMulti(el,step){
     <button class="cta" id="multiGo" style="margin-top:18px" disabled>Continue →</button>`;
   const opts=el.querySelector('.opts'), go=el.querySelector('#multiGo');
   const sync=()=>{ go.disabled=!(state[step.id]&&state[step.id].length); };
+  const press=(n,v)=>{ n.classList.toggle('sel',v); n.setAttribute('aria-pressed',v?'true':'false'); };
   step.options.forEach(o=>{
     const on=state[step.id].includes(o.val);
-    const b=document.createElement('button'); b.className='opt'+(on?' sel':'');
-    b.innerHTML=`<span class="box"></span>${o.emoji?`<span class="emoji">${o.emoji}</span>`:''}<span class="txt">${o.label}</span>`;
-    b.onclick=()=>{ const a=state[step.id]; const i=a.indexOf(o.val);
-      if(i>=0){ a.splice(i,1); b.classList.remove('sel'); }
+    const b=document.createElement('button'); b.type='button'; b.className='opt'+(on?' sel':'');
+    b.setAttribute('aria-pressed',on?'true':'false');
+    b.innerHTML=`<span class="box"></span>${optIcon(o)}<span class="txt">${o.label}</span>`;
+    /* the only option screen with no tap feedback — same ripple/float/haptic as renderSingle */
+    b.onclick=(e)=>{ const a=state[step.id]; const i=a.indexOf(o.val);
+      fx(b,e,null);
+      if(i>=0){ a.splice(i,1); press(b,false); }
       else {
-        if(o.solo){ a.length=0; opts.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); }
-        else { step.options.forEach((oo,j)=>{ if(oo.solo){ const k=a.indexOf(oo.val); if(k>=0){ a.splice(k,1); opts.children[j].classList.remove('sel'); } } }); }
-        a.push(o.val); b.classList.add('sel');
+        if(o.solo){ a.length=0; opts.querySelectorAll('.opt').forEach(x=>press(x,false)); }
+        else { step.options.forEach((oo,j)=>{ if(oo.solo){ const k=a.indexOf(oo.val); if(k>=0){ a.splice(k,1); press(opts.children[j],false); } } }); }
+        a.push(o.val); press(b,true);
       }
       sync(); };
     opts.appendChild(b);
@@ -1063,15 +1440,19 @@ function renderNum(el,step){
     <div class="numrow">${step.fields.map(f=>`<div class="field numfield"><label>${f.label}</label><span class="ni">${NUM_ICON[f.key]||''}</span><input id="nf_${f.key}" type="number" inputmode="numeric" min="${f.min}" max="${f.max}" placeholder="${f.placeholder}" value="${state[f.key]||''}"></div>`).join('')}</div>
     <div id="boardEst"></div>
     <button class="cta" style="margin-top:16px" onclick="saveNums('${step.id}')">Continue →</button>
-    <div class="skiplink" onclick="next()">Skip — I'll add it later</div>`;
+    <div class="skiplink" role="button" tabindex="0" onclick="next()">Skip — I'll add it later</div>`;
   const upd=()=>renderBoardEst(el);
   step.fields.forEach(f=>{const i=el.querySelector('#nf_'+f.key); if(i)i.addEventListener('input',upd);});
   renderBoardEst(el);
 }
 function renderBoardEst(el){
   const box=el.querySelector('#boardEst'); if(!box)return;
-  const w=parseFloat(val('nf_weight_kg'));
-  if(!w||w<40){ box.innerHTML=`<div class="boardcard empty"><div class="bk">🏄 Recommended board volume</div><div class="bd" style="margin-top:6px">Add your weight to see the ideal board volume for your level.</div></div>`; return; }
+  /* read off `el`, NOT the document: render() appends `el` to #app only after the
+     renderer returns, so on the first paint (and on every back-nav) getElementById
+     returned null and the card claimed it had no weight to work with. */
+  const wi=el.querySelector('#nf_weight_kg'); const raw=parseFloat(wi?wi.value.trim():'');
+  if(!raw||raw<40||raw>200){ box.innerHTML=`<div class="boardcard empty"><div class="bk">🏄 Recommended board volume</div><div class="bd" style="margin-top:6px">Add your weight to see the ideal board volume for your level.</div></div>`; return; }
+  const w=Math.min(150,raw);   /* a fat-fingered 600 must not print "570–630 L" */
   // volume factor by measured level: beginner needs more float, advanced less
   const lvl=levelAvg(); const f = lvl<1.6?1.0 : lvl<2.4?0.75 : lvl<3.2?0.55 : 0.42;
   const lo=Math.round(w*(f-0.05)), hi=Math.round(w*(f+0.05));
@@ -1082,7 +1463,9 @@ function renderBoardEst(el){
 }
 function saveNums(id){
   const step=STEPS.find(s=>s.id===id);
-  step.fields.forEach(f=>{ const v=val('nf_'+f.key); if(v)state[f.key]=v; });
+  /* min/max on a bare input are inert without a form — clamp on the way into state */
+  step.fields.forEach(f=>{ const v=parseFloat(val('nf_'+f.key));
+    if(!isNaN(v)) state[f.key]=String(Math.max(f.min,Math.min(f.max,v))); });
   next();
 }
 function renderSnippet(el,step){
@@ -1091,28 +1474,40 @@ function renderSnippet(el,step){
   el.innerHTML=`
     <div class="spacer" style="max-height:46px"></div>
     <div class="snip">
-      <div class="sk"><div class="sav"><img src="img/ta-logo.png" alt="TA"></div><div><div class="skk">Coach's note</div><div class="skn">Improve Surfing · Gold Coast</div></div></div>
-      <div class="typing" id="snipTyping"><i></i><i></i><i></i></div>
-      <div id="snipBody" style="display:none">
-        <div class="st">${interp(c.title)}</div>
-        <div class="sb">${c.body}</div>
-        ${c.stat?`<div class="snipstat"><b>${c.stat[0]}</b><span>${c.stat[1]}</span></div>`:''}
+      <div class="sav"><img src="img/coach.jpg" alt="Improve Surfing coach" onerror="this.style.display='none'"></div>
+      <div class="sk">
+        <div class="skk">Improve Surfing · Coach</div>
+        <div class="sbub">
+          <div class="typing" id="snipTyping"><i></i><i></i><i></i></div>
+          <div id="snipBody" style="visibility:hidden">
+            <div class="st">${interp(c.title)}</div>
+            <div class="sb">${c.body}</div>
+            ${c.stat?`<div class="snipstat"><b>${c.stat[0]}</b><span>${c.stat[1]}</span></div>`:''}
+          </div>
+        </div>
+        <div class="skn">Coach's note · based on your answers</div>
       </div>
     </div>
     <div class="spacer"></div>
-    <button class="cta green" id="snipGo" style="visibility:hidden" onclick="next()">${c.btn||'Got it →'}</button>`;
+    <button class="cta" id="snipGo" style="visibility:hidden" onclick="next()">${c.btn||'Got it →'}</button>`;
   const from=idx;
+  /* sn5/sn6/sn12/sn15/sn17 have no other action, so this IS the primary — and a
+     reduced-motion user should not stare at three still dots for 850ms */
+  const rm=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
   setTimeout(()=>{ if(idx!==from)return;
     const t=document.getElementById('snipTyping'), b=document.getElementById('snipBody'), g=document.getElementById('snipGo');
-    if(t)t.remove();
-    if(b){ b.style.display='block'; b.classList.add('snipin'); }
+    if(t)t.style.visibility='hidden';
+    if(b){ b.style.visibility='visible'; b.classList.add('snipin'); }
     if(g){ g.style.visibility='visible'; g.classList.add('snipin'); }
     buzz(8);
-  },850);
+  },rm?0:850);
 }
 function renderMilestone(el,step){
-  const SEC=['Ocean comfort & take-off','Wave reading & rail control','Your board & equipment fit','Goals & programme match'];
-  const doneN = step.stage>=4?4:2;
+  /* relabelled + re-staged so the recap stops ticking sections the user hasn't reached:
+     ms1 = 2 done / 1 live / 50%, ms2 = 3 done / 'Goals & programme match' live / 75%
+     (which no longer fights the ~90% the top bar shows on the very next screen). */
+  const SEC=['Ocean comfort & take-off','Wave reading & positioning','Rail control & your board','Goals & programme match'];
+  const doneN = step.stage>=4?3:2;
   const pct = Math.round(doneN/4*100);
   const cp = step.stage>=4?2:1;
   el.innerHTML=`
@@ -1138,9 +1533,9 @@ function renderLoader(el){
     <div class="loader-wrap">
       <div class="ring-wrap big">
         <svg viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="52" fill="none" stroke="#e1e8f1" stroke-width="9"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="#dfeef5" stroke-width="9"/>
           <circle id="ringfill" cx="60" cy="60" r="52" fill="none" stroke="url(#rg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)"/>
-          <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4d6bff"/><stop offset=".55" stop-color="#1a36e8"/><stop offset="1" stop-color="#ff6a4d"/></linearGradient></defs>
+          <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0e7490"/><stop offset=".55" stop-color="#0891b2"/><stop offset="1" stop-color="#0284c7"/></linearGradient></defs>
         </svg>
         <div class="ring-orbit"><i></i><i></i></div>
         <div class="ring-num" id="ringnum">0%</div>
@@ -1192,10 +1587,10 @@ function radarSVG(p){
   const KEYS=Object.keys(PILLARS), N=KEYS.length, cx=150, cy=104, R=72, MAX=4;
   const pt=(i,rad)=>{const a=(-90+i*360/N)*Math.PI/180; return [cx+rad*Math.cos(a), cy+rad*Math.sin(a)];};
   let s='<svg viewBox="0 0 300 212" width="100%">';
-  for(let g=1;g<=MAX;g++){ s+='<polygon points="'+KEYS.map((_,i)=>pt(i,R*g/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="none" stroke="#e1e8f1"/>'; }
-  KEYS.forEach((_,i)=>{const e=pt(i,R); s+=`<line x1="${cx}" y1="${cy}" x2="${e[0].toFixed(1)}" y2="${e[1].toFixed(1)}" stroke="#e1e8f1"/>`;});
-  s+='<g class="radarg"><polygon points="'+KEYS.map((k,i)=>pt(i,R*Math.max(.35,(p[k]||1))/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="rgba(77,107,255,.18)" stroke="#4d6bff" stroke-width="2.5" stroke-linejoin="round"/></g>';
-  KEYS.forEach((k,i)=>{const d=pt(i,R*Math.max(.35,(p[k]||1))/MAX); s+=`<circle class="rdot" style="animation-delay:${(0.9+i*0.09).toFixed(2)}s" cx="${d[0].toFixed(1)}" cy="${d[1].toFixed(1)}" r="3.5" fill="#4d6bff" stroke="#fff" stroke-width="1.5"/>`;});
+  for(let g=1;g<=MAX;g++){ s+='<polygon points="'+KEYS.map((_,i)=>pt(i,R*g/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="none" stroke="#dfeaf1"/>'; }
+  KEYS.forEach((_,i)=>{const e=pt(i,R); s+=`<line x1="${cx}" y1="${cy}" x2="${e[0].toFixed(1)}" y2="${e[1].toFixed(1)}" stroke="#e4eef4"/>`;});
+  s+='<g class="radarg"><polygon points="'+KEYS.map((k,i)=>pt(i,R*Math.max(.35,(p[k]||1))/MAX).map(v=>v.toFixed(1)).join(',')).join(' ')+'" fill="rgba(8,145,178,.16)" stroke="#0e7490" stroke-width="2.5" stroke-linejoin="round"/></g>';
+  KEYS.forEach((k,i)=>{const d=pt(i,R*Math.max(.35,(p[k]||1))/MAX); s+=`<circle class="rdot" style="animation-delay:${(0.9+i*0.09).toFixed(2)}s" cx="${d[0].toFixed(1)}" cy="${d[1].toFixed(1)}" r="3.5" fill="#0e7490" stroke="#fff" stroke-width="1.5"/>`;});
   KEYS.forEach((k,i)=>{const l=pt(i,R+22); const anc=Math.abs(l[0]-cx)<10?'middle':(l[0]>cx?'start':'end');
     s+=`<text class="rlab" x="${l[0].toFixed(1)}" y="${(l[1]+3.5).toFixed(1)}" text-anchor="${anc}">${PILLARS[k].label}</text>`;});
   return s+'</svg>';
@@ -1205,30 +1600,33 @@ function renderScore(el){
   const proj=computeProjection(state);
   const lim=LIMITER_META[r.limiter];
   const nm=firstName();
+  const RING_C=578;   /* 2πr, r=92 */
   el.innerHTML=`
     <div class="reveal-wrap">
       <div class="reveal-label">Your Surf Score</div>
-      <div class="gauge"><svg viewBox="0 0 240 140" width="240" height="140">
-        <path d="M20,130 A100,100 0 0 1 220,130" fill="none" stroke="#e1e8f1" stroke-width="16" stroke-linecap="round"/>
-        <path id="gf" d="M20,130 A100,100 0 0 1 220,130" fill="none" stroke="url(#gg)" stroke-width="16" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/>
-        <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ef4444"/><stop offset="1" stop-color="#ff6a4d"/></linearGradient></defs>
-      </svg>
-      <span class="bub" style="left:16%"></span><span class="bub" style="left:38%;animation-delay:.9s"></span><span class="bub" style="left:62%;animation-delay:1.7s"></span><span class="bub" style="left:83%;animation-delay:.4s"></span></div>
-      <div class="bignum"><span id="bn">0</span><span class="of">/100</span></div>
-      <div class="lvl-line">Diagnostic level: <b>L${r.lvl} · ${LEVELS[r.lvl]}</b> (${r.avg}/4)</div>
-      <div class="reveal-headline">${nm?nm+', you':'You'}'re surfing at <span class="red">roughly ${r.score}%</span> of your potential.</div>
-      <div class="reveal-body">Your 20-point diagnostic, mapped across the <b>6 pillars</b> of surf progression:</div>
-      <div class="radarcard">${radarSVG(r.pillars)}
-        <div class="pillrows">${Object.keys(PILLARS).map(k=>{const v=r.pillars[k];const w=k===r.limiter;const pw=v?Math.round(v/4*100):8;
-          return `<div class="prow2${w?' weak':''}"><span class="nm2">${PILLARS[k].label}${w?' ⚠':''}</span><span class="bar2"><i style="width:0%" data-w="${pw}"></i></span><span class="vv">${v!=null?v.toFixed(1):'–'}</span></div>`;}).join('')}</div>
+      <div class="gauge">
+        <span class="ghalo"></span>
+        <svg viewBox="0 0 224 224" width="224" height="224" aria-hidden="true">
+          <circle class="gtrack" cx="112" cy="112" r="92"/>
+          <circle id="gf" cx="112" cy="112" r="92" stroke-dasharray="${RING_C}" stroke-dashoffset="${RING_C}"/>
+          <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0891b2"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs>
+        </svg>
+        <span class="bub" style="left:16%"></span><span class="bub" style="left:38%;animation-delay:.9s"></span><span class="bub" style="left:62%;animation-delay:1.7s"></span><span class="bub" style="left:83%;animation-delay:.4s"></span>
+        <div class="bignum"><span id="bn">0</span><span class="of">/100</span></div>
       </div>
+      <div class="lvl-line">Diagnostic level: <b>L${r.lvl} · ${LEVELS[r.lvl]}</b> (${r.avg}/4)</div>
+      <div class="reveal-headline">${nm?nm+', you':'You'}'re surfing at <span class="hl">roughly ${r.score}%</span> of your potential.</div>
+      <div class="reveal-body">Your 20-point diagnostic, mapped across the <b>6 pillars</b> of surf progression:</div>
+      <div class="radarcard">${radarSVG(r.pillars)}</div>
+      <div class="pillrows">${Object.keys(PILLARS).map((k,i)=>{const v=r.pillars[k];const w=k===r.limiter;const pw=v?Math.round(v/4*100):8;
+        return `<div class="prow2${w?' weak':''}">${w?'<span class="pflag">Limiter</span>':''}<span class="nm2">${PILLARS[k].label}</span><span class="vv">${v!=null?v.toFixed(1):'–'}<i>/4</i></span><span class="bar2"><i style="width:0%;transition-delay:${(0.05+i*0.09).toFixed(2)}s" data-w="${pw}"></i></span></div>`;}).join('')}</div>
       <div class="limbox"><div class="lk">Your #1 limiter</div><div class="ln2">${lim.label}</div><p>This is what's capping everything else. Your programme attacks it first — with <b>${lim.fix}</b>.</p></div>
       <div class="tenyr">On your own, at this rate, you'll likely still be at this exact level in <b>${proj.stuck}</b>.</div>
-      ${gslot('worried','ar-wide','FRUSTRATED SURFER — prompt #5 (by gender)')}
+      ${gslot('worried','ar-wide','FRUSTRATED SURFER — prompt #5 (by gender)','')}
       <button class="cta" style="margin-top:14px" onclick="next()">See how fast I can break through →</button>
     </div>`;
   const gf=el.querySelector('#gf');
-  setTimeout(()=>{gf.style.transition='stroke-dashoffset 1.4s cubic-bezier(.22,1,.36,1)';gf.style.strokeDashoffset=(314-314*pct)},120);
+  setTimeout(()=>{gf.style.transition='stroke-dashoffset 1.7s cubic-bezier(.3,.85,.3,1)';gf.style.strokeDashoffset=(RING_C-RING_C*pct)},120);
   animateNum(el.querySelector('#bn'),0,r.score,1500,v=>Math.round(v));
   setTimeout(()=>{const bn=el.querySelector('.bignum'); if(bn)bn.classList.add('settled'); buzz(14);},1650);
   setTimeout(()=>{el.querySelectorAll('.bar2 i').forEach(b=>b.style.width=b.dataset.w+'%');},500);
@@ -1247,31 +1645,36 @@ function renderProjection(el){
       <div class="reveal-headline" style="margin-top:8px">Two paths start <span class="hl">today.</span></div>
       <div class="chartbox2">
         <svg viewBox="0 0 320 206" width="100%" preserveAspectRatio="xMidYMid meet">
-          <defs><linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d6bff" stop-opacity=".30"/><stop offset="1" stop-color="#4d6bff" stop-opacity="0"/></linearGradient></defs>
-          <line x1="${x0}" y1="${baseY}" x2="${xR}" y2="${baseY}" stroke="#e1e8f1"/>
-          <line id="pfree" x1="${x0}" y1="${tgtY}" x2="${xR}" y2="${tgtY}" stroke="#93a7b6" stroke-width="1" stroke-dasharray="4 4" opacity="0"/>
+          <defs><linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0ea5e9" stop-opacity=".28"/><stop offset="1" stop-color="#0ea5e9" stop-opacity="0"/></linearGradient></defs>
+          <line x1="${x0}" y1="${baseY}" x2="${xR}" y2="${baseY}" stroke="#e4eef4"/>
+          <line id="pfree" x1="${x0}" y1="${tgtY}" x2="${xR}" y2="${tgtY}" stroke="#a8c0cd" stroke-width="1" stroke-dasharray="4 4" opacity="0"/>
           <text id="cfree" class="cfree" x="${x0+2}" y="${tgtY-7}" opacity="0">★ Your potential</text>
           <path id="parea" d="${gArea}" fill="url(#gArea)" opacity="0"/>
-          <path id="pred" d="${rP}" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-dasharray="760" stroke-dashoffset="760"/>
-          <path id="pgreen" d="${gP}" fill="none" stroke="#4d6bff" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="760" stroke-dashoffset="760"/>
-          <circle id="dred" cx="${xR}" cy="${baseY-20}" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="2" opacity="0"/>
-          <circle id="dgreen" cx="${xM}" cy="${tgtY}" r="6.5" fill="#4d6bff" stroke="#ffffff" stroke-width="2.5" opacity="0"/>
-          <g id="cgreen" opacity="0"><rect x="${xM-30}" y="${tgtY-34}" width="60" height="21" rx="7" fill="#4d6bff"/><text class="ctag" x="${xM}" y="${tgtY-19.5}">${p.weeks} wks</text></g>
+          <path id="pred" d="${rP}" fill="none" stroke="#ea580c" stroke-width="3" stroke-linecap="round" stroke-dasharray="760" stroke-dashoffset="760"/>
+          <path id="pgreen" d="${gP}" fill="none" stroke="#0e7490" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="760" stroke-dashoffset="760"/>
+          <circle id="dred" cx="${xR}" cy="${baseY-20}" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2" opacity="0"/>
+          <circle id="dgreen" cx="${xM}" cy="${tgtY}" r="6.5" fill="#0e7490" stroke="#ffffff" stroke-width="2.5" opacity="0"/>
+          <g id="cgreen" opacity="0"><rect x="${xM-30}" y="${tgtY-34}" width="60" height="21" rx="7" fill="#0e7490"/><text class="ctag" x="${xM}" y="${tgtY-19.5}">${p.weeks} wks</text></g>
           <text class="caxis" x="${x0+2}" y="${baseY+16}">Today</text>
           <text class="caxis" x="${xR}" y="${baseY+16}" text-anchor="end">Time →</text>
         </svg>
       </div>
-      <div class="legend"><span><i style="background:#ef4444"></i>On your own</span><span><i style="background:#4d6bff"></i>With Improve</span></div>
+      <div class="legend"><span><i style="background:#ea580c"></i>On your own</span><span><i style="background:#0e7490"></i>With Improve</span></div>
       <div class="proj-row">
         <div class="proj-card bad"><div class="pn">${p.stuck}</div><div class="pl">and still the same level, on your own</div></div>
         <div class="proj-card good"><div class="pn">${p.weeks} wks</div><div class="pl">to your next level, coached</div></div>
       </div>
       <div class="savedpill">Break your plateau and level up in <b>weeks, not years</b> — 1% better every session.</div>
-      ${gslot('future','ar-wide','FUTURE YOU SURFING WELL — prompt #4 (by gender)')}
-      <button class="cta green" style="margin-top:16px" onclick="next()">Show me the programme →</button>
+      ${gslot('future','ar-wide','FUTURE YOU SURFING WELL — prompt #4 (by gender)','')}
+      <button class="cta" style="margin-top:16px" onclick="next()">Show me the programme →</button>
     </div>`;
   const pr=el.querySelector('#pred'),pg=el.querySelector('#pgreen'),pa=el.querySelector('#parea'),
         free=el.querySelector('#pfree'),cf=el.querySelector('#cfree');
+  /* the declared dasharray of 760 is ~2.2x the real path length, so each line finished
+     drawing at ~40% of its transition and the reveal read draw-pause-pop. Measure once
+     the node is in the document (setTimeout 0 runs after render() appends it). */
+  setTimeout(()=>{ [pr,pg].forEach(p=>{ let L=0; try{ L=Math.ceil(p.getTotalLength()); }catch(e){}
+    if(L>0){ p.style.strokeDasharray=L; p.style.strokeDashoffset=L; } }); },0);
   setTimeout(()=>{free.style.transition='opacity .5s';free.style.opacity=1;cf.style.transition='opacity .5s';cf.style.opacity=1;},150);
   setTimeout(()=>{pr.style.transition='stroke-dashoffset 1.2s ease';pr.style.strokeDashoffset=0;},350);
   setTimeout(()=>{pg.style.transition='stroke-dashoffset 1.4s ease';pg.style.strokeDashoffset=0;pa.style.transition='opacity 1s';pa.style.opacity=1;},700);
@@ -1281,7 +1684,12 @@ function renderBridge(el){
   el.innerHTML=`
     <div class="eyebrow">The method</div>
     <h1>The system that turns <span class="hl">frustrated surfers</span> into confident ones.</h1>
-    ${slot('coach','ar-wide','COACH IN WATER — prompt #3')}
+    <div class="heroph">${slot('coach','ar-wide','COACH IN WATER — prompt #3','An Improve Surfing coach in the water with a student')}</div>
+    <div class="auth-grid">
+      <div class="a"><b>2019</b><span>Since</span></div>
+      <div class="a"><b>300+</b><span>surfers</span></div>
+      <div class="a"><b>99%</b><span>satisfaction</span></div>
+    </div>
     <div class="sub" style="margin-top:14px">Since <b>2019</b>, Improve Surfing has coached <b>300+ surfers</b> on the Gold Coast with one obsession: <b>1% better every session.</b> Not random surfs — a real plan, real feedback, real progress.</div>
     <div class="methodrow">
       <span class="m"><b>Surf</b> sessions 1:1</span>
@@ -1289,11 +1697,6 @@ function renderBridge(el){
       <span class="m"><b>Surfskate</b></span>
       <span class="m"><b>Mobility</b></span>
       <span class="m"><b>Apnea</b></span>
-    </div>
-    <div class="auth-grid">
-      <div class="a"><b>Since</b><span>2019</span></div>
-      <div class="a"><b>300+</b><span>surfers</span></div>
-      <div class="a"><b>99%</b><span>satisfaction</span></div>
     </div>
     <button class="cta" onclick="next()">See my recommended programme →</button>
     <div class="btnnote">Matched to <b>your</b> answers · limited spots</div>`;
@@ -1315,15 +1718,20 @@ function renderResult(el){
         <div class="tier-price" id="tcPrice"></div>
         <div class="tier-perday" id="tcDay"></div>
         <div id="tcBadge"></div>
-        <ul class="tier-inc" style="margin-top:12px">${t.inc.map(i=>`<li>${i}</li>`).join('')}</ul>
+        <ul class="tier-inc" style="margin-top:12px">${t.inc.map(i=>`<li>${TICK_SVG}<span>${i}</span></li>`).join('')}</ul>
       </div>
 
       <button class="cta" id="claimBtn" style="display:none;margin-top:16px" onclick="next()">See all plans → join now</button>
       <div class="guar" id="guar" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> 10% founding discount unlocked · secure checkout</div>
     </div>`;
-  paintTierPrice();
+  /* render() appends `el` to #app only after this function returns, so these nodes
+     aren't in the document yet — defer the paint, and query `el` directly here.
+     (getElementById used to return null: the price never painted, and the else
+     branch threw and blanked the screen when a discount was already claimed.) */
+  setTimeout(paintTierPrice,0);
   if(!state._discount) setTimeout(()=>openScratchModal(),850);
-  else { document.getElementById('claimBtn').style.display='block'; document.getElementById('guar').style.display='flex'; }
+  else { const cb=el.querySelector('#claimBtn'), gr=el.querySelector('#guar');
+         if(cb)cb.style.display='block'; if(gr)gr.style.display='flex'; }
 }
 function paintTierPrice(){
   const t=TIERS[state._tier]; const d=state._discount||0;
@@ -1336,34 +1744,63 @@ function paintTierPrice(){
 function openScratchModal(){
   if(document.getElementById('scratchModal'))return;
   const ov=document.createElement('div'); ov.className='modal-ov'; ov.id='scratchModal';
+  ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-labelledby','mTitle');
   ov.innerHTML=`
-    <div class="modal-card">
+    <div class="modal-card" tabindex="-1">
+      <button class="m-close" id="mClose" type="button" aria-label="Close" onclick="closeScratchModal()">×</button>
       <div class="modal-kick">Founding member bonus</div>
-      <div class="modal-h">Scratch to reveal your bonus</div>
+      <div class="modal-h" id="mTitle">Scratch to reveal your bonus</div>
       <div class="modal-sub">Only this intake's founding members get it. Scratch the panel 👇</div>
       <div class="m-scratch">
         <div class="m-prize"><div class="pk">You unlocked</div><div class="pt">10% OFF</div><div class="ps">your membership — for as long as you stay</div></div>
         <canvas id="mScratchCanvas"></canvas>
       </div>
       <div class="m-hint" id="mHint">👆 Scratch the silver panel</div>
-      <button class="m-claim" id="mClaim" onclick="claimDiscount()">Claim my 10% off →</button>
+      <button class="cta m-claim" id="mClaim" onclick="claimDiscount()">Claim my 10% off →</button>
     </div>`;
   document.body.appendChild(ov);
+  const card=ov.firstElementChild; if(card&&card.focus)card.focus();
+  ov.addEventListener('click',e=>{ if(e.target===ov) closeScratchModal(); });
+  ov.__esc=e=>{ if(e.key==='Escape'){ e.preventDefault(); closeScratchModal(); } };
+  document.addEventListener('keydown',ov.__esc);
   setTimeout(()=>initScratch(),60);
+  /* nobody may be dead-ended one step before checkout: if the pointer gesture never
+     lands (keyboard, switch control, a canvas that failed to size), reveal anyway. */
+  setTimeout(()=>{ const c=document.getElementById('mClaim');
+    if(c&&document.getElementById('scratchModal')&&c.style.display!=='block') reveal(); },8000);
+}
+function closeScratchModal(){
+  const ov=document.getElementById('scratchModal'); if(!ov)return;
+  if(ov.__esc)document.removeEventListener('keydown',ov.__esc);
+  ov.style.transition='opacity .3s'; ov.style.opacity=0; setTimeout(()=>ov.remove(),300);
+  /* the result screen's own forward control is hidden until the modal is done with —
+     unhide it on every exit path, or the funnel stops here. */
+  const cb=document.getElementById('claimBtn'), gr=document.getElementById('guar');
+  if(cb){ cb.style.display='block'; if(cb.focus)cb.focus(); }
+  if(gr)gr.style.display='flex';
 }
 function initScratch(){
   const cv=document.getElementById('mScratchCanvas'); if(!cv)return;
-  const r=cv.getBoundingClientRect(); cv.width=r.width; cv.height=r.height;
-  const ctx=cv.getContext('2d');
-  const g=ctx.createLinearGradient(0,0,r.width,r.height); g.addColorStop(0,'#c7d2da'); g.addColorStop(.5,'#9fb0bd'); g.addColorStop(1,'#c7d2da');
-  ctx.fillStyle=g; ctx.fillRect(0,0,r.width,r.height);
-  ctx.fillStyle='rgba(11,42,68,.75)'; ctx.font='700 15px Poppins, sans-serif'; ctx.textAlign='center';
-  ctx.fillText('SCRATCH HERE', r.width/2, r.height/2-4);
-  ctx.font='22px serif'; ctx.fillText('🏄 ✦ 🏄', r.width/2, r.height/2+24);
+  /* clientWidth/Height are transform-independent; getBoundingClientRect() returned the
+     modal's mid-animation box (modin starts at scale .92), so the backing store was ~8%
+     small and every scratch landed right of the finger. Also scale for DPR. */
+  const w=cv.clientWidth, h=cv.clientHeight;
+  if(!w||!h){ setTimeout(initScratch,60); return; }
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
+  const g=ctx.createLinearGradient(0,0,w,h); g.addColorStop(0,'#c7d2da'); g.addColorStop(.5,'#9fb0bd'); g.addColorStop(1,'#c7d2da');
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='rgba(11,42,68,.75)'; ctx.font="700 15px 'Plus Jakarta Sans', sans-serif"; ctx.textAlign='center';
+  ctx.fillText('SCRATCH HERE', w/2, h/2-4);
+  ctx.font='22px serif'; ctx.fillText('🏄 ✦ 🏄', w/2, h/2+24);
   ctx.globalCompositeOperation='destination-out';
-  let drawing=false, done=false;
+  let drawing=false, done=false, lastBz=0;
   function pos(e){const t=e.touches?e.touches[0]:e;const b=cv.getBoundingClientRect();return{x:t.clientX-b.left,y:t.clientY-b.top}}
-  function scratch(e){ if(!drawing)return; const p=pos(e); ctx.beginPath(); ctx.arc(p.x,p.y,22,0,7); ctx.fill(); buzz(4);
+  function scratch(e){ if(!drawing)return; const p=pos(e); ctx.beginPath(); ctx.arc(p.x,p.y,22,0,7); ctx.fill();
+    /* throttled: this fires on every pointermove, and 60 vibrate() calls a second get
+       dropped by Android anyway while keeping the haptic driver awake */
+    const now=Date.now(); if(now-lastBz>90){ lastBz=now; buzz(4); }
     if(!done&&cleared()>0.45){ done=true; reveal(); } }
   function cleared(){ const d=ctx.getImageData(0,0,cv.width,cv.height).data; let c=0; for(let i=3;i<d.length;i+=40){if(d[i]===0)c++;} return c/(d.length/40); }
   cv.addEventListener('mousedown',e=>{drawing=true;scratch(e)});
@@ -1381,12 +1818,9 @@ function reveal(){
 }
 function claimDiscount(){
   state._discount=0.10;
-  const ov=document.getElementById('scratchModal');
-  if(ov){ ov.style.transition='opacity .3s'; ov.style.opacity=0; setTimeout(()=>ov.remove(),300); }
+  closeScratchModal();          /* unhides #claimBtn / #guar and restores focus */
   paintTierPrice();
-  const cb=document.getElementById('claimBtn'), gr=document.getElementById('guar');
-  if(cb){cb.style.display='block';cb.classList.add('snipin');}
-  if(gr)gr.style.display='flex';
+  const cb=document.getElementById('claimBtn'); if(cb)cb.classList.add('snipin');
   const pw=document.getElementById('tcPrice'); if(pw){pw.classList.remove('settled');void pw.offsetWidth;pw.classList.add('settled');}
 }
 function claimTier(){
@@ -1396,26 +1830,54 @@ function claimTier(){
 /* Paste the @improvesurfing LightWidget id here (lightwidget.com → connect account → copy widget id)
    e.g. IG_WIDGET_ID='ab12cd34...'; leave '' to show the real profile card fallback. */
 const IG_WIDGET_ID='';
+/* the Glasswater check: a drawn mark inside a soft filled circle (glasswater.html:575) */
+const TICK_SVG='<svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="rgba(8,145,178,.16)"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#0891b2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const WAVE_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c2.2 0 2.2-1.8 4.5-1.8S9.8 14 12 14s2.2-1.8 4.5-1.8S18.8 14 21 14"/><path d="M3 19c2.2 0 2.2-1.8 4.5-1.8S9.8 19 12 19s2.2-1.8 4.5-1.8S18.8 19 21 19"/></svg>';
+function planCard(k,rec,d){
+  const t=TIERS[k]; const sel=state._sel===k;
+  return `<div class="plan${sel?' sel':''}" data-k="${k}" role="button" tabindex="0" onclick="selectPlan(this,'${k}',1)">
+      ${rec===k?`<span class="pbadge">★ Your match</span>`:''}
+      <span class="psel"></span>
+      <span class="pname">${t.name}</span>
+      ${d?`<span class="pold">was ${t.price}/wk</span>`:''}
+      <span class="pprice"><i>A$</i>${money(wkNow(t)).slice(2)}<em>/wk</em></span>
+      <span class="pday">≈ ${money(dayNow(t))} / day</span>
+      <span class="pfeat">${t.inc.slice(0,3).map(f=>`<span>${TICK_SVG}<em style="font-style:normal">${f}</em></span>`).join('')}</span>
+      <span class="psess">${WAVE_SVG}${t.sessions}</span>
+    </div>`;
+}
+function centerPlan(card,smooth){
+  if(!card)return; const track=card.parentElement; if(!track)return;
+  const left=card.offsetLeft-(track.clientWidth-card.offsetWidth)/2;
+  const rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(smooth&&!rm&&track.scrollTo){ try{ track.scrollTo({left:left,behavior:'smooth'}); return; }catch(e){} }
+  track.scrollLeft=left;
+}
+function clearCtaBar(){ const b=document.getElementById('ctabar'); if(b)b.remove(); document.body.classList.remove('has-bar'); }
+function mountCtaBar(){
+  clearCtaBar();
+  const t=TIERS[state._sel]||TIERS[pickTier(state)];
+  const bar=document.createElement('div'); bar.className='ctabar'; bar.id='ctabar';
+  /* the tier name lives on the trust line, not in the button: at 17px/800 the old label
+     wrapped to two lines for Elite / Foundation / Consistency — i.e. for most selections */
+  bar.innerHTML=`<button class="cta" id="payBtn" onclick="payTier()">Join now → <span id="payprice">${money(wkNow(t))}</span>/week</button>
+    <div class="paytrust">🔒 <span id="payname">${t.name}</span> · secure checkout via Stripe <b class="spots">· 3 spots left</b></div>`;
+  document.body.appendChild(bar);
+  setTimeout(()=>document.body.classList.add('has-bar'),40);   /* slide it up on enter */
+}
 function renderPlans(el){
   const rec=state._tier||pickTier(state); if(!state._sel)state._sel=rec;
   const order=['foundation','swell','consistency','elite'];
   const nm=firstName(); const d=state._discount||0;
+  el.classList.add('padbar');   /* keeps the sticky bar off the content */
   el.innerHTML=`
     <div class="eyebrow">Choose your plan</div>
     <h1>${nm?nm+', choose':'Choose'} your <span class="hl">programme.</span></h1>
-    <div class="sub">Your match is pre-selected — but pick whichever fits you best.</div>
+    <div class="sub" style="margin-bottom:14px">Your match is pre-selected — but pick whichever fits you best.</div>
     ${d?`<div class="disc-banner"><span class="disc-badge">✓ 10% founding discount applied to all plans</span></div>`:''}
-    <div class="plans">${order.map(k=>{const t=TIERS[k];const sel=state._sel===k;const rc=rec===k;
-      return `<div class="plan${sel?' sel':''}" onclick="selectPlan(this,'${k}')">
-        ${rc?`<span class="pbadge">★ Your match</span>`:''}
-        <span class="pradio"></span>
-        <div class="pinfo"><div class="pn2">${t.name}</div><div class="pm">${t.sessions}</div></div>
-        <div class="pprice"><div class="pweekbig">${d?`<span class="pold">${t.price}</span>`:''}<b>${money(wkNow(t))}</b> <span>/wk</span></div><div class="pweek">≈ ${money(dayNow(t))} / day</div></div>
-      </div>`;}).join('')}</div>
-    <div class="scarce" style="margin-top:2px"><span class="dotr"></span> Only 15 members this intake · <b>&nbsp;3 spots left</b></div>
-    <button class="cta" id="payBtn" style="margin-top:14px" onclick="payTier()">Join now → <span id="payprice">${money(wkNow(TIERS[state._sel]))}</span>/week</button>
-    <div class="guar"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> Founding member intake · billed weekly in A$</div>
-    <div class="paytrust">🔒 Secure checkout · powered by Stripe</div>
+    <div class="scarce" style="margin:0"><span class="dotr"></span> Only 15 members this intake · <b>&nbsp;3 spots left</b></div>
+    <div class="plans">${order.map(k=>planCard(k,rec,d)).join('')}</div>
+    <div class="guar" style="margin-top:4px"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> Founding member intake · billed weekly in A$</div>
     <div class="igsec">
       <div class="ighead">
         <div class="igav"><img src="img/ta-logo.png" alt="TA"></div>
@@ -1425,10 +1887,27 @@ function renderPlans(el){
       <div id="igFeed"></div>
       <a class="igbtn" href="https://www.instagram.com/improvesurfing/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1012 18.6 6.6 6.6 0 0012 5.4zm0 10.9a4.3 4.3 0 110-8.6 4.3 4.3 0 010 8.6zM18.9 5.1a1.5 1.5 0 100 3.1 1.5 1.5 0 000-3.1z"/></svg> Follow the real feed → @improvesurfing</a>
     </div>`;
-  mountIgFeed();
+  mountIgFeed(el);
+  mountCtaBar();
+  /* carousel: centre the matched card on entry, keep the bar in sync while swiping */
+  const track=el.querySelector('.plans'), from=idx;
+  if(track){
+    setTimeout(()=>{ if(idx===from) centerPlan(track.querySelector('.plan.sel'),false); },70);
+    let st=null;
+    track.addEventListener('scroll',()=>{
+      clearTimeout(st);
+      st=setTimeout(()=>{
+        const cards=[].slice.call(track.querySelectorAll('.plan'));
+        const mid=track.scrollLeft+track.clientWidth/2; let bi=0,bd=1e9;
+        cards.forEach((c,i)=>{const dd=Math.abs(c.offsetLeft+c.offsetWidth/2-mid); if(dd<bd){bd=dd;bi=i;}});
+        const c=cards[bi]; if(c&&c.dataset.k&&c.dataset.k!==state._sel) selectPlan(c,c.dataset.k);
+      },110);
+    },{passive:true});
+  }
 }
-function mountIgFeed(){
-  const box=document.getElementById('igFeed'); if(!box)return;
+function mountIgFeed(root){
+  /* `root` is the still-detached .step: getElementById can't see it yet */
+  const box=(root||document).querySelector('#igFeed'); if(!box)return;
   if(IG_WIDGET_ID){
     box.innerHTML=`<iframe src="//lightwidget.com/widgets/${IG_WIDGET_ID}.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;border-radius:12px;margin-top:12px"></iframe>`;
     if(!window.__lwLoaded){ const s=document.createElement('script'); s.src='https://cdn.lightwidget.com/widgets/lightwidget.js'; document.body.appendChild(s); window.__lwLoaded=true; }
@@ -1440,11 +1919,20 @@ function mountIgFeed(){
     </div>`;
   }
 }
-function selectPlan(node,k){ state._sel=k; document.querySelectorAll('.plan').forEach(p=>p.classList.remove('sel')); node.classList.add('sel'); const pp=document.getElementById('payprice'); if(pp)pp.textContent=money(wkNow(TIERS[k])); updateDebug(); }
+function selectPlan(node,k,fromTap){
+  state._sel=k;
+  document.querySelectorAll('.plan').forEach(p=>p.classList.remove('sel'));
+  node.classList.add('sel');
+  const t=TIERS[k];
+  const pp=document.getElementById('payprice'); if(pp)pp.textContent=money(wkNow(t));
+  const pn=document.getElementById('payname');  if(pn)pn.textContent=t.name;
+  if(fromTap){ buzz(9); centerPlan(node,true); }
+  updateDebug();
+}
 function payTier(){ const t=TIERS[state._sel]; alert('(prototype) Opens the Stripe checkout for '+t.name+' — '+money(wkNow(t))+'/week.\nURL: '+t.url); }
 function igFallback(img){ img.style.display='none'; const s=img.nextElementSibling; if(s)s.style.display='flex'; }
 function burstConfetti(n){
-  const cols=['#4d6bff','#1a36e8','#ff6a4d','#f5a623','#0c2a3f'];
+  const cols=['#0891b2','#0ea5e9','#38bdf8','#fb923c','#0f2530'];   /* Glasswater palette */
   for(let i=0;i<(n||70);i++){ const c=document.createElement('div'); c.className='confetti';
     c.style.left=Math.random()*100+'vw'; c.style.background=cols[i%cols.length];
     c.style.animationDuration=(2+Math.random()*2)+'s'; c.style.animationDelay=(Math.random()*.4)+'s';
@@ -1452,6 +1940,17 @@ function burstConfetti(n){
 }
 function val(id){const e=document.getElementById(id);return e?e.value.trim():''}
 function animateNum(node,from,to,dur,fmt){const t0=performance.now();const iv=setInterval(()=>{const p=Math.min(1,(performance.now()-t0)/dur),e=1-Math.pow(1-p,3);node.textContent=fmt(from+(to-from)*e);if(p>=1)clearInterval(iv);},40);}
+/* the gender/age cards, the skip link and the back chevron are divs with onclick.
+   Enter/Space must fire them like a real button for keyboard + switch-control users.
+   (window.event inside pickGender/pickCard then has clientX 0 → fx() falls back to
+   the element centre, which is exactly what we want.) */
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter'&&e.key!==' '&&e.key!=='Spacebar')return;
+  const t=e.target;
+  if(!t||!t.getAttribute||t.getAttribute('role')!=='button')return;
+  if(t.tagName==='BUTTON'||t.tagName==='A')return;
+  e.preventDefault(); t.click();
+});
 function updateDebug(){if(!DEBUG)return;const el=document.getElementById('tagdebug');el.style.display='block';const sc=state._score?state._score.score:'—';const tier=state._tier||(state.commit?pickTier(state):'—');el.textContent=`[debug] lvl:${levelAvg().toFixed(2)} · score:${sc} · lim:${limiterKey()} · tier:${tier}`;}
 render();
 </script>
