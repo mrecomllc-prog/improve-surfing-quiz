@@ -1,1 +1,5 @@
 server.log
+
+# local preview config / scratch
+.claude/
+index.v12-backup.html
