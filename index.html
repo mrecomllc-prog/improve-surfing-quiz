@@ -2237,7 +2237,7 @@ function renderBonus(el){
   el.innerHTML=`
     <div class="bonushead">
       <div class="modal-kick">Your founding member bonus</div>
-      <div class="modal-h" id="mTitle">Scratch the wax to reveal what you've earned</div>
+      <div class="modal-h" id="mTitle">Scratch to reveal what you've earned</div>
       <div class="modal-sub">Yours as part of the founding member intake.</div>
     </div>
     <div class="bonuswrap">
@@ -2266,7 +2266,7 @@ function renderBonus(el){
           <span class="tk-no">NO. <b id="tkNo">0000</b></span>
         </div>
       </div>
-      <div class="m-hint" id="mHint">Rub the wax off with your finger</div>
+      <div class="m-hint" id="mHint">Scratch the panel with your finger</div>
     </div>
     <button class="cta m-claim" id="mClaim" onclick="claimDiscount()">Lock in my 10% off →</button>
     <div class="skiplink" role="button" tabindex="0" onclick="next()">Skip — show me the plans</div>`;
@@ -2412,9 +2412,9 @@ function initScratch(){
    Brushed metal, painted once: a diagonal ramp (cool silver with one warm stop),
    a specular band laid across it, a 4px hatch, five swirl arcs and a top/bottom
    vignette. ~150 draw ops, no assets, no rAF. */
-/* the scratch surface is a real photograph of a waxed board deck — code-drawn texture
-   read as a beige smudge, not as wax. Preloaded so the canvas is never painted empty. */
-const WAX_IMG=new Image(); WAX_IMG.src='img/wax.jpg';
+/* the scratch surface is a real photograph of a lottery scratch panel — code-drawn texture
+   read as a smudge. Preloaded so the canvas is never painted empty. */
+const WAX_IMG=new Image(); WAX_IMG.src='img/scratch-panel.jpg';
 function paintFoil(ctx,w,h){
   if(WAX_IMG.complete&&WAX_IMG.naturalWidth){
     /* cover-fit the photo into the stage */
@@ -2426,7 +2426,7 @@ function paintFoil(ctx,w,h){
   } else {
     /* flat wax tone until the photo lands — never leave the prize showing */
     const g=ctx.createLinearGradient(0,0,w*.25,h);
-    g.addColorStop(0,'#f7f3e6'); g.addColorStop(.5,'#efe7d2'); g.addColorStop(1,'#e2d7ba');
+    g.addColorStop(0,'#cdd6db'); g.addColorStop(.5,'#b3bec5'); g.addColorStop(1,'#c6d0d6');
     ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
     WAX_IMG.addEventListener('load',()=>{
       const cv=document.getElementById('mScratchCanvas');
@@ -2435,7 +2435,7 @@ function paintFoil(ctx,w,h){
   }
   /* seat it in the card: sun on the top edge, shade in the well */
   const v=ctx.createLinearGradient(0,0,0,h);
-  v.addColorStop(0,'rgba(255,255,255,.16)'); v.addColorStop(.55,'rgba(255,255,255,0)'); v.addColorStop(1,'rgba(78,64,38,.26)');
+  v.addColorStop(0,'rgba(255,255,255,.20)'); v.addColorStop(.55,'rgba(255,255,255,0)'); v.addColorStop(1,'rgba(32,44,52,.24)');
   ctx.fillStyle=v; ctx.fillRect(0,0,w,h);
 
   paintFoilLabel(ctx,w,h);
@@ -2478,17 +2478,17 @@ function paintFoilLabel(ctx,w,h){
   /* embossed: a light pass one pixel low, the dark pass on top */
   const ly=cy+h*.12;
   ctx.font="800 13px 'Plus Jakarta Sans',system-ui,-apple-system,sans-serif";
-  ctx.fillStyle='rgba(255,255,255,.6)'; trackedText(ctx,'SCRATCH THE WAX',cx,ly+1,1.6);
-  ctx.fillStyle='rgba(92,78,48,.80)';
-  const lw=trackedText(ctx,'SCRATCH THE WAX',cx,ly,1.6);
+  ctx.fillStyle='rgba(255,255,255,.6)'; trackedText(ctx,'SCRATCH HERE',cx,ly+1,1.6);
+  ctx.fillStyle='rgba(28,42,52,.78)';
+  const lw=trackedText(ctx,'SCRATCH HERE',cx,ly,1.6);
   /* hairlines flanking the label */
-  ctx.strokeStyle='rgba(120,104,70,.28)'; ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(28,42,52,.26)'; ctx.lineWidth=1;
   ctx.beginPath();
   ctx.moveTo(cx-lw/2-26,ly); ctx.lineTo(cx-lw/2-11,ly);
   ctx.moveTo(cx+lw/2+11,ly); ctx.lineTo(cx+lw/2+26,ly);
   ctx.stroke();
   ctx.font="700 8.5px 'Plus Jakarta Sans',system-ui,-apple-system,sans-serif";
-  ctx.fillStyle='rgba(110,95,62,.55)'; trackedText(ctx,'RUB IT OFF WITH YOUR FINGER',cx,ly+h*.11,1.4);
+  ctx.fillStyle='rgba(28,42,52,.48)'; trackedText(ctx,'SCRATCH TO REVEAL YOUR BONUS',cx,ly+h*.11,1.4);
   ctx.restore();
 }
 function reveal(){
