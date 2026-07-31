@@ -43,7 +43,10 @@
   --gold:#b45309;                               /* amber: ★ glyphs are text-sized, so they need 4.5:1 — #b45309 is 4.7 on white, 4.4 on the wash */
   --gold-on-dark:#ffdfa1;                       /* the same semantic gold, on the deep aqua prize field: measured 4.84:1 at 375px and 4.64:1 at 320px (a 9.5px kicker is normal text → 4.5 minimum) */
   --f:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  /* the ONE empty-meter track. The same pillar meter is drawn on the loader, the score
+     screen and the checkpoint — three hard-coded greys read as three components. */
   --track:rgba(15,37,48,.09);
+  --track-warn:#ffdcca;                         /* its limiter variant, likewise single-sourced */
   --shadow:var(--sh3); --shadow-card:var(--sh1);
   --shadow-btn:inset 0 1.5px 0 rgba(255,255,255,.35),0 14px 32px -8px rgba(8,145,178,.5);
 }
@@ -65,8 +68,9 @@ body:before{
 img{max-width:100%}
 button{font:inherit;color:inherit}
 :focus{outline:none}
-/* opaque aqua — the old rgba(8,145,178,.45) composited to #90cddc (1.75:1) on the light card */
-:focus-visible{outline:3px solid #0e7490;outline-offset:2px;border-radius:14px;box-shadow:0 0 0 7px rgba(14,165,233,.18)}
+/* opaque aqua — the old rgba(8,145,178,.45) composited to #90cddc (1.75:1) on the light card.
+   --aq1 IS #0e7490: the ring is the accent, so it says so instead of repeating the hex. */
+:focus-visible{outline:3px solid var(--aq1);outline-offset:2px;border-radius:14px;box-shadow:0 0 0 7px rgba(14,165,233,.18)}
 #shell{width:100%;max-width:460px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative;z-index:1}
 
 /* desktop — the column becomes a floating rounded panel */
@@ -94,7 +98,12 @@ button{font:inherit;color:inherit}
 .progress-wrap{display:flex;flex-direction:column;gap:9px}
 /* Glasswater signature: a dot rail whose live section stretches into a 28px pill */
 .dots{display:flex;gap:7px;justify-content:center}
-.dots i{width:8px;height:8px;border-radius:99px;background:#c2d6e1;transition:width .45s var(--spring),background .45s}
+/* the rail IS the progress signal, so an inactive dot is a meaningful graphical object and
+   owes 3:1. #c2d6e1 measured 1.38:1 on the #eef7fa wash. Measured, not guessed: #9fb7c5
+   only reaches 1.92:1 — #758d9d is 3.19:1 at the top of the wash and 3.01:1 at the bottom,
+   so it clears the floor everywhere the rail actually appears, and still reads as "not yet"
+   beside the 28px aqua pill (which carries the state by width and hue, not by weight). */
+.dots i{width:8px;height:8px;border-radius:99px;background:#758d9d;transition:width .45s var(--spring),background .45s}
 .dots i.on{width:28px;background:var(--grad)}
 .barrow{display:flex;align-items:center;gap:0}
 /* demoted to a hairline sub-rail — the dots now carry the signal */
@@ -113,15 +122,15 @@ button{font:inherit;color:inherit}
 .step>*:nth-child(6){animation-delay:.25s}.step>*:nth-child(7){animation-delay:.30s}
 .step>*:nth-child(8){animation-delay:.35s}.step>*:nth-child(9){animation-delay:.40s}
 @keyframes childIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-/* loader / score / projection / result wrap their whole screen in one element,
+/* loader / score / projection wrap their whole screen in one element,
    so the .step>* ladder above only ever matched a single node — cascade inside them too */
-.loader-wrap>*,.reveal-wrap>*,.scratch-wrap>*{animation:childIn .62s var(--spring) backwards}
-.loader-wrap>*:nth-child(2),.reveal-wrap>*:nth-child(2),.scratch-wrap>*:nth-child(2){animation-delay:.05s}
-.loader-wrap>*:nth-child(3),.reveal-wrap>*:nth-child(3),.scratch-wrap>*:nth-child(3){animation-delay:.10s}
-.loader-wrap>*:nth-child(4),.reveal-wrap>*:nth-child(4),.scratch-wrap>*:nth-child(4){animation-delay:.15s}
-.loader-wrap>*:nth-child(5),.reveal-wrap>*:nth-child(5),.scratch-wrap>*:nth-child(5){animation-delay:.20s}
-.loader-wrap>*:nth-child(6),.reveal-wrap>*:nth-child(6),.scratch-wrap>*:nth-child(6){animation-delay:.25s}
-.loader-wrap>*:nth-child(7),.reveal-wrap>*:nth-child(7),.scratch-wrap>*:nth-child(7){animation-delay:.30s}
+.loader-wrap>*,.reveal-wrap>*{animation:childIn .62s var(--spring) backwards}
+.loader-wrap>*:nth-child(2),.reveal-wrap>*:nth-child(2){animation-delay:.05s}
+.loader-wrap>*:nth-child(3),.reveal-wrap>*:nth-child(3){animation-delay:.10s}
+.loader-wrap>*:nth-child(4),.reveal-wrap>*:nth-child(4){animation-delay:.15s}
+.loader-wrap>*:nth-child(5),.reveal-wrap>*:nth-child(5){animation-delay:.20s}
+.loader-wrap>*:nth-child(6),.reveal-wrap>*:nth-child(6){animation-delay:.25s}
+.loader-wrap>*:nth-child(7),.reveal-wrap>*:nth-child(7){animation-delay:.30s}
 .loader-wrap>*:nth-child(8),.reveal-wrap>*:nth-child(8){animation-delay:.35s}
 .loader-wrap>*:nth-child(9),.reveal-wrap>*:nth-child(9){animation-delay:.40s}
 .loader-wrap>*:nth-child(10),.reveal-wrap>*:nth-child(10){animation-delay:.45s}
@@ -180,11 +189,6 @@ h1 .red{color:var(--coral)}
 .opt.sel .emoji{background:linear-gradient(135deg,#cdeefa,#bfe3f8);box-shadow:inset 0 0 0 1px rgba(8,145,178,.3)}
 .opt .emoji.ic svg{display:block}
 
-/* multi select */
-.opt .box{width:24px;height:24px;border-radius:9px;border:2px solid rgba(15,37,48,.34);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
-.opt.sel .box{border-color:transparent;background:var(--grad);box-shadow:0 6px 14px -5px rgba(8,145,178,.55)}
-.opt.sel .box:after{content:"✓";color:#fff;font-weight:800;font-size:13px;line-height:1}
-
 /* ---------- gender cards ---------- */
 .gcards{display:flex;gap:12px;margin-top:4px}
 .gcard{flex:1;background:var(--card);border:2px solid rgba(15,37,48,.05);border-radius:24px;padding:0 0 15px;cursor:pointer;overflow:hidden;box-shadow:var(--sh1);transition:transform .3s var(--spring),box-shadow .3s,border-color .3s;text-align:center}
@@ -194,8 +198,6 @@ h1 .red{color:var(--coral)}
   background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
   box-shadow:var(--sh2),var(--ring);
 }
-.gcard .gbadge{width:78px;height:78px;border-radius:50%;margin:26px auto 0;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--soft);box-shadow:inset 0 0 0 1px rgba(8,145,178,.14);transition:.25s}
-.gcard.sel .gbadge{background:linear-gradient(135deg,#cdeefa,#bfe3f8);box-shadow:inset 0 0 0 1px rgba(8,145,178,.3)}
 .gcard .gname{font-size:15px;font-weight:800;margin-top:13px;color:var(--ink);letter-spacing:-.01em}
 .gcard.alt{flex:none;width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:16px;margin-top:11px;color:var(--mut);font-weight:700;font-size:14px;border-radius:20px}
 
@@ -232,8 +234,8 @@ h1 .red{color:var(--coral)}
 /* ---------- image slots ---------- */
 .imgslot{width:100%;border-radius:22px;object-fit:cover;display:block;box-shadow:var(--sh2);filter:saturate(1.03) contrast(1.02)}
 .imgslot.ph{background:linear-gradient(135deg,#e3eff6,var(--surface2));border:1.5px dashed rgba(15,37,48,.12);box-shadow:none;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mut);font-size:11px;letter-spacing:.05em;padding:10px;line-height:1.4;font-weight:700}
-.ar-hero{aspect-ratio:16/10;border-radius:26px;margin:2px -6px 0;width:calc(100% + 12px)}
-.ar-port{aspect-ratio:3/4}.ar-wide{aspect-ratio:16/9}.ar-sq{aspect-ratio:1/1}.ar-card{aspect-ratio:4/5}
+.ar-hero{aspect-ratio:16/9;border-radius:26px;margin:2px -6px 0;width:calc(100% + 12px)}
+.ar-port{aspect-ratio:3/4}.ar-wide{aspect-ratio:16/9}.ar-card{aspect-ratio:4/5}
 .imgslot.ph.ar-hero{min-height:150px}
 .imgslot.ph.ar-wide{min-height:120px}
 
@@ -253,37 +255,43 @@ h1 .red{color:var(--coral)}
 /* ---------- intro (layered depth: headline → hero → floating stats) ---------- */
 .intro-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:var(--card);color:var(--aq1);font-size:11px;font-weight:800;padding:9px 15px;border-radius:99px;margin-bottom:10px;letter-spacing:.13em;text-transform:uppercase;box-shadow:var(--sh1)}
 .intro-badge:before{content:"";width:7px;height:7px;border-radius:99px;background:var(--grad);flex-shrink:0}
-.intro-h{font-size:36px;line-height:1.1;font-weight:800;letter-spacing:-.03em;margin:6px 0 14px;color:var(--ink)}
+/* 36px overflowed both target viewports (doc 1033 at 375, CTA top 928 — 116px below the
+   fold). The whole intro block is retuned ~120px shorter so the button lands above it. */
+.intro-h{font-size:31px;line-height:1.1;font-weight:800;letter-spacing:-.03em;margin:4px 0 10px;color:var(--ink)}
 .intro-h .red{color:var(--coral)}
-/* the headline block reserves the space the hero photo climbs into — 30px against the
-   card's -36px climb gives the reference's real -6px overlap (56px only left a gap) */
-/* the hero climbs -36px and the pill sits -15px above that, so the pill's top edge lands
-   51px into this block — reserve enough room or it prints over the sub copy */
-.intro-head{padding-bottom:58px}
+/* the hero climbs -30px and the pill sits -13px above that, so the pill's top edge lands
+   43px into this block — this padding reserves exactly that, or it prints over the sub copy */
+.intro-head{padding-bottom:44px}
 .intro-head .sub{margin-bottom:0}
-.herocard{position:relative;margin-top:-36px;z-index:2}
+.herocard{position:relative;margin-top:-30px;z-index:2}
 /* light placeholder — the old #0f2530 painted a near-black slab while hero.jpg loaded */
 .heroph{position:relative;border-radius:28px;overflow:hidden;box-shadow:var(--sh3);background:linear-gradient(135deg,#e3eff6,var(--surface2))}
 .heroph:after{content:"";position:absolute;inset:0;border-radius:28px;pointer-events:none;border:1px solid rgba(255,255,255,.55)}
 .heroph>.imgslot{border-radius:0;box-shadow:none;margin:0;width:100%}
-.herocard .imgslot.ar-hero{margin:0;width:100%;border-radius:0;box-shadow:none;aspect-ratio:16/10}
+.herocard .imgslot.ar-hero{margin:0;width:100%;border-radius:0;box-shadow:none;aspect-ratio:16/9}
 .herocard .imgslot.ph.ar-hero{border:0;box-shadow:none;background:linear-gradient(135deg,#e3eff6,var(--surface2))}
 /* rotated glass pill riding the photo's top-right corner */
-.scorepill{position:absolute;top:-15px;right:14px;z-index:3;transform:rotate(3deg);text-align:center;background:rgba(255,255,255,.84);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.9);border-radius:18px;padding:9px 14px;box-shadow:var(--sh2);animation:pillPop .7s var(--spring) .5s backwards}
+.scorepill{position:absolute;top:-13px;right:14px;z-index:3;transform:rotate(3deg);text-align:center;background:rgba(255,255,255,.84);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.9);border-radius:18px;padding:9px 14px;box-shadow:var(--sh2);animation:pillPop .7s var(--spring) .5s backwards}
 .scorepill small{display:block;font-size:9.5px;font-weight:800;letter-spacing:.1em;color:var(--mut);text-transform:uppercase}
 .scorepill strong{font-size:23px;font-weight:800;letter-spacing:-.02em;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 @keyframes pillPop{0%{opacity:0;transform:rotate(3deg) scale(.5)}70%{transform:rotate(3deg) scale(1.07)}100%{opacity:1;transform:rotate(3deg) scale(1)}}
-/* the three stat cards overlap the bottom edge of the photo */
-.trust{display:grid;grid-template-columns:1fr 1.16fr 1fr;gap:9px;margin:-28px 0 0;padding:0 6px;position:relative;z-index:3}
-.trust .t{flex:1;background:var(--card);border-radius:20px;padding:13px 8px 12px;text-align:center;box-shadow:var(--sh2)}
+/* the three stat cards overlap the bottom edge of the photo.
+   The 6px stagger below is the deliberate layer tell — so the avatar row now sits BELOW
+   the label instead of above the number, where it shoved the middle card's "300+" 20px
+   off the baseline the other two share and swamped the 6px offset with an accidental one. */
+.trust{display:grid;grid-template-columns:1fr 1.24fr 1fr;gap:9px;margin:-28px 0 0;padding:0 6px;position:relative;z-index:3}
+.trust .t{flex:1;background:var(--card);border-radius:20px;padding:12px 8px 11px;text-align:center;box-shadow:var(--sh2)}
 .trust .t:nth-child(1),.trust .t:nth-child(3){transform:translateY(6px)}
 .trust .t b{font-size:21px;font-weight:800;color:var(--ink);display:block;line-height:1;letter-spacing:-.02em}
 .trust .t span{font-size:10px;color:var(--mut);font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:block;margin-top:4px}
-.avs{display:flex;justify-content:center;margin-bottom:5px}
-.avs img{width:21px;height:21px;border-radius:50%;object-fit:cover;border:2px solid #fff;margin-left:-7px;box-shadow:0 2px 5px rgba(15,37,48,.16)}
+.avs{display:flex;justify-content:center;margin-top:6px}
+.avs img{width:19px;height:19px;border-radius:50%;object-fit:cover;border:2px solid #fff;margin-left:-6px;box-shadow:0 2px 5px rgba(15,37,48,.16)}
 .avs img:first-child{margin-left:0}
-.sub2{margin-top:16px;color:var(--ink);font-weight:600}
 .spacer{flex:1;min-height:14px}
+/* the flexible gaps that stop a short screen trailing off into blank page — the same
+   device the checkpoint uses (.mgap), applied to the option/gender/age/text screens */
+.qgap{flex:1 1 auto;min-height:0}
+.qgap.t{flex-grow:.6}
 
 /* ---------- text inputs ---------- */
 .bigfield{margin-top:6px}
@@ -295,11 +303,6 @@ h1 .red{color:var(--coral)}
 .field input{width:100%;background:var(--card);border:2px solid rgba(15,37,48,.06);border-radius:18px;padding:16px;color:var(--ink);font-size:16px;font-weight:700;font-family:inherit;box-shadow:var(--sh1);transition:border-color .2s,box-shadow .2s} /* ≥16px: iOS won't auto-zoom on focus */
 .field input:focus{outline:none;border-color:transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;box-shadow:var(--sh2),var(--ring)}
 .field input::placeholder{color:var(--mute);font-weight:500}
-.suggest{margin-top:8px;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:var(--sh2);display:none}
-.sugg{padding:13px 16px;font-size:14.5px;font-weight:600;cursor:pointer;color:var(--mut);border-bottom:1px solid var(--line2)}
-.sugg:last-child{border-bottom:none}
-.sugg:hover{background:#f2f9fc}
-.sugg b{color:var(--ink);font-weight:800}
 .phonewrap{display:flex;align-items:stretch;gap:9px}
 .ccode{display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid rgba(15,37,48,.06);border-radius:18px;padding:0 14px;font-size:15px;font-weight:800;color:var(--ink);box-shadow:var(--sh1);white-space:nowrap}
 .flag{width:23px;height:16px;border-radius:4px;object-fit:cover;box-shadow:0 0 0 1px rgba(15,37,48,.08)}
@@ -319,12 +322,22 @@ h1 .red{color:var(--coral)}
    auto margins centre when there is room and pin to the top when there is not. */
 .loader-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-start;text-align:center}
 .lstat{font-size:21px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;color:var(--ink)}
-.lsub{font-size:13px;font-weight:600;color:var(--mut);margin-bottom:26px}
-.checks{display:flex;flex-direction:column;gap:12px;text-align:left;max-width:300px;margin:0 auto}
+.lsub{font-size:13px;font-weight:600;color:var(--mut);margin-bottom:20px}
+/* NO max-width + auto margins here: an auto cross-axis margin on a flex item cancels
+   align-items:stretch, so this shrank to 320px inside a 386px column and the screen ended
+   up with three different left edges (22 / 67 / 95 at 430px). Everything runs the column. */
+.checks{display:flex;flex-direction:column;gap:9px;text-align:left}
 /* pending rows carry their state in the colour + checkbox, not in opacity —
    the old opacity:.45 dropped them to ~1.5:1 */
-.chk{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:700;color:var(--mut);opacity:1;transition:.35s}
+.chk{display:flex;align-items:flex-start;gap:12px;font-size:14px;font-weight:700;color:var(--mut);opacity:1;transition:.35s}
 .chk.active,.chk.done{opacity:1;color:var(--ink)}
+/* every row carries a second line: the phase's live status while it runs, then the real
+   value it produced. The min-height reserves it so nothing reflows as phases turn over. */
+.chk .ctx{flex:1;min-width:0}
+.chk .ctx b{display:block;font-size:13.5px;font-weight:700;line-height:1.3}
+.chk .cmt{display:block;font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.01em;line-height:1.22;color:var(--mute);min-height:12px;margin-top:2px;transition:color .3s}
+.chk.active .cmt,.chk.done .cmt{color:var(--aq1)}
+.chk.done .cmt{animation:childIn .4s var(--spring) both}
 .chk .cb{width:24px;height:24px;border-radius:9px;border:2px solid rgba(15,37,48,.34);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.3s}
 .chk.done .cb{background:var(--grad);border-color:transparent;box-shadow:0 6px 14px -5px rgba(8,145,178,.55)}
 .chk.done .cb:after{content:"✓";color:#fff;font-weight:800;font-size:13px}
@@ -336,18 +349,23 @@ h1 .red{color:var(--coral)}
 .ring-wrap:before{content:"";position:absolute;inset:10px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.24),transparent 70%);animation:pulse 1.8s ease-in-out infinite}
 .ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:29px;font-weight:800;letter-spacing:-.03em;color:var(--ink)}
 @keyframes pulse{0%,100%{opacity:.45;transform:scale(.95)}50%{opacity:1;transform:scale(1.06)}}
-.testi{margin-top:24px;background:var(--card);border-radius:20px;padding:15px;font-size:12.5px;font-weight:600;color:var(--mut);min-height:62px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--sh1);text-align:left}
-.testi .av{width:40px;height:40px;border-radius:50%;flex-shrink:0;object-fit:cover;border:2px solid #fff;box-shadow:var(--sh1)}
-.testi .avph{width:40px;height:40px;border-radius:50%;background:var(--grad-ink);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;flex-shrink:0;box-shadow:0 6px 14px -5px rgba(8,145,178,.5)}
-.tbody{display:flex;flex-direction:column;gap:3px}
-.tbody span{font-style:italic;line-height:1.45}
-.tbody b{color:var(--ink);font-size:11.5px;font-weight:800}
+/* this slot used to carry three fabricated testimonials over real faces. It now rotates
+   VERIFIABLE facts only — coaching since 2019, 300+ surfers, 99% satisfaction, the named
+   services, Coolangatta — until the client supplies real, attributable quotes. */
+.testi{margin-top:14px;background:var(--card);border-radius:20px;padding:14px;font-size:12.5px;font-weight:600;color:var(--mut);min-height:58px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--sh1);text-align:left}
+.testi .tmark{width:40px;height:40px;border-radius:50%;flex-shrink:0;background:var(--soft);box-shadow:inset 0 0 0 1px rgba(8,145,178,.14);display:flex;align-items:center;justify-content:center}
+.testi .tmark svg{width:20px;height:20px;display:block}
+.tbody{display:flex;flex-direction:column;gap:3px;min-width:0}
+.tbody span{line-height:1.45}
+.tbody b{color:var(--ink);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 .stars{color:var(--gold);font-size:11px;letter-spacing:1.5px}
-.trustline{margin-top:16px;font-size:11.5px;font-weight:600;color:var(--mut);text-align:center}
+.trustline{margin-top:12px;font-size:11.5px;font-weight:600;color:var(--mut);text-align:center}
 .trustline b{color:var(--ink);font-weight:800}
-.trustline .stars{display:inline}
+/* --gold (#b45309) measures 4.35:1 against the BOTTOM of the wash, which is exactly where
+   the loader puts this line. --gold stays for on-card use; on the wash it is coral-deep. */
+.trustline .stars{display:inline;color:var(--coral-deep)}
 /* loader — richer */
-.ring-wrap.big{width:150px;height:150px;margin:0 auto 20px}
+.ring-wrap.big{width:150px;height:150px;margin:0 auto 16px}
 .ring-wrap.big:before{content:"";position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.3),transparent 68%);filter:blur(4px);animation:pulse 1.8s ease-in-out infinite}
 .ring-wrap.big svg{width:150px;height:150px;position:relative}
 .loader-wrap>.ring-wrap.big{margin-top:auto}
@@ -357,13 +375,27 @@ h1 .red{color:var(--coral)}
    4.4–15.6px in, so the bead centre belongs at 5.5px, not at the old 122px-wrap -3px */
 .ring-orbit i{position:absolute;top:5.5px;left:50%;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--aq1);box-shadow:0 0 12px rgba(8,145,178,.9)}
 .ring-orbit i:nth-child(2){top:auto;bottom:5.5px;background:var(--aq2);box-shadow:0 0 12px rgba(14,165,233,.9)}
-.ldata{font-size:12px;color:var(--mut);font-weight:700;margin:-14px 0 16px}
+.ldata{font-size:12px;color:var(--mut);font-weight:700;margin:-12px 0 12px}
 .ldata b{color:var(--aq1);font-weight:800;font-variant-numeric:tabular-nums}
-.lpills{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px;max-width:320px;margin:2px auto 6px}
-.lpill{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:var(--mut)}
-.lpill .lpb{flex:1;height:6px;background:var(--track);border-radius:99px;overflow:hidden}
-.lpill .lpb i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .6s ease}
+/* the six pillar meters — each one fills to the surfer's REAL pillarScores() value, and
+   only at the moment the phase that owns it finishes reading it */
+/* the six meters are the screen's only real data — they get the full column, not a
+   320px inset strip (which drew each bar 112px wide inside a 386px card) */
+.lpills{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px 16px;margin:2px 0 6px}
+.lpill{display:block;text-align:left;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);transition:color .3s}
+.lpill .lpr{display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.lpill .lpn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lpill .lpv{flex:none;font-size:11.5px;font-weight:800;letter-spacing:-.01em;text-transform:none;color:var(--mute);font-variant-numeric:tabular-nums;opacity:0;transform:translateY(3px);transition:opacity .3s,transform .4s var(--over),color .3s}
+.lpill .lpv i{font-style:normal;font-size:9px;font-weight:700;color:var(--mut)}
+.lpill .lpb{position:relative;display:block;height:6px;background:var(--track);border-radius:99px;overflow:hidden;margin-top:6px}
+.lpill .lpb i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .8s var(--spring)}
 .lpill.on{color:var(--ink)}
+.lpill.on .lpv{opacity:1;transform:none;color:var(--aq1)}
+/* a meter being read right now: a light sweeping the empty track */
+.lpill.scan .lpb{box-shadow:inset 0 0 0 1px rgba(8,145,178,.22)}
+.lpill.scan .lpb:after{content:"";position:absolute;top:0;bottom:0;left:0;width:42%;border-radius:99px;
+  background:linear-gradient(90deg,rgba(8,145,178,0),rgba(8,145,178,.4),rgba(8,145,178,0));animation:lscan 1.05s linear infinite}
+@keyframes lscan{from{transform:translateX(-110%)}to{transform:translateX(255%)}}
 
 /* ---------- score reveal ---------- */
 .reveal-wrap{text-align:center;display:flex;flex-direction:column;flex:1}
@@ -383,105 +415,152 @@ h1 .red{color:var(--coral)}
 .reveal-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-weight:800;margin-top:12px}
 .reveal-headline{font-size:23px;font-weight:800;line-height:1.22;letter-spacing:-.025em;margin:14px 4px 9px;color:var(--ink)}
 .reveal-headline .red{color:var(--coral)}
-.reveal-body{font-size:14px;line-height:1.55;font-weight:500;color:var(--mut);margin-bottom:6px}
-.reveal-body b{color:var(--ink);font-weight:700}
-.tenyr{background:var(--coral-bg);border:1px solid var(--coral-line);border-radius:20px;padding:15px 16px;margin:16px 0;font-size:13.5px;font-weight:600;line-height:1.5;color:var(--coral-ink);box-shadow:0 1px 2px rgba(154,52,21,.05),0 10px 28px -10px rgba(234,88,12,.2)}
-.tenyr b{color:var(--coral-deep);font-weight:800;font-size:16px} /* 16px is below the AA "large" cut-off — needs the deep coral */
-
-/* radar + pillar breakdown (Glasswater card grid) */
-.radarcard{background:var(--card);border-radius:26px;padding:16px 8px 4px;margin:16px 0 0;box-shadow:var(--sh1)}
-.radarcard .rlab{font:700 10px 'Plus Jakarta Sans',sans-serif;fill:var(--mut)}
-.pillrows{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0 2px;text-align:left}
-@media(min-width:392px){.pillrows{grid-template-columns:repeat(3,1fr)}}
-.prow2{position:relative;display:block;margin:0;background:var(--card);border-radius:18px;padding:12px 12px 13px;box-shadow:var(--sh1);font-size:12px;font-weight:700;color:var(--ink)}
-.prow2 .nm2{display:block;width:auto;text-align:left;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);line-height:1.25}
-.prow2 .vv{display:block;width:auto;text-align:left;font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-top:4px;line-height:1}
-.prow2 .vv i{font-style:normal;font-size:11px;font-weight:700;color:var(--mut);letter-spacing:0}
-.prow2 .bar2{display:block;flex:none;height:5px;background:#e8f1f6;border-radius:99px;overflow:hidden;margin-top:9px}
-.prow2 .bar2 i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width 1.1s var(--spring)}
-.prow2.weak{background:var(--coral-bg);box-shadow:0 1px 2px rgba(154,52,21,.06),0 10px 28px -8px rgba(234,88,12,.22)}
-.prow2.weak .vv{color:var(--coral-ink)}
-.prow2.weak .bar2{background:#ffe0d1}
-.prow2.weak .bar2 i{background:linear-gradient(135deg,#f97316,#ea580c)}
-.prow2 .pflag{position:absolute;top:-8px;right:8px;background:linear-gradient(135deg,#d1490b,#a8380c);color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:99px;padding:5px 9px;box-shadow:0 6px 14px -4px rgba(234,88,12,.5)}
-.limbox{background:var(--coral-bg);border:1px solid var(--coral-line);border-radius:20px;padding:15px 16px;margin:12px 0 2px;text-align:left;box-shadow:0 1px 2px rgba(154,52,21,.05),0 10px 28px -10px rgba(234,88,12,.22)}
-.limbox .lk{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--coral-ink);font-weight:800;margin-bottom:6px}
-.limbox .ln2{font-size:19px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-bottom:6px}
-.limbox p{font-size:12.5px;font-weight:600;color:var(--coral-ink);line-height:1.5}
-.limbox p b{color:var(--ink);font-weight:800}
-.lvl-line{font-size:12px;font-weight:600;color:var(--mut);margin-top:14px}
+/* the score's provenance, as two chips under the ring — the level it measured and
+   how many scored answers produced it. Not decoration: both come from levelAvg(). */
+.lvl-line{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:15px}
+/* inline-block, not inline-flex: a flex chip turns every text node into a flex item and
+   the row gap then opens a 6px hole around each <b> ("Measured on  9  technique answers") */
+.lvl-line span{display:inline-block;background:var(--card);border-radius:99px;padding:7px 13px;font-size:11px;font-weight:700;line-height:1.25;color:var(--mut);box-shadow:var(--sh1);letter-spacing:-.005em}
 .lvl-line b{color:var(--ink);font-weight:800}
+.lvl-line .lvb{background:linear-gradient(135deg,#f0fafd,#e8f4fb);box-shadow:inset 0 0 0 1px rgba(8,145,178,.16),var(--sh1)}
+.lvl-line .lvb b{color:var(--aq1)}
+.lvl-line .lvb em{font-style:normal;color:var(--aq1);font-weight:800}
 
-/* ---------- projection ---------- */
-.legend{display:flex;justify-content:center;gap:18px;margin-top:4px;font-size:11.5px;font-weight:700;color:var(--ink)}
-.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
-.proj-row{display:flex;gap:11px;margin:12px 0}
-.proj-card{flex:1;background:var(--card);border:2px solid rgba(15,37,48,.05);border-radius:20px;padding:14px 12px;text-align:center;box-shadow:var(--sh1)}
-.proj-card.bad{background:var(--coral-bg);border-color:var(--coral-line)}
-.proj-card.good{border-color:transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;box-shadow:var(--sh2),var(--ring)}
-.proj-card .pn{font-size:32px;line-height:1;font-weight:800;letter-spacing:-.035em}
-.proj-card.bad .pn{color:var(--coral)}
-.proj-card.good .pn{background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-.proj-card .pl{font-size:10.5px;font-weight:600;color:var(--mut);margin-top:6px;line-height:1.35}
-.proj-card.bad .pl{color:var(--coral-ink)}
-.chartbox2{background:var(--card);border-radius:24px;padding:14px 10px 8px;margin:6px 0 14px;box-shadow:var(--sh1)}
-.chartbox2 .ctag{fill:#fff;font:800 11px 'Plus Jakarta Sans',sans-serif;text-anchor:middle}
+/* ---------- the diagnostic instrument: radar + the six values in ONE card ----------
+   Six free-floating cards used to compete with the radar for the same reading; now the
+   shape and the numbers are the same artefact, and the limiter is the one coral cell. */
+.radarcard{background:var(--card);border-radius:26px;padding:15px 15px 15px;margin:16px 0 0;text-align:left;
+  box-shadow:var(--sh2),0 9px 0 -4px rgba(255,255,255,.94),0 18px 32px -18px rgba(15,37,48,.32)}
+.radarcard .dgh{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.radarcard .dgt{font-size:13.5px;font-weight:800;letter-spacing:-.015em;color:var(--ink)}
+.radarcard .dgs{font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--aq1);white-space:nowrap}
+/* the 300×212 viewBox stretches to whatever width it is given: cap it so a 430px phone
+   gets a centred instrument instead of a hexagon with its labels flung to the margins */
+.radarcard>svg{display:block;width:100%;max-width:330px;margin:0 auto}
+.radarcard .rlab{font:700 10px 'Plus Jakarta Sans',sans-serif;fill:var(--mut)}
+/* the instrument and its read-out are the same artefact: they share ONE edge. The svg is
+   capped at 330px, so the numbers under it are too — otherwise the radar sat 13px inset
+   from the values it belongs to at 430px (and aligned only by accident at 375). */
+/* minmax(0,1fr), NOT 1fr: `1fr` is minmax(AUTO,1fr), so the third column's min-content
+   ("Mindset"+the Limiter flag, "Equipment") ate the free space and the tracks came out
+   96.8/79.0/127.1px. The bars are % of their own cell, so four pillars all reading 2.0/4
+   drew fills of 53/37/29/53px — the one instrument on the screen was encoding column
+   width, not score. Equal tracks make bar length mean the number again. */
+.pillrows{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:6px auto 0;max-width:330px;padding-top:12px;border-top:1px solid var(--line2);text-align:left}
+@media(min-width:392px){.pillrows{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.prow2{position:relative;display:block;margin:0;background:var(--surface2);border-radius:15px;padding:9px 11px 10px;box-shadow:none;font-size:12px;font-weight:700;color:var(--ink)}
+/* the flag gets its own line under the name (flex-basis 100% on .nm2 forces the wrap):
+   sharing a 101px track with "Mindset" ellipsised both, and it was the limiter cell's
+   min-content that unbalanced the grid in the first place */
+.prow2 .p2h{display:flex;align-items:center;gap:0 6px;min-width:0;flex-wrap:wrap}
+.prow2 .nm2{flex:1 1 100%;min-width:0;font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow2 .vv{display:block;font-size:17px;font-weight:800;letter-spacing:-.025em;color:var(--ink);margin-top:3px;line-height:1;font-variant-numeric:tabular-nums}
+.prow2 .vv i{font-style:normal;font-size:10px;font-weight:700;color:var(--mut);letter-spacing:0}
+.prow2 .bar2{display:block;flex:none;height:5px;background:var(--track);border-radius:99px;overflow:hidden;margin-top:8px}
+.prow2 .bar2 i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width 1.1s var(--spring)}
+.prow2.top .vv{background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.prow2.weak{background:var(--coral-bg);box-shadow:inset 0 0 0 1px var(--coral-line)}
+.prow2.weak .vv{color:var(--coral-deep)}
+.prow2.weak .bar2{background:var(--track-warn)}
+.prow2.weak .bar2 i{background:linear-gradient(135deg,#f97316,#ea580c)}
+/* defensive: a pillar the diagnostic never got to read (same treatment as the checkpoint) */
+.prow2.wait .nm2,.prow2.wait .vv{color:var(--mute)}
+.prow2.wait .bar2{background:transparent;box-shadow:inset 0 0 0 1.5px rgba(15,37,48,.10)}
+/* the flag now sits INSIDE the row (the old absolute chip collided with the row above it) */
+.prow2 .pflag{flex:none;margin-top:5px;background:linear-gradient(135deg,#d1490b,#a8380c);color:#fff;font-size:8.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;border-radius:99px;padding:3px 7px;line-height:1.25;box-shadow:0 6px 14px -6px rgba(234,88,12,.6)}
+
+/* ---------- the insight: your #1 limiter ---------- */
+.limbox{position:relative;overflow:hidden;background:var(--coral-bg);border:1px solid var(--coral-line);border-radius:24px;padding:15px 16px 16px;margin:14px 0 0;text-align:left;
+  box-shadow:var(--sh2),0 20px 36px -18px rgba(234,88,12,.45)}
+.limbox:before{content:"";position:absolute;top:-56px;right:-42px;width:158px;height:158px;border-radius:50%;background:radial-gradient(circle,rgba(234,88,12,.16),transparent 70%);pointer-events:none}
+.limbox .lhead{position:relative;display:flex;align-items:center;gap:12px}
+.limbox .li{flex:0 0 46px;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.32),0 16px 32px -12px rgba(234,88,12,.8)}
+.limbox .li svg{width:22px;height:22px;fill:#fff;display:block}
+.limbox .lt{flex:1;min-width:0}
+.limbox .lk{display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--coral-ink);font-weight:800;line-height:1.2}
+.limbox .ln2{display:block;font-size:20px;font-weight:800;letter-spacing:-.028em;color:var(--ink);margin-top:3px;line-height:1.1}
+.limbox .lv{flex:none;text-align:right;font-size:23px;font-weight:800;letter-spacing:-.035em;line-height:1;color:var(--coral-deep);font-variant-numeric:tabular-nums}
+.limbox .lv i{font-style:normal;font-size:10.5px;font-weight:700;color:var(--coral-ink);letter-spacing:0}
+.limbox p{position:relative;font-size:12.5px;font-weight:600;color:var(--coral-ink);line-height:1.5;margin-top:8px}
+.limbox p b{color:var(--ink);font-weight:800}
+/* the "why it is the limiter" line — the actual comparison, so the flag reads as a finding */
+.limbox .lwhy{font-size:11.5px;font-weight:700;color:var(--coral-ink);margin-top:12px;padding-top:11px;border-top:1px solid var(--coral-line)}
+.limbox .lwhy b{color:var(--coral-deep);font-weight:800}
+
+/* ---------- emotional proof: the stuck photo, bound to the loss line ---------- */
+.stuck{position:relative;border-radius:26px;overflow:hidden;background:var(--card);margin:14px 0 0;text-align:left;box-shadow:var(--sh2)}
+.stuck .sph{position:relative;line-height:0}
+.stuck .sph .imgslot{width:100%;display:block;border-radius:0;box-shadow:none;aspect-ratio:16/10;object-fit:cover;filter:saturate(.82) contrast(1.02)}
+.stuck .sph .imgslot.ph{aspect-ratio:16/10;height:auto}
+.stuck .sph:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(9,38,50,.38),rgba(9,38,50,0) 48%,rgba(9,38,50,.20))}
+.stuck .schip{position:absolute;z-index:2;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);border-radius:99px;padding:6px 11px;font-size:9.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--coral-ink);box-shadow:0 10px 22px -10px rgba(15,37,48,.6)}
+.stuck .schip:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--coral)}
+.stuck .sbody{background:var(--coral-bg);border-top:1px solid var(--coral-line);padding:14px 16px 15px}
+.stuck .sk{display:block;font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--coral-ink);margin-bottom:6px}
+.stuck p{font-size:13.5px;font-weight:600;line-height:1.5;color:var(--coral-ink)}
+.stuck p b{color:var(--coral-deep);font-weight:800}
+
+/* ---------- projection: the fork ----------
+   Two futures, deliberately unequal. Path A is flat, dull and small; Path B is the
+   barrel photo over a deep aqua field. The numbers carry the screen. */
+.fork{display:flex;flex-direction:column;gap:0;margin:14px 0 0;text-align:left}
+.fpath{position:relative;border-radius:24px;overflow:hidden}
+.fpath .fk{display:flex;align-items:center;gap:7px;font-size:9.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.fpath .fk:before{content:"";flex:none;width:8px;height:8px;border-radius:50%}
+.fpath .fnum{font-weight:800;line-height:1;letter-spacing:-.045em;margin:9px 0 6px}
+.fpath .fl{font-size:12.5px;font-weight:600;line-height:1.45}
+/* path A — the default future: flat line, muted card, no elevation */
+.fpath.bad{background:var(--coral-bg);border:1px solid var(--coral-line);padding:14px 16px 14px;box-shadow:0 1px 2px rgba(154,52,21,.05)}
+.fpath.bad .fk{color:var(--coral-ink)}
+.fpath.bad .fk:before{background:var(--coral)}
+.fpath.bad .fnum{font-size:33px;color:var(--coral)}
+.fpath.bad .fl{color:var(--coral-ink)}
+.fpath.bad .fl b{color:var(--coral-deep);font-weight:800}
+.fflat{display:block;height:3px;border-radius:99px;margin-top:12px;opacity:.5;
+  background:repeating-linear-gradient(90deg,var(--coral) 0 9px,transparent 9px 17px)}
+/* the hinge of the whole fork, and it sits on the page wash with no card behind it:
+   --mute (#5f7987) measured 4.23:1 at the top of the gradient and 3.98:1 lower down.
+   --mut is 5.48:1 on the wash, and 10.5px keeps it under the 18.66px bold exemption safely. */
+.forkor{display:flex;align-items:center;gap:11px;margin:11px 2px;font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+.forkor:before,.forkor:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(15,37,48,.16),transparent)}
+/* path B — the other path, and the barrel photo IS the card */
+.fpath.good{background:var(--card);box-shadow:var(--sh3),var(--ring)}
+.fpath.good .fph{position:relative;line-height:0}
+.fpath.good .fph .imgslot{width:100%;display:block;border-radius:0;box-shadow:none;aspect-ratio:16/10;object-fit:cover}
+.fpath.good .fph .imgslot.ph{aspect-ratio:16/10;height:auto}
+.fpath.good .fph:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(4,32,44,.34),rgba(4,32,44,0) 46%,rgba(4,32,44,.34))}
+.fpath.good .fchip{position:absolute;z-index:2;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);border-radius:99px;padding:6px 11px;font-size:9.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--aq1);box-shadow:0 10px 22px -10px rgba(15,37,48,.6)}
+.fpath.good .fchip:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--aq2)}
+/* the same deep aqua field the scratch prize uses — the funnel's "payoff" surface.
+   The top light is cut to .12 (from .20) for the same reason it is on the prize: at .20 the
+   band the kicker sits in lifted to ~rgb(17,121,154), where no legible aqua-white clears
+   4.5:1 at 9.5px. It now composites to ~rgb(14,117,148) and #e8f8ff measures 4.9:1. */
+.fpath.good .ffoot{position:relative;padding:15px 16px 16px;
+  background:radial-gradient(120% 90% at 50% -20%,rgba(56,189,248,.12),rgba(56,189,248,0) 60%),linear-gradient(160deg,#0b6f8c 0%,#0a5270 46%,#07364b 100%)}
+.fpath.good .fk{color:#e8f8ff}
+.fpath.good .fk:before{background:#7dd3fc}
+.fpath.good .fnum{font-size:41px;color:#fff;background:linear-gradient(178deg,#ffffff 0%,#e6f7ff 48%,#b6e2f8 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.fpath.good .fl{color:#c4e3f1}
+.fpath.good .fl b{color:#fff;font-weight:800}
+
+/* the chart is an ILLUSTRATION of the two paths — it is labelled as one */
+.chartbox2{background:var(--card);border-radius:24px;padding:13px 12px 12px;margin:14px 0 0;box-shadow:var(--sh1);text-align:left}
+.chartbox2 .cbh{margin:0 2px 2px}
+.chartbox2 .cbt{font-size:12.5px;font-weight:800;letter-spacing:-.01em;color:var(--ink)}
 .chartbox2 .cfree{fill:var(--mut);font:700 10px 'Plus Jakarta Sans',sans-serif}
 .chartbox2 .caxis{fill:var(--mute);font:600 9.5px 'Plus Jakarta Sans',sans-serif}
-.savedpill{display:block;background:linear-gradient(135deg,#f0fafd,#e8f4fb);border:1px solid rgba(8,145,178,.16);border-radius:20px;padding:14px 16px;font-size:13.5px;color:var(--ink);font-weight:700;margin:0 0 14px;text-align:center;line-height:1.45;box-shadow:var(--sh1)}
+.cbnote{font-size:10px;font-weight:600;color:var(--mute);line-height:1.4;margin-top:9px;padding-top:9px;border-top:1px solid var(--line2)}
+.legend{display:flex;justify-content:center;gap:18px;margin-top:2px;font-size:11px;font-weight:700;color:var(--mut);white-space:nowrap}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.savedpill{display:block;background:linear-gradient(135deg,#f0fafd,#e8f4fb);border:1px solid rgba(8,145,178,.16);border-radius:20px;padding:14px 16px;font-size:13.5px;color:var(--ink);font-weight:700;margin:14px 0 0;text-align:center;line-height:1.45;box-shadow:var(--sh1)}
 .savedpill b{background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;font-weight:800}
 
-/* ---------- bridge ---------- */
-/* signature #1 — the same three-stat component as the intro's .trust, so it gets the
-   same climb over the photo above it (the translateY(6px) tell below only reads as a
-   layer when the row actually overlaps something) */
-.auth-grid{display:flex;gap:10px;margin:-28px 0 4px;padding:0 6px;position:relative;z-index:3}
-.auth-grid .a{flex:1;background:var(--card);border-radius:20px;padding:13px 6px 12px;text-align:center;box-shadow:var(--sh2)}
-.auth-grid .a:nth-child(1),.auth-grid .a:nth-child(3){transform:translateY(6px)}
-.auth-grid .a b{display:block;font-size:21px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
-.auth-grid .a span{font-size:10px;color:var(--mut);font-weight:700;letter-spacing:.06em;text-transform:uppercase;line-height:1.25;display:block;margin-top:4px}
-.methodrow{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
-.methodrow .m{background:var(--card);border-radius:99px;padding:9px 14px;font-size:12px;font-weight:700;color:var(--mut);box-shadow:var(--sh1)}
-.methodrow .m b{color:var(--ink);font-weight:800}
-
-/* ---------- tier result ---------- */
-.tiercard{
-  position:relative;overflow:hidden;text-align:left;
-  border:2px solid transparent;border-radius:26px;padding:22px;margin:8px 0 14px;
-  background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
-  box-shadow:var(--sh3),var(--ring);
-}
-.tiercard:before{content:"";position:absolute;top:-60px;right:-50px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,.14),transparent 70%);pointer-events:none}
-.tiercard .tier-tag{position:relative;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--aq1);font-weight:800;margin-bottom:8px}
-.tiercard .tier-name{position:relative;font-size:26px;font-weight:800;line-height:1.06;margin-bottom:10px;color:var(--ink);letter-spacing:-.03em}
-.tiercard .tier-price{position:relative;display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
-.tiercard .tier-price b{font-size:36px;font-weight:800;line-height:1;letter-spacing:-.04em;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-.tiercard .tier-price span{font-size:13px;color:var(--mut);font-weight:700}
-.tiercard .tier-meta{position:relative;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:14px}
-.tiercard .tier-meta b{color:var(--aq1);font-weight:800}
-.tier-body{position:relative;display:grid;grid-template-rows:0fr;transition:grid-template-rows .42s var(--spring)}
-.tiercard.open .tier-body{grid-template-rows:1fr}
-.tier-body>div{overflow:hidden;min-height:0}
-.tier-toggle{position:relative;display:flex;align-items:center;gap:6px;margin-top:14px;font-size:12.5px;font-weight:800;color:var(--aq1)}
-.tier-toggle svg{width:15px;height:15px;transition:transform .35s var(--spring)}
-.tiercard.open .tier-toggle svg{transform:rotate(180deg)}
-.tiercard{cursor:pointer}
-.tier-inc{position:relative;list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(15,37,48,.08)}
-.tier-inc li{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.4}
-/* signature #8 on the commercial screens: a drawn check in a soft filled circle,
-   not a font glyph whose optical weight changes per platform (see TICK_SVG in the JS) */
-.tier-inc li svg,.plan .pfeat span svg{flex:0 0 15px;width:15px;height:15px;margin-top:2px}
-.tier-price .was{font-size:16px;color:var(--mute);text-decoration:line-through;font-weight:700;-webkit-text-fill-color:var(--mute)}  /* the flex gap already spaces it */
-.tier-perday{position:relative;font-size:12.5px;font-weight:600;color:var(--mut);margin-top:2px}
-.tier-perday b{color:var(--aq1);font-weight:800}
+/* ---------- commercial chrome ---------- */
 .disc-badge{display:inline-flex;align-items:center;gap:6px;background:#e9f7fc;border:1px solid rgba(8,145,178,.28);color:var(--aq1);font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:99px;margin-top:10px;position:relative}
 .scarce{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:800;color:var(--coral-ink);margin:2px 0 12px}
 .scarce .dotr{width:8px;height:8px;border-radius:50%;background:#f97316;box-shadow:0 0 0 4px rgba(234,88,12,.14);animation:pulse 1.6s infinite;flex-shrink:0}
 .guar{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12px;font-weight:600;color:var(--mut);margin-top:14px}
 .guar svg{width:15px;height:15px;fill:var(--aq1);flex-shrink:0}
-/* the honest exit for someone who dismissed the scratch card: the bonus is still theirs
-   to take, so it stays one tap away instead of quietly vanishing. 44px tap target. */
-.reopen{display:none;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:10px;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--aq1);text-decoration:underline;text-underline-offset:3px;cursor:pointer;border-radius:14px}
 
 /* ---------- plans / payment — vertical accordion ---------- */
 /* every plan visible at once, cheapest first; the body collapses so the list stays
@@ -518,17 +597,13 @@ h1 .red{color:var(--coral)}
 .plan .pbody>div{overflow:hidden;min-height:0}
 .plan .pfeat{display:flex;flex-direction:column;gap:9px;padding-top:14px;margin-top:13px;border-top:1px solid rgba(15,37,48,.08)}
 .plan .pfeat span{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;font-weight:600;line-height:1.45;color:var(--ink)}
+/* signature #8 on the commercial screens: a drawn check in a soft filled circle,
+   not a font glyph whose optical weight changes per platform (see TICK_SVG in the JS) */
 .plan .pfeat span svg{flex:0 0 15px;width:15px;height:15px;margin-top:2px}
 .plan .ptoggle{position:relative;display:flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;font-weight:800;color:var(--aq1);letter-spacing:.01em}
 .plan .ptoggle svg{width:14px;height:14px;transition:transform .35s var(--spring)}
 .plan.open .ptoggle svg{transform:rotate(180deg)}
 .plan .pbadge{position:absolute;top:-11px;left:18px;background:var(--grad-ink);color:#fff;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:99px;white-space:nowrap;box-shadow:0 8px 18px -4px rgba(8,145,178,.55);z-index:2}
-.plan .pweek{font-size:11px;font-weight:600;color:var(--mut);margin-top:5px}
-/* legacy row bits — kept defined, unused by the accordion markup */
-.plan .pradio{width:24px;height:24px;border-radius:50%;border:2px solid rgba(15,37,48,.34);background:#fff;flex-shrink:0}
-.plan .pinfo{flex:1;text-align:left;min-width:0}
-.plan .pn2{font-size:15px;font-weight:800;color:var(--ink)}
-.plan .pm{font-size:11px;font-weight:600;color:var(--mut);margin-top:4px}
 .disc-banner{text-align:center;margin:0 0 12px}
 .paytrust{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:600;color:var(--mut);margin-top:12px}
 
@@ -551,42 +626,19 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .ctabar .cta{margin-top:0;white-space:nowrap}   /* a label regression must show, not silently wrap */
 .ctabar .paytrust{margin-top:9px;flex-wrap:wrap}
 .ctabar .paytrust #payname{color:var(--ink);font-weight:800}
-.ctabar .spots{color:var(--coral-deep);font-weight:800}
-
-/* IG real card */
-.igservices{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 4px}
-.igservices span{background:var(--card);border-radius:99px;padding:6px 12px;font-size:11.5px;font-weight:700;color:var(--mut);box-shadow:var(--sh1)}
-.igreal{background:var(--card);border-radius:20px;padding:15px 16px;margin:12px 0 0;box-shadow:var(--sh1)}
-.igreal-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink);font-weight:700;padding:5px 0}
-.igreal-note{font-size:11.5px;color:var(--mute);font-weight:600;margin-top:8px;font-style:italic}
-
-/* instagram grid */
-.igsec{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
-.ighead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.igav{width:46px;height:46px;border-radius:50%;flex-shrink:0;background:var(--grad);box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(8,145,178,.28),var(--sh1);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px}
-.igav img{width:26px;height:26px;object-fit:contain}
-.igmeta{text-align:left;flex:1;min-width:0}
-.ighandle{font-size:14.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
-.igtag{font-size:11.5px;font-weight:600;color:var(--mut);margin-top:3px;line-height:1.35}
-.iggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.igtile{position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;display:block;background:linear-gradient(135deg,#e3eff6,var(--surface2));box-shadow:var(--sh1)}
-.igtile img{width:100%;height:100%;object-fit:cover;display:block}
-.igtile .igph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:10px;font-weight:700;letter-spacing:.04em}
-/* Instagram ramp trimmed to its magenta→indigo half: the original amber stop left white
-   label text at 2.6:1. Every stop below clears 4.5 on white. */
-.igbtn{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:14px;width:100%;text-decoration:none;padding:16px;border-radius:99px;font-weight:800;font-size:15px;color:#fff;background:linear-gradient(95deg,#d62976,#c13584 32%,#962fbf 66%,#4f5bd5);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.3),0 14px 30px -12px rgba(214,41,118,.5)}
-.igbtn svg{width:20px;height:20px;fill:#fff}
 
 /* ---------- scratch ---------- */
-/* the in-page scratch card is gone — the card lives in the modal now (.m-scratch et al).
-   .scratch-wrap survives as the result screen's flex wrapper + entrance-cascade hook. */
-.scratch-wrap{text-align:center;display:flex;flex-direction:column}
+/* the in-page scratch card is gone — the card lives in the modal now (.m-scratch et al). */
 /* above .modal-ov (z-index 100) — the reveal burst used to paint *under* the scrim's
    blur, so the one moment of reward in the paywall rendered as nothing */
 .confetti{position:fixed;top:-10px;width:9px;height:14px;z-index:120;pointer-events:none;border-radius:2px;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
 
-/* ---------- coach's note — chat row: avatar + name label + bubble ---------- */
+/* ---------- coach's note — chat row: avatar + name label + bubble ----------
+   The note alone measured 211px on a 758px column and the single trailing spacer dumped
+   the whole remainder below it (438px of void at 430x900). It now gets the funnel's
+   strongest authority image above it and the .mgap split the checkpoint uses. */
+.snipshot{margin:0 0 14px}
 .snip{position:relative;display:flex;align-items:flex-start;gap:11px;background:none;box-shadow:none;padding:0;border-radius:0;text-align:left;margin-top:4px}
 .snip .sav{position:relative;width:44px;height:44px;flex:0 0 44px;border-radius:50%;overflow:visible;background:var(--grad-ink);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;box-shadow:0 8px 18px -6px rgba(8,145,178,.5)}
 .snip .sav:after{content:"";position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:var(--green);border:2.5px solid #fff;z-index:2}
@@ -605,34 +657,76 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .snipstat{display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,#f0fafd,#e8f4fb);border:1px solid rgba(8,145,178,.14);border-radius:16px;padding:11px 14px;margin-top:14px;font-size:12.5px;font-weight:600;color:var(--ink);text-align:left}
 .snipstat b{font-size:19px;font-weight:800;letter-spacing:-.03em;flex-shrink:0;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 
-/* ---------- milestone (rich checkpoint) ---------- */
-.mile-ck{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--aq1);font-weight:800;text-align:center;margin-bottom:6px}
-.mrecap{background:var(--card);border-radius:22px;padding:8px 16px;margin:18px 0 4px;box-shadow:var(--sh1)}
-.mrow{display:flex;align-items:center;gap:12px;padding:10px 2px;font-size:13.5px;font-weight:700;border-bottom:1px solid var(--line2)}
-.mrow:last-child{border-bottom:none}
-.mrow .mi{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.mrow.ok .mi{background:var(--grad);box-shadow:0 6px 14px -5px rgba(8,145,178,.5)}
-.mrow.ok .mi:after{content:"✓";color:#fff;font-size:12px;font-weight:800}
-.mrow.now .mi{border:2px solid var(--aq1);background:rgba(14,165,233,.1)}
-.mrow.now .mi:after{content:"";width:9px;height:9px;border-radius:50%;background:var(--aq1)}
-.mrow.wait .mi{border:2px solid rgba(15,37,48,.34)}
-.mrow.ok .ml{color:var(--ink)}.mrow.now .ml{color:var(--ink)}.mrow.wait .ml{color:var(--mute)}
-.mrow .ml{flex:1;text-align:left}
-.mprog{margin:18px 0 2px}   /* tracks the .mrecap card edges above it */
-.mprog .mpbar{height:10px;background:var(--track);border-radius:99px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(15,37,48,.07)}
-.mprog .mpbar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width 1s var(--spring)}
-.mprog .mpt{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);font-weight:700;margin-top:9px}
-.mprog .mpt b{color:var(--aq1);font-weight:800}
+/* ---------- milestone (rich checkpoint) ----------
+   The checkpoint is a READ-OUT, not a receipt: it prints the level it has measured so far,
+   the pillars it can already score, a named 4-section rail, and what the next block opens.
+   Every number on it comes from levelAvg()/pillarScores() — nothing is decorative. */
 /* every other screen starts at the top of #app; centring this one left the block floating
    in the middle with dead space above and below, reading as misaligned against the rest */
-.mile{flex:1;display:flex;flex-direction:column;justify-content:flex-start;text-align:center;padding-top:8px}
-.mile .mck{width:74px;height:74px;border-radius:50%;background:var(--grad);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),0 18px 40px -14px rgba(8,145,178,.6);animation:pop .5s var(--over) both}
-.mile .mck svg{width:32px;height:32px;fill:#fff}
+.mile{flex:1;display:flex;flex-direction:column;justify-content:flex-start;text-align:center}
+/* the three flexible gaps absorb the slack: a tall phone gets airier spacing between the
+   blocks instead of one dead pool above the CTA */
+.mgap{flex:1 1 auto;min-height:7px}
+.mile>.mhead{animation:childIn .62s var(--spring) backwards}
+.mile>.mread{animation:childIn .62s var(--spring) .10s backwards}
+.mile>.mnext{animation:childIn .62s var(--spring) .19s backwards}
+.mile-ck{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--aq1);font-weight:800;text-align:center;margin-bottom:6px}
+.mile .mck{width:52px;height:52px;border-radius:50%;background:var(--grad);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),0 18px 40px -14px rgba(8,145,178,.6);animation:pop .5s var(--over) both}
+.mile .mck svg{width:25px;height:25px;fill:#fff}
 @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
-.mile h1{font-size:26px;margin-top:2px}
-.milebars{display:flex;gap:7px;justify-content:center;margin:16px 0 4px}
-.milebars i{width:34px;height:6px;border-radius:99px;background:var(--track)}
-.milebars i.on{background:var(--grad)}
+.mile h1{font-size:22px;line-height:1.13;margin:2px 0 6px}
+.mile .sub{font-size:12.5px;line-height:1.45;margin-bottom:0}
+
+/* the read-out card — layered: a second sheet peeks out under the bottom edge */
+.mread{position:relative;background:var(--card);border-radius:24px;padding:13px 15px 12px;text-align:left;
+  box-shadow:var(--sh2),0 9px 0 -4px rgba(255,255,255,.94),0 18px 32px -18px rgba(15,37,48,.32)}
+/* level read-out */
+.mtop{display:flex;align-items:center;gap:12px}
+.mtop .mlb{flex:0 0 42px;width:42px;height:42px;border-radius:50%;background:var(--soft);box-shadow:inset 0 0 0 1px rgba(8,145,178,.16);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--aq1)}
+.mtop .mlt{flex:1;min-width:0}
+.mtop .mlk{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtop .mlv{display:block;font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-top:2px;line-height:1.2}
+.mtop .mlv em{font-style:normal;font-size:11px;font-weight:700;color:var(--mut);letter-spacing:0}
+/* section rail — the real progress artefact: four named segments, one live */
+.msec{margin-top:11px;padding-top:10px;border-top:1px solid var(--line2)}
+.mseck{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:10.5px;font-weight:700;color:var(--mut);margin-bottom:7px}
+.mseck b{color:var(--ink);font-weight:800}
+.mseck .msq{color:var(--aq1);font-weight:800;white-space:nowrap}
+.msegs{display:flex;gap:6px}
+.msegs i{flex:1;height:8px;border-radius:99px;background:var(--track);position:relative;overflow:hidden;box-shadow:inset 0 1px 2px rgba(15,37,48,.07)}
+.msegs i.ok{background:var(--grad);box-shadow:0 6px 14px -8px rgba(8,145,178,.75)}
+.msegs i.now:after{content:"";position:absolute;left:0;top:0;bottom:0;width:44%;background:var(--grad);border-radius:99px;animation:segp 1.8s ease-in-out infinite}
+@keyframes segp{0%,100%{width:34%;opacity:.55}50%{width:62%;opacity:1}}
+.msl{display:flex;gap:6px;margin-top:6px}
+.msl span{flex:1;min-width:0;font-size:9px;line-height:1.2;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msl span.ok{color:var(--aq1)}
+.msl span.now{color:var(--ink)}
+/* the six pillars, as far as they can be scored right now */
+.mpg{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line2)}
+.mpc .mpr{display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.mpc .mpn{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mpc .mpv{flex:none;font-size:12.5px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+.mpc .mpv i{font-style:normal;font-size:9.5px;font-weight:700;color:var(--mut);letter-spacing:0}
+.mpc .mpb{display:block;height:5px;background:var(--track);border-radius:99px;overflow:hidden;margin-top:5px}
+.mpc .mpb i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .95s var(--spring)}
+.mpc.top .mpv{background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+/* coral is the limiter language everywhere else in the funnel — same meaning here */
+.mpc.low .mpv{color:var(--coral-ink);-webkit-text-fill-color:var(--coral-ink)}
+.mpc.low .mpb{background:var(--track-warn)}
+.mpc.low .mpb i{background:linear-gradient(135deg,#f97316,#ea580c)}
+.mpc.wait .mpn,.mpc.wait .mpv{color:var(--mute)}
+.mpc.wait .mpb{background:transparent;box-shadow:inset 0 0 0 1.5px rgba(15,37,48,.10)}
+.mnote{font-size:11px;font-weight:600;color:var(--mut);line-height:1.4;margin-top:9px;padding-top:8px;border-top:1px solid var(--line2)}
+.mnote b{color:var(--ink);font-weight:800}
+/* what the next block opens — the pull-forward */
+.mnext{display:flex;align-items:center;gap:12px;text-align:left;background:linear-gradient(135deg,#f0fafd,#e8f4fb);border:1px solid rgba(8,145,178,.16);border-radius:22px;padding:11px 14px;box-shadow:var(--sh1)}
+.mnext .mni{flex:0 0 42px;width:42px;height:42px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(8,145,178,.14),0 8px 18px -10px rgba(8,145,178,.75)}
+.mnext .mni svg{width:20px;height:20px;fill:none;stroke:var(--aq1);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.mnext .mnb{flex:1;min-width:0}
+.mnext .mnk{display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--aq1);font-weight:800}
+.mnext .mnt{display:block;font-size:14.5px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-top:2px;line-height:1.22}
+.mnext .mnc{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.mnext .mnc span{background:rgba(255,255,255,.86);border-radius:99px;padding:3px 9px;font-size:10.5px;font-weight:700;color:var(--mut);box-shadow:0 1px 2px rgba(15,37,48,.06)}
 
 /* ---------- number inputs + board card ---------- */
 .numrow{display:flex;gap:11px;margin-top:4px}
@@ -654,8 +748,6 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .boardcard.empty{background:var(--card);border:1.5px dashed rgba(15,37,48,.12);color:var(--mut);box-shadow:var(--sh1)}
 .boardcard.empty:before{display:none}
 .boardcard.empty .bk{color:var(--mut)}
-.numwhy{display:flex;align-items:flex-start;gap:9px;font-size:12px;font-weight:600;color:var(--mut);margin-top:14px;line-height:1.45}
-.numwhy svg{width:15px;height:15px;fill:var(--aq1);flex-shrink:0;margin-top:1px}
 
 /* ---------- tap feedback ---------- */
 .opt,.gcard,.acard{position:relative;overflow:hidden}
@@ -673,8 +765,6 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .bar{position:relative;overflow:visible}
 .bar>i{position:relative;overflow:hidden}
 #barsurfer{display:none}
-.qcount.bump{animation:qbump .35s}
-@keyframes qbump{40%{transform:scale(1.2);color:var(--aq1)}}
 
 /* coach's note typing indicator */
 .typing{display:flex;gap:5px;padding:8px 2px 4px}
@@ -689,7 +779,7 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 @keyframes radarIn{from{opacity:0;transform:scale(.25)}to{opacity:1;transform:scale(1)}}
 .rdot{transform-box:fill-box;transform-origin:center;animation:dotIn .4s var(--over) backwards}
 @keyframes dotIn{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
-.bignum.settled,.tier-price.settled{animation:numSettle .5s var(--over)}
+.bignum.settled{animation:numSettle .5s var(--over)}
 @keyframes numSettle{35%{transform:scale(1.14)}}
 .limbox.attn{animation:attn 1.1s}
 @keyframes attn{35%{box-shadow:0 0 0 8px rgba(234,88,12,.14)}70%,100%{box-shadow:0 0 0 0 rgba(234,88,12,0)}}
@@ -712,10 +802,12 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 /* loader + result juice */
 .testi.tin{animation:childIn .5s var(--spring) both}
 .chk.done .cb{animation:pop .35s var(--over)}
-.tiercard{animation:cardIn .7s .15s var(--spring) backwards}
-@keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
 .plan .pbadge{animation:badgeP 2s infinite}
-@keyframes badgeP{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.08)}}
+/* NO translateX(-50%): the badge was centred with left:50% once, but .plan .pbadge is
+   positioned with left:18px now. Both keyframes carried the translate, so it was permanent
+   — the 108px "★ Your match" pill sat at x=-12, hanging off the left edge of its own card
+   (and getting sliced by #shell's overflow-x:clip on desktop). */
+@keyframes badgeP{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 /* hintB is bound on .m-hint (the modal's scratch cue) */
 @keyframes hintB{50%{transform:translateY(3px)}}
 
@@ -730,7 +822,6 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .chartbox2 #dred{fill:var(--coral);stroke:#fff}
 .chartbox2 #pgreen{stroke:var(--aq1)}
 .chartbox2 #dgreen{fill:var(--aq1);stroke:#fff}
-.chartbox2 #cgreen rect{fill:var(--aq1)}
 .chartbox2 #gArea stop:first-child{stop-color:#0ea5e9;stop-opacity:.28}
 .chartbox2 #gArea stop:last-child{stop-color:#0ea5e9;stop-opacity:0}
 .legend span:nth-child(1) i{background:var(--coral)!important}
@@ -775,7 +866,7 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
    the shimmer (z3) too, and it survives the canvas being removed on reveal. */
 .m-scratch:after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 1px 0 rgba(255,255,255,.30)}
-.m-scratch:focus-visible{outline:3px solid #0e7490;outline-offset:3px;border-radius:20px;box-shadow:var(--sh2),0 0 0 7px rgba(14,165,233,.18)}
+.m-scratch:focus-visible{outline:3px solid var(--aq1);outline-offset:3px;border-radius:20px;box-shadow:var(--sh2),0 0 0 7px rgba(14,165,233,.18)}
 
 /* the prize — a deep aqua→ink field, not a flat radial: a cool top light, a blue floor
    bounce and a diagonal body ramp, so the number sits in a lit space.
@@ -834,7 +925,7 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .m-claim.in{animation:childIn .5s var(--spring) both}
 /* re-state --shadow-btn: a bare box-shadow here would REPLACE .cta's, flattening the button
    onto the card at exactly the moment a keyboard user is on it (same pattern as .m-scratch) */
-.m-claim:focus-visible{border-radius:99px;outline:3px solid #0e7490;outline-offset:3px;box-shadow:var(--shadow-btn),0 0 0 7px rgba(14,165,233,.18)}
+.m-claim:focus-visible{border-radius:99px;outline:3px solid var(--aq1);outline-offset:3px;box-shadow:var(--shadow-btn),0 0 0 7px rgba(14,165,233,.18)}
 /* the modal must never be a dead end: an always-reachable dismiss, keyboard included.
    The mute toggle is its mirror on the left, so the header stays optically balanced. */
 /* 44px: the smallest reliable touch target. The box is 44 and the PAINTED circle stays 36 —
@@ -852,7 +943,7 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 /* the muted state reads as dimmed but stays ≥3:1 on the chip (AA non-text) */
 .m-mute[aria-pressed="true"]{color:var(--mute)}
 /* negative offset so the ring hugs the 36px painted circle, not the 44px hit box */
-.m-close:focus-visible,.m-mute:focus-visible{border-radius:50%;outline:3px solid #0e7490;outline-offset:-4px;box-shadow:0 0 0 5px rgba(14,165,233,.18)}
+.m-close:focus-visible,.m-mute:focus-visible{border-radius:50%;outline:3px solid var(--aq1);outline-offset:-4px;box-shadow:0 0 0 5px rgba(14,165,233,.18)}
 
 .tag-debug{position:fixed;bottom:8px;left:10px;font-size:10px;font-family:monospace;z-index:50;color:#7b96a4;display:none} /* hidden in production; add ?debug to the URL to show */
 
@@ -864,15 +955,21 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
   /* the 46px icon circle gives back a little width on the smallest phones */
   .opt{gap:11px;padding:16px 14px}
   .opt .emoji{flex:0 0 40px;width:40px;height:40px;font-size:19px}
-  /* the track bleeds to the narrower app padding; side padding re-centres card #1 */
-  .plans{margin-left:-16px;margin-right:-16px;padding-left:calc(50% - 94px);padding-right:calc(50% - 94px)}
-  .plan{flex:0 0 220px;padding:20px 15px 16px}
+  /* the checkpoint read-out loses ~55px of inner width here: the two uppercase micro-labels
+     ("RAIL & BOARD", "MEASURED LEVEL · N TECHNIQUE ANSWERS") are the only things that
+     ellipsised, so they scale down rather than truncate */
+  .mile h1{font-size:21px}
+  .msl span{font-size:8px;letter-spacing:.02em}
+  .mtop .mlk{font-size:8.5px;letter-spacing:.05em}
+  .mtop .mlb{flex:0 0 40px;width:40px;height:40px;font-size:14px}
+  .mnext .mnc span{font-size:10px;padding:3px 8px}
+  /* .plans is a VERTICAL accordion — the carousel rules that used to live here (a
+     calc(50% - 94px) inset plus flex:0 0 220px) survived the switch and were still live:
+     every card rendered 220px wide in a 328px column, and the 220px basis landed on the
+     COLUMN main axis, locking each collapsed card to 220px tall against 166px of content.
+     360px is the modal Android width, so this was most of the Android traffic. */
+  .plan{padding:20px 15px 16px}
   .plan .pprice{font-size:38px}
-  .plan .pn2{font-size:13.5px}
-  .plan .pweekbig b{font-size:18px}
-  .plan .pweek{font-size:10px}
-  .tiercard{padding:19px}
-  .tiercard .tier-price b{font-size:30px}
   .gauge{width:208px;height:208px}
   .bignum{font-size:60px}
   /* the scratch modal loses ~55px of inner width here: shrink the corner controls and
@@ -994,8 +1091,9 @@ const STEPS = [
   { id:'sn5', type:'snippet', cond:()=>scOf('q5')!=null&&scOf('q5')<=2,
     content:()=>({
       title:"{nm}take-off inconsistency is the #1 plateau we coach.",
-      body:"It's almost never strength — it's <b>positioning and timing</b>. Fix where you sit and when you go, and your wave count doubles. That's the fastest win in surfing.",
-      stat:['2×',"wave count in ~6 weeks is the norm once positioning clicks"]
+      body:"It's almost never strength — it's <b>positioning and timing</b>. Fix where you sit and when you go, and the same session gives you more waves. That's the fastest win in surfing.",
+      /* facts only: no outcome multiplier, no invented deadline */
+      stat:['300+',"surfers coached at Coolangatta, Gold Coast since 2019"]
     })},
 
   { id:'q6', type:'single', q:true,
@@ -1010,8 +1108,8 @@ const STEPS = [
   { id:'sn6', type:'snippet', cond:()=>scOf('q6')!=null&&scOf('q6')<=2,
     content:()=>({
       title:"Wave reading isn't talent — it's pattern recognition.",
-      body:"And you can't learn it by trial and error alone. It's the single skill <b>video analysis</b> accelerates the most — you literally watch the pattern until you own it.",
-      stat:['#1',"skill our coaches fix fastest with video analysis"]
+      body:"And you can't learn it by trial and error alone. This is what <b>video surf analysis</b> is for — you watch the pattern back with your coach until you own it.",
+      stat:['1:1',"video surf analysis is part of every Improve Surfing programme"]
     })},
 
 
@@ -1112,9 +1210,11 @@ const STEPS = [
     ]},
 
   { id:'sn15', type:'snippet', cond:()=>{const a=scOf('q15'),b=scOf('q5');return a!=null&&b!=null&&((a>=3&&b<=2)||(a<=2&&b>=3));},
+    /* both stats are verbatim member benefits from the membership page — the old ones
+       promised a free board check that is not in the services or in any tier's inclusions */
     content:()=>scOf('q15')>=3
-      ? {title:"Heads up — your board might be working against you.",body:"Short, low-volume boards <b>punish a developing take-off</b>. Riding the right volume now means faster progress, not slower — and we check that in your first session.",stat:['1st',"session includes a free board check"]}
-      : {title:"You've probably outgrown your board.",body:"Your take-off is ahead of your equipment — a step down in volume unlocks <b>turns you physically can't do</b> on a big board. Worth checking before you plateau on it.",stat:['$200',"off partner shapers when you're ready to switch"]}
+      ? {title:"Heads up — your board might be working against you.",body:"Short, low-volume boards <b>punish a developing take-off</b>. Riding the right volume now means faster progress, not slower — it's the kind of thing your coach reads straight off your surfing.",stat:['$200',"OFF Yugen and Ryan surfboards, included with membership"]}
+      : {title:"You've probably outgrown your board.",body:"Your take-off is ahead of your equipment — a step down in volume unlocks <b>turns you physically can't do</b> on a big board. Worth checking before you plateau on it.",stat:['$200',"OFF Yugen and Ryan surfboards when you're ready to switch"]}
     },
 
   { id:'q16', type:'single', q:true,
@@ -1132,7 +1232,8 @@ const STEPS = [
 
   { id:'ms2', type:'milestone', stage:4, confetti:70,
     title:'{nm}your surf profile is complete.',
-    sub:'20-point diagnostic captured. A few quick ones to match your programme — then we calculate your Surf Score.',
+    /* says what has actually been captured, not a fixed total the funnel never runs */
+    sub:'Your technique, ocean and gear read is captured. A few quick ones to match your programme — then we calculate your Surf Score.',
     btn:'Match my programme →' },
 
   /* ═══ Section 5 · Programme match ═══ */
@@ -1183,7 +1284,8 @@ const STEPS = [
   { id:'plans', type:'plans' },
 ];
 
-/* ---------- scoring (20-point diagnostic, Yugen-style 1–4 scale) ---------- */
+/* ---------- scoring (13-point diagnostic, Yugen-style 1–4 scale) ----------
+   13 = LEVEL_QS (9 technique answers) + q3/q4/q15/q16. The UI says 13-point too. */
 function scOf(id){ return (state._sc&&state._sc[id]!=null)?state._sc[id]:null; }
 const LEVEL_QS=['q5','q6','q8','q9','q9b','q10','q12','q14','q14b'];
 function levelAvg(){ let t=0,c=0; LEVEL_QS.forEach(q=>{const s=scOf(q); if(s!=null){t+=s;c++}}); return c?t/c:1; }
@@ -1250,14 +1352,15 @@ function pickTier(s){
 /* ENGINE */
 const state={_sc:{}}; let idx=0; const app=document.getElementById('app');
 const DEBUG=/[?&]debug/.test(location.search);
-const INPUT=['single','gender','imgcards','text','multi','num'];
+const INPUT=['single','gender','imgcards','text','num'];
 function inputSteps(){ return STEPS.filter(s=>INPUT.includes(s.type)&&(!s.cond||s.cond(state))); }
-function qSteps(){ return STEPS.filter(s=>s.q&&(!s.cond||s.cond(state))); }
-/* the four funnel sections the dot rail encodes — the same split the milestone recap uses */
-const DOT_SEC={name:0,gender:0,age:0,q1:0,q2:0,q3:0,q4:0,q5:0,q6:0,q7:0,q8:0,q9:0,q9b:0,
-  q10:1,q11:1,q12:1,q13:1,q14:1,q14b:1,
-  q15:2,q16:2,q17:2,q18:2,
-  missing:3,sessions:3,commit:3,local:3,q19:3,phone:3};
+/* the four funnel sections the dot rail encodes — the same split the milestone recap uses.
+   Keys are STEPS ids and nothing else: q7/q11/q13/q17/q18/'missing' were removed with
+   their screens and left this map claiming sections for questions that don't exist. */
+const DOT_SEC={name:0,gender:0,age:0,q1:0,q2:0,q3:0,q4:0,q5:0,q6:0,q8:0,q9:0,q9b:0,
+  q10:1,q12:1,q14:1,q14b:1,
+  q15:2,q16:2,
+  sessions:3,commit:3,local:3,q19:3,phone:3};
 function setProgress(step){
   const pw=document.getElementById('progwrap');
   const isInput=INPUT.includes(step.type);
@@ -1276,7 +1379,10 @@ function setProgress(step){
       [].forEach.call(dots.children,(d,i)=>d.classList.toggle('on',i===sec));
     }
   } else pw.style.visibility='hidden';
-  document.getElementById('back').classList.toggle('show', idx>0&&STEPS[idx].type!=='result'&&STEPS[idx].type!=='plans');
+  /* the loader is a 4.2s transient that auto-advances — a back chevron on it is a control
+     that undoes itself. (The old test excluded 'result', a screen that no longer exists.) */
+  const NOBACK={loader:1,plans:1};
+  document.getElementById('back').classList.toggle('show', idx>0&&!NOBACK[STEPS[idx].type]);
 }
 /* Skipping a conditional step has to drop whatever it once contributed: q9b/q14b stayed
    in _sc after the answer that unlocked them changed, poisoning levelAvg()/pillarScores()
@@ -1287,12 +1393,18 @@ function next(){ idx++;
     delete state._sc[STEPS[idx].id]; delete state[STEPS[idx].id]; idx++;
   }
   if(idx>=STEPS.length)idx=STEPS.length-1; render(); }
-function goBack(){ if(idx<=0)return; do{idx--}while(idx>0&&STEPS[idx].cond&&!STEPS[idx].cond(state)); render(); }
+/* skips the loader the same way it skips a failed cond step: back from the score screen
+   used to land on the loader, which immediately replays its 4.2s run and calls next()
+   straight back to the score — a 4.7s round trip to nowhere. */
+function goBack(){ if(idx<=0)return;
+  do{ idx--; }
+  while(idx>0&&((STEPS[idx].cond&&!STEPS[idx].cond(state))||STEPS[idx].type==='loader'));
+  render(); }
 function render(){
   const step=STEPS[idx]; setProgress(step); clearCtaBar(); app.innerHTML='';
   const el=document.createElement('div'); el.className='step';
   ({intro:renderIntro,text:renderText,gender:renderGender,imgcards:renderImgCards,single:renderSingle,
-    multi:renderMulti,num:renderNum,snippet:renderSnippet,milestone:renderMilestone,
+    num:renderNum,snippet:renderSnippet,milestone:renderMilestone,
     loader:renderLoader,score:renderScore,projection:renderProjection,plans:renderPlans})[step.type](el,step);
   app.appendChild(el); window.scrollTo(0,0); updateDebug();
 }
@@ -1304,7 +1416,6 @@ function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,
    from their contents, so an unlabelled <img> made screen readers read "img/male.jpg Man" */
 function slot(name,ar,label,alt){ return `<img class="imgslot ${ar}" data-ar="${ar}" data-label="${label}" alt="${esc(alt||'')}" src="img/${name}.jpg" onerror="imgFallback(this)">`; }
 function gslot(base,ar,label,alt){ const g=state.gender==='Woman'?'f':'m'; return slot(base+'-'+g,ar,label,alt); }
-function avFallback(img,ini){ const s=document.createElement('span'); s.className='avph'; s.textContent=ini; img.replaceWith(s); }
 
 function renderIntro(el){
   /* layered depth: headline block → hero photo climbs over it → stat cards overlap the photo */
@@ -1317,60 +1428,58 @@ function renderIntro(el){
     </div>
     <div class="herocard">
       <div class="heroph">${slot('hero','ar-hero','HERO — prompt #1 (surfer, Gold Coast wave)','A surfer riding a Gold Coast wave')}</div>
-      <div class="scorepill"><small>Surf Score</small><strong>82</strong></div>
+      <!-- computeScore() clamps to 20–58, so the old "82" advertised a number no surfer
+           who takes this quiz can be given. Labelled as a sample, inside the real range. -->
+      <div class="scorepill"><small>Sample score</small><strong>54</strong></div>
     </div>
     <div class="trust">
       <div class="t"><b>2019</b><span>Since</span></div>
-      <div class="t"><div class="avs">${av('t1')}${av('t2')}${av('t3')}</div><b>300+</b><span>surfers coached</span></div>
+      <div class="t"><b>300+</b><span>surfers coached</span><div class="avs">${av('t1')}${av('t2')}${av('t3')}</div></div>
       <div class="t"><b>99%</b><span>satisfaction</span></div>
     </div>
-    <div class="sub sub2">Take the <b>20-point diagnostic</b> — get your <b>Surf Score</b>, your 6-pillar breakdown, and the exact path to your next level.</div>
     <div class="spacer"></div>
     <button class="cta" onclick="next()">Find my Surf Score →</button>
-    <div class="btnnote">No cost · <b>Personalised</b> result at the end</div>`;
+    <!-- the .sub2 paragraph folded in here: at 375 it was the last ~85px of the overflow
+         that pushed this button 116px below the fold -->
+    <div class="btnnote">No cost · <b>13-point diagnostic</b> · your Surf Score, your 6-pillar breakdown and the path to your next level</div>`;
 }
-const EMAIL_DOMAINS=['gmail.com','hotmail.com','outlook.com','yahoo.com.au','icloud.com','bigpond.com','live.com.au'];
 function renderText(el,step){
   const type=step.inputType||'text';
   let title=step.title; const nm=firstName();
   if(title.includes('{nm}')) title = nm ? title.replace('{nm}',nm+', ') : title.replace('{nm}','').replace(/^([a-z])/i,c=>c.toUpperCase());
   let fieldHtml;
   if(step.phone){
+    /* paint the NATIONAL digits back, never the stored "+61 …": the field sits next to a
+       "+61" chip, and saveText() re-prefixes on every submit — so a back-nav + Continue
+       used to produce "+61 +61493447438", then "+61 +61+61493447438" */
     fieldHtml=`<div class="phonewrap">
         <span class="ccode"><img class="flag" src="https://flagcdn.com/au.svg" alt="AU"> +61</span>
-        <input id="tf" type="tel" inputmode="tel" placeholder="${step.placeholder}" value="${esc(state[step.field]||'')}" autocomplete="off">
+        <input id="tf" type="tel" inputmode="tel" placeholder="${step.placeholder}" value="${esc(natPhone(state[step.field]))}" autocomplete="off">
       </div>`;
   } else {
-    fieldHtml=`<div class="bigfield"><input id="tf" type="${type}" placeholder="${step.placeholder}" value="${esc(state[step.field]||'')}" autocomplete="off"></div>${step.suggest?'<div class="suggest" id="suggest"></div>':''}`;
+    fieldHtml=`<div class="bigfield"><input id="tf" type="${type}" placeholder="${step.placeholder}" value="${esc(state[step.field]||'')}" autocomplete="off"></div>`;
   }
   el.innerHTML=`
     ${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}
     <h1>${title}</h1>${step.sub?`<div class="sub">${step.sub}</div>`:''}
     ${fieldHtml}
-    <button class="cta" style="margin-top:18px" onclick="saveText('${step.field}','${type}')">Continue →</button>
+    <div class="qgap"></div>
+    <button class="cta" style="margin-top:0" onclick="saveText('${step.field}','${type}')">Continue →</button>
     ${step.privacy?`<div class="privacy"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> Your details are safe and never shared.</div>`:''}`;
   const inp=el.querySelector('#tf'); setTimeout(()=>inp.focus(),120);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')saveText(step.field,type)});
   inp.addEventListener('input',()=>{ inp.classList.remove('err'); inp.removeAttribute('aria-invalid'); });
-  if(step.suggest){ const box=el.querySelector('#suggest'); inp.addEventListener('input',()=>emailSuggest(inp,box)); }
   if(step.phone){ inp.addEventListener('input',()=>{inp.value=inp.value.replace(/[^0-9 ]/g,'');}); }
 }
-function emailSuggest(inp,box){
-  const v=inp.value.trim(); const at=v.indexOf('@');
-  const local = at===-1 ? v : v.slice(0,at);
-  const dom = at===-1 ? '' : v.slice(at+1).toLowerCase();
-  if(!local || (at!==-1 && EMAIL_DOMAINS.includes(dom))){ box.style.display='none'; box.innerHTML=''; return; }
-  const list=EMAIL_DOMAINS.filter(d=>dom===''||d.startsWith(dom)).slice(0,5);
-  if(!list.length){ box.style.display='none'; return; }
-  box.style.display='block';
-  box.innerHTML=list.map(d=>`<div class="sugg" onmousedown="pickEmail(event,'${local}@${d}')">${local}<b>@${d}</b></div>`).join('');
-}
-function pickEmail(e,v){ e.preventDefault(); const i=document.getElementById('tf'); if(i){i.value=v;i.focus();} const b=document.getElementById('suggest'); if(b){b.style.display='none';} }
+/* the stored value is canonical "+61 4xxxxxxxx"; this is the national form the field shows */
+function natPhone(v){ return String(v==null?'':v).replace(/^\s*\+?61\s*/,'').trim(); }
 function saveText(field,type){ let v=val('tf'); const ok = !v ? false : (type==='email' ? /.+@.+\..+/.test(v) : true);
   const i=document.getElementById('tf');
   if(!ok){ if(i){ i.classList.add('err'); i.setAttribute('aria-invalid','true'); i.focus(); } return; }
   if(i){ i.classList.remove('err'); i.removeAttribute('aria-invalid'); }
-  if(field==='phone'){ v='+61 '+v.replace(/\s/g,'').replace(/^0/,''); }
+  /* strip any prefix ALREADY there before adding one — this has to be idempotent, because
+     the back chevron is shown on the phone step and Continue can be pressed repeatedly */
+  if(field==='phone'){ v='+61 '+v.replace(/\s/g,'').replace(/^\+?61/,'').replace(/^0/,''); }
   state[field]=v; next(); }
 function renderGender(el,step){
   /* the stored answer has to paint: gslot() is already using state.gender to pick the
@@ -1378,11 +1487,13 @@ function renderGender(el,step){
   const s=v=>state.gender===v?' sel':'', p=v=>state.gender===v?'true':'false';
   el.innerHTML=`
     <div class="eyebrow">${step.eyebrow}</div><h1>${step.title}</h1>
+    <div class="qgap t"></div>
     <div class="gcards">
       <div class="gcard${s('Man')}" role="button" tabindex="0" aria-pressed="${p('Man')}" onclick="pickGender(this,'Man')">${slot('male','ar-port','MALE SURFER','')}<div class="gname">Man</div></div>
       <div class="gcard${s('Woman')}" role="button" tabindex="0" aria-pressed="${p('Woman')}" onclick="pickGender(this,'Woman')">${slot('female','ar-port','FEMALE SURFER','')}<div class="gname">Woman</div></div>
     </div>
-    <div class="gcard alt${s('Prefer not to say')}" role="button" tabindex="0" aria-pressed="${p('Prefer not to say')}" onclick="pickGender(this,'Prefer not to say')">Prefer not to say</div>`;
+    <div class="gcard alt${s('Prefer not to say')}" role="button" tabindex="0" aria-pressed="${p('Prefer not to say')}" onclick="pickGender(this,'Prefer not to say')">Prefer not to say</div>
+    <div class="qgap"></div>`;
 }
 function pickGender(node,v){ state.gender=v; fx(node,window.event,null); const from=idx;
   document.querySelectorAll('.gcard').forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-pressed','false');});
@@ -1390,7 +1501,9 @@ function pickGender(node,v){ state.gender=v; fx(node,window.event,null); const f
   setTimeout(()=>{if(idx===from)next()},430); }
 function renderImgCards(el,step){
   el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${step.title}</h1>${step.sub?`<div class="sub">${step.sub}</div>`:''}
-    <div class="acards">${step.options.map(o=>`<div class="acard${state[step.id]===o.val?' sel':''}" role="button" tabindex="0" aria-pressed="${state[step.id]===o.val?'true':'false'}" onclick="pickCard(this,'${step.id}','${o.val}')">${gslot(o.img,'ar-card',o.label,'')}<div class="aname">${o.label}</div></div>`).join('')}</div>`;
+    <div class="qgap t"></div>
+    <div class="acards">${step.options.map(o=>`<div class="acard${state[step.id]===o.val?' sel':''}" role="button" tabindex="0" aria-pressed="${state[step.id]===o.val?'true':'false'}" onclick="pickCard(this,'${step.id}','${o.val}')">${gslot(o.img,'ar-card',o.label,'')}<div class="aname">${o.label}</div></div>`).join('')}</div>
+    <div class="qgap"></div>`;
 }
 function pickCard(node,id,v){ state[id]=v; fx(node,window.event,null); const from=idx;
   document.querySelectorAll('.acard').forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-pressed','false');});
@@ -1540,17 +1653,7 @@ const OPT_ICONS={
   compete:IC('<path d="M7 3.5h10V9a5 5 0 0 1-10 0z"/><path d="M7 5.5H4v1a3 3 0 0 0 3 3"/><path d="M17 5.5h3v1a3 3 0 0 1-3 3"/><path d="M12 14v4"/><path d="M8.5 20.5h7"/>'),
   /* q2 — years surfing */
   under_1yr:HG(0), '1_2yr':HG(1), '3_5yr':HG(2), '6_10yr':HG(3), over_10yr:HG(4),
-  /* q17 — post-surf habits */
-  reflects:IC('<path d="M9 17.4a6 6 0 1 1 6 0V19H9z"/><path d="M10 21.5h4"/>'),
-  video_review:IC('<rect x="2.5" y="6.5" width="12" height="11" rx="2.5"/><path d="M14.5 10.6l6-3.1v9l-6-3.1z"/>'),
-  discusses:IC('<path d="M2.5 9.5a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v1.5a4 4 0 0 1-4 4H8l-3.6 2.6v-3.1a4 4 0 0 1-1.9-3.5z"/><path d="M18 8.2h1.6a2 2 0 0 1 2 2v2.4a2 2 0 0 1-1 1.7"/>'),
-  nothing:IC('<circle cx="12" cy="12" r="4.4"/><path d="M12 2.2v2.4M12 19.4v2.4M2.2 12h2.4M19.4 12h2.4M5.1 5.1l1.7 1.7M17.2 17.2l1.7 1.7M18.9 5.1l-1.7 1.7M6.8 17.2l-1.7 1.7"/>'),
-  infrequent:IC('<rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M8 2.8v4.2M16 2.8v4.2M3.5 10.4h17"/><path d="M9 15.4h6"/>'),
-  /* q18 — six-month picture */
-  confidence:IC('<path d="M12 2.4l8 3.1v5.9c0 5-3.4 9.2-8 10.2-4.6-1-8-5.2-8-10.2V5.5z"/><path d="M8.8 11.9l2.4 2.4 4.3-4.6"/>'),
-  technical:IC('<circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r="1.3" '+SOLID+'/>'),
-  expression:IC('<path d="M11 2.6l2.1 5.4 5.4 2.1-5.4 2.1L11 17.6 8.9 12.2 3.5 10.1l5.4-2.1z"/><path d="M18.8 15.6l.8 1.9 1.9.8-1.9.8-.8 1.9-.8-1.9-1.9-.8 1.9-.8z"/>'),
-  progression:IC('<path d="M3 17.2l5.6-5.6 3.6 3.6L21 6.4"/><path d="M15.2 6.4H21v5.8"/>'),
+  /* (the q17 post-surf-habits and q18 six-month-picture sets went out with those questions) */
   /* sessions per week */
   '1':DOTS(1), '1-2':DOTS(2), '2+':DOTS(3),
   /* commit */
@@ -1575,7 +1678,10 @@ function optIcon(o){
   return `<span class="emoji ic">${OPT_WAVE}</span>`;
 }
 function renderSingle(el,step){
-  el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}<div class="opts" role="radiogroup"></div>`;
+  /* the .qgap pair is the option screens' share of the fix the checkpoint got: a 3-option
+     screen used to stop mid-page with ~400px of blank below it at 430x900. The gaps absorb
+     the slack above and below the stack (60/40) instead of dumping it all at the bottom. */
+  el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}<div class="qgap t"></div><div class="opts" role="radiogroup"></div><div class="qgap"></div>`;
   const opts=el.querySelector('.opts');
   step.options.forEach(o=>{
     const b=document.createElement('button'); b.type='button'; b.className='opt'+(state[step.id]===o.val?' sel':'');
@@ -1588,32 +1694,6 @@ function renderSingle(el,step){
       const from=idx; setTimeout(()=>{if(idx===from)next()},430); };
     opts.appendChild(b);
   });
-}
-function renderMulti(el,step){
-  state[step.id]=state[step.id]||[];
-  el.innerHTML=`${step.eyebrow?`<div class="eyebrow">${step.eyebrow}</div>`:''}<h1>${interp(step.title)}</h1>${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}<div class="opts"></div>
-    <button class="cta" id="multiGo" style="margin-top:18px" disabled>Continue →</button>`;
-  const opts=el.querySelector('.opts'), go=el.querySelector('#multiGo');
-  const sync=()=>{ go.disabled=!(state[step.id]&&state[step.id].length); };
-  const press=(n,v)=>{ n.classList.toggle('sel',v); n.setAttribute('aria-pressed',v?'true':'false'); };
-  step.options.forEach(o=>{
-    const on=state[step.id].includes(o.val);
-    const b=document.createElement('button'); b.type='button'; b.className='opt'+(on?' sel':'');
-    b.setAttribute('aria-pressed',on?'true':'false');
-    b.innerHTML=`<span class="box"></span>${optIcon(o)}<span class="txt">${o.label}</span>`;
-    /* the only option screen with no tap feedback — same ripple/float/haptic as renderSingle */
-    b.onclick=(e)=>{ const a=state[step.id]; const i=a.indexOf(o.val);
-      fx(b,e,null);
-      if(i>=0){ a.splice(i,1); press(b,false); }
-      else {
-        if(o.solo){ a.length=0; opts.querySelectorAll('.opt').forEach(x=>press(x,false)); }
-        else { step.options.forEach((oo,j)=>{ if(oo.solo){ const k=a.indexOf(oo.val); if(k>=0){ a.splice(k,1); press(opts.children[j],false); } } }); }
-        a.push(o.val); press(b,true);
-      }
-      sync(); };
-    opts.appendChild(b);
-  });
-  go.onclick=()=>next(); sync();
 }
 const NUM_ICON={height_cm:'📏',weight_kg:'⚖️'};
 function renderNum(el,step){
@@ -1694,7 +1774,8 @@ function renderSnippet(el,step){
   const c=step.content();
   /* chat-style: typing dots first, then the note springs in */
   el.innerHTML=`
-    <div class="spacer" style="max-height:46px"></div>
+    <div class="qgap t"></div>
+    <div class="snipshot">${slot('coach','ar-wide','COACH READING THE LINEUP','An Improve Surfing coach reading the lineup at Coolangatta')}</div>
     <div class="snip">
       <div class="sav"><img src="img/coach-av.jpg" alt="Improve Surfing coach" onerror="this.style.display='none'"></div>
       <div class="sk">
@@ -1710,10 +1791,10 @@ function renderSnippet(el,step){
         <div class="skn">Coach's note · based on your answers</div>
       </div>
     </div>
-    <div class="spacer"></div>
+    <div class="qgap"></div>
     <button class="cta" id="snipGo" style="visibility:hidden" onclick="next()">${c.btn||'Got it →'}</button>`;
   const from=idx;
-  /* sn5/sn6/sn12/sn15/sn17 have no other action, so this IS the primary — and a
+  /* sn5/sn6/sn12/sn15 have no other action, so this IS the primary — and a
      reduced-motion user should not stare at three still dots for 850ms */
   const rm=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
   setTimeout(()=>{ if(idx!==from)return;
@@ -1724,33 +1805,125 @@ function renderSnippet(el,step){
     buzz(8);
   },rm?0:850);
 }
+/* the four funnel sections the checkpoint rail encodes — `t` is the full name, `s` the
+   short form the rail prints under each segment, `next` is what that block actually asks */
+const MSEC=[
+  {s:'Take-off',    t:'Ocean comfort & take-off',   next:['Wave reading','Peak positioning','Ocean confidence']},
+  {s:'Wave read',   t:'Wave reading & positioning', next:['Turning mechanics','Your real blocker','Board fit & volume']},
+  {s:'Rail & board',t:'Rail control & your board',  next:['Turning mechanics','Your real blocker','Board fit & volume']},
+  {s:'Programme',   t:'Goals & programme match',    next:['Weekly rhythm','Commitment','Coach profile']},
+];
+const ARROW_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.6 12h14"/><path d="M12.6 5.6L19 12l-6.4 6.4"/></svg>';
 function renderMilestone(el,step){
-  /* relabelled + re-staged so the recap stops ticking sections the user hasn't reached:
-     ms1 = 2 done / 1 live / 50%, ms2 = 3 done / 'Goals & programme match' live / 75%
-     (which no longer fights the ~90% the top bar shows on the very next screen). */
-  const SEC=['Ocean comfort & take-off','Wave reading & positioning','Rail control & your board','Goals & programme match'];
+  /* relabelled + re-staged so the rail stops ticking sections the user hasn't reached:
+     ms1 = 2 of 4 done, section 3 live · ms2 = 3 of 4 done, 'Goals & programme match' live
+     (which no longer fights the ~90% the top bar shows on the very next screen).
+     Everything below the headline is READ from state — level, pillars, answers logged. */
   const doneN = step.stage>=4?3:2;
-  const pct = Math.round(doneN/4*100);
-  const cp = step.stage>=4?2:1;
+  const cp    = step.stage>=4?2:1;
+  const nx    = Math.min(MSEC.length-1,doneN);
+  const P=pillarScores(), keys=Object.keys(PILLARS);
+  const got=keys.filter(k=>P[k]!=null), pend=keys.filter(k=>P[k]==null);
+  /* strongest / weakest of what has actually been measured so far */
+  let top=null,low=null;
+  got.forEach(k=>{ if(top===null||P[k]>P[top])top=k; if(low===null||P[k]<P[low])low=k; });
+  /* gated on the milestone's OWN stage, not on live state: navigating back to ms1 after
+     answering q15/q16 flipped this true and printed the ms2 copy ("All six pillars scored…
+     your Surf Score confirms it next") on Checkpoint 1 of 2, six questions early. */
+  const complete = got.length>0 && pend.length===0 && step.stage>=4;
+  const avg=levelAvg(), lvl=Math.max(1,Math.min(4,Math.floor(avg+1e-9)));
+  const nLvl=LEVEL_QS.filter(q=>scOf(q)!=null).length;
+  const all=inputSteps(), ansN=all.filter(s=>STEPS.indexOf(s)<idx).length, ansT=all.length;
+  /* ms1 celebrates the strongest reading and names what is still blank; ms2 can only be
+     reached with all six pillars scored, so it hands over the emerging limiter instead */
+  /* the pend.length test is load-bearing now that `complete` is stage-gated: back-navigating
+     to ms1 after answering q15/q16 leaves every pillar scored on a checkpoint that must not
+     claim to be the final one, and the old else-branch then printed "<b></b>  is still
+     unmeasured". Three states: nothing read yet · still reading · all read. */
+  const note = !got.length
+    ? `Your first pillar readings come out of the next block.`
+    : complete
+      ? `All six pillars scored. <b>${PILLARS[low].label}</b> is your emerging limiter at <b>${P[low].toFixed(1)}/4</b> — your Surf Score confirms it next.`
+      : pend.length
+        ? `Strongest so far: <b>${PILLARS[top].label}</b> at <b>${P[top].toFixed(1)}/4</b>. <b>${pend.map(k=>PILLARS[k].label).join(' and ')}</b> ${pend.length>1?'are':'is'} still unmeasured — the next block fixes that.`
+        : `Strongest so far: <b>${PILLARS[top].label}</b> at <b>${P[top].toFixed(1)}/4</b>. The next block sharpens these readings before your Surf Score.`;
+  const segCls=i=>i<doneN?'ok':(i===doneN?'now':'wait');
   el.innerHTML=`
     <div class="mile">
-      <div class="mile-ck">Checkpoint ${cp} of 2</div>
-      <div class="mck"><svg viewBox="0 0 24 24"><path d="M9 16.2l-4.2-4.2L3.4 13.4 9 19 21 7l-1.4-1.4z"/></svg></div>
-      <h1>${interp(step.title)}</h1>
-      <div class="sub" style="margin-top:9px">${interp(step.sub||'')}</div>
-      <div class="mrecap">${SEC.map((s,i)=>{const st=i<doneN?'ok':(i===doneN?'now':'wait');return `<div class="mrow ${st}"><span class="mi"></span><span class="ml">${s}</span></div>`;}).join('')}</div>
-      <div class="mprog">
-        <div class="mpbar"><i data-w="${pct}"></i></div>
-        <div class="mpt"><span>Diagnostic progress</span><span><b>${pct}%</b> complete</span></div>
+      <div class="mhead">
+        <div class="mile-ck">Checkpoint ${cp} of 2</div>
+        <div class="mck"><svg viewBox="0 0 24 24"><path d="M9 16.2l-4.2-4.2L3.4 13.4 9 19 21 7l-1.4-1.4z"/></svg></div>
+        <h1>${interp(step.title)}</h1>
+        ${step.sub?`<div class="sub">${interp(step.sub)}</div>`:''}
       </div>
+      <div class="mgap"></div>
+      <div class="mread">
+        <div class="mtop">
+          <span class="mlb">L${lvl}</span>
+          <span class="mlt">
+            <span class="mlk">Measured level · ${nLvl} technique answer${nLvl===1?'':'s'}</span>
+            <span class="mlv">${LEVELS[lvl]}<em> · ${avg.toFixed(1)}/4</em></span>
+          </span>
+        </div>
+        <div class="msec">
+          <div class="mseck"><span>Section <b>${doneN}</b> of 4 complete</span><span class="msq">${ansN} of ${ansT} answered</span></div>
+          <div class="msegs">${MSEC.map((s,i)=>`<i class="${segCls(i)}"></i>`).join('')}</div>
+          <div class="msl">${MSEC.map((s,i)=>`<span class="${segCls(i)}">${s.s}</span>`).join('')}</div>
+        </div>
+        <div class="mpg">${keys.map((k,i)=>{
+          const v=P[k], has=v!=null;
+          const cls = !has ? 'wait' : (complete ? (k===low?'low':'') : (k===top?'top':''));
+          return `<div class="mpc ${cls}">
+            <span class="mpr"><span class="mpn">${PILLARS[k].label}</span><span class="mpv">${has?v.toFixed(1):'—'}${has?'<i>/4</i>':''}</span></span>
+            <span class="mpb"><i data-w="${has?Math.round(v/4*100):0}" style="transition-delay:${(i*0.07).toFixed(2)}s"></i></span>
+          </div>`;}).join('')}</div>
+        <div class="mnote">${note}</div>
+      </div>
+      <div class="mgap"></div>
+      <div class="mnext">
+        <span class="mni">${ARROW_SVG}</span>
+        <span class="mnb">
+          <span class="mnk">Up next · Section ${nx+1}</span>
+          <span class="mnt">${MSEC[nx].t}</span>
+          <span class="mnc">${MSEC[nx].next.map(c=>`<span>${c}</span>`).join('')}</span>
+        </span>
+      </div>
+      <div class="mgap"></div>
     </div>
     <button class="cta" onclick="next()">${step.btn||'Continue →'}</button>`;
-  setTimeout(()=>{const b=el.querySelector('.mpbar i'); if(b)b.style.width=b.dataset.w+'%';},250);
-  if(step.confetti) burstConfetti(step.confetti===true?70:step.confetti);
-  buzz(12);
+  setTimeout(()=>{el.querySelectorAll('.mpb i').forEach(b=>{b.style.width=b.dataset.w+'%';});},260);
+  /* once per checkpoint, not once per paint — both used to re-fire on every back-nav */
+  if(!state['_cf_'+step.id]){
+    state['_cf_'+step.id]=1;
+    if(step.confetti) burstConfetti(step.confetti===true?70:step.confetti);
+    buzz(12);
+  }
 }
+/* ── loader phases ───────────────────────────────────────────────────────────
+   Four phases, one per checklist row, each owning two of the six pillars. A phase
+   scans its pillars (sweeping light on the empty track), lands them at its own
+   thresholds, then the row ticks and prints the REAL value that phase produced.
+   Pillar order in the grid = the order they get analysed, so the meters land
+   top-to-bottom instead of at arbitrary times. */
+const LPHASE=[
+  {row:'Mapping your level & wave count',       pill:['skill','ocean'],
+   scan:['Reading your take-off & ride answers','Weighting session frequency','Scoring Skill · Ocean Sense']},
+  {row:"Spotting what's holding you back",      pill:['theory','mindset'],
+   scan:['Comparing all six pillar readings','Isolating your lowest pillar','Scoring Wave IQ · Mindset']},
+  {row:'Matching you to a coaching programme',  pill:['fitness','equipment'],
+   scan:['Checking paddle fitness','Checking board fit & volume','Matching session load']},
+  {row:'Projecting your progression curve',     pill:[],
+   scan:['Modelling weeks to your next level','Cross-checking coached progression','Finalising your Surf Score']},
+];
 function renderLoader(el){
-  const PILL=Object.values(PILLARS).map(p=>p.label);
+  const PORDER=LPHASE.reduce((a,ph)=>a.concat(ph.pill),[]);
+  const PS=pillarScores();
+  /* the counter used to run to "1,240 data points cross-checked" — a number nothing in the
+     funnel produces. It now counts what the quiz actually collected. */
+  const nAns=inputSteps().filter(s=>{
+    if(s.type==='num') return s.fields.some(f=>state[f.key]!=null&&state[f.key]!=='');
+    const k=s.field||s.id; return state[k]!=null&&state[k]!=='';
+  }).length;
   el.innerHTML=`
     <div class="loader-wrap">
       <div class="ring-wrap big">
@@ -1764,44 +1937,77 @@ function renderLoader(el){
       </div>
       <div class="lstat" id="lstat">Analysing your answers…</div>
       <div class="lsub">Building your personalised Surf Score</div>
-      <div class="ldata"><b id="ldp">0</b> data points cross-checked</div>
-      <div class="lpills">${PILL.map((p,i)=>`<div class="lpill" id="lp${i}"><span class="lpb"><i></i></span>${p}</div>`).join('')}</div>
+      <div class="ldata"><b id="ldp">0</b> of your ${nAns} answers cross-checked</div>
+      <div class="lpills">${PORDER.map((k,i)=>`<div class="lpill" id="lp${i}"><span class="lpr"><span class="lpn">${PILLARS[k].label}</span><span class="lpv">${PS[k]!=null?PS[k].toFixed(1)+'<i>/4</i>':'—'}</span></span><span class="lpb"><i></i></span></div>`).join('')}</div>
       <div class="checks">
-        <div class="chk"><span class="cb"></span>Mapping your level & wave count</div>
-        <div class="chk"><span class="cb"></span>Spotting what's holding you back</div>
-        <div class="chk"><span class="cb"></span>Matching you to a coaching programme</div>
-        <div class="chk"><span class="cb"></span>Projecting your progression curve</div>
+        ${LPHASE.map(ph=>`<div class="chk"><span class="cb"></span><span class="ctx"><b>${ph.row}</b><em class="cmt"></em></span></div>`).join('')}
       </div>
       <div class="testi" id="testi"></div>
-      <div class="trustline"><span class="stars">★★★★★</span> <b>4.9/5</b> · 300+ surfers coached on the Gold Coast</div>
+      <!-- "4.9/5" was a rating that exists nowhere in the approved set (since 2019,
+           300+ surfers coached, 99% satisfaction, Coolangatta). Only those figures now. -->
+      <div class="trustline"><span class="stars">★★★★★</span> <b>99% satisfaction</b> · 300+ surfers coached on the Gold Coast since 2019</div>
     </div>`;
   const ldp=el.querySelector('#ldp'), pills=[...el.querySelectorAll('.lpill')];
-  const pillTargets=Object.values(PILLARS).map(p=>{let t=0,c=0;p.qs.forEach(q=>{const s=scOf(q);if(s!=null){t+=s;c++;}});return c?Math.round(t/c/4*100):40;});
+  /* the meters fill to the surfer's own pillar scores — nothing here is a stock width */
+  const pillW=PORDER.map(k=>PS[k]!=null?Math.round(PS[k]/4*100):0);
+  /* what each phase actually produced, printed on its row the moment it ticks */
+  const lvlN=Math.max(1,Math.min(4,Math.floor(levelAvg()+1e-9)));
+  const limL=(LIMITER_META[limiterKey()]||{}).label||'Skill';
+  const sessL={'1':'1 session a week','1-2':'1–2 sessions a week','2+':'2+ sessions a week'}[state.sessions]||'1 session a week';
+  const wksN=computeProjection(state).weeks;
+  const RESULT=[`Level ${lvlN} · ${LEVELS[lvlN]}`,`Limiter · ${limL}`,`Matched · ${sessL}`,`${wksN} weeks to your next level`];
   const stats=['Analysing your answers…','Cross-checking coaching since 2019…','Calculating your Surf Score…','Building your progression curve…'];
-  const testis=[
-    {f:'t1',i:'J',t:'I surfed for 8 years stuck on the same waves. 3 months in, I finally got barrelled.',n:'Jake M., Coolangatta'},
-    {f:'t2',i:'S',t:'The video analysis showed me one fix that changed my whole take-off.',n:'Sofia R., Palm Beach'},
-    {f:'t3',i:'D',t:'Consistency was my problem. The weekly structure sorted it fast.',n:'Dan K., Burleigh'},
+  /* Was three fabricated testimonials — invented names, suburbs, star rows and outcome
+     claims, rendered over real faces so they read as verified people. Until the client
+     supplies real, attributable quotes this slot rotates facts we can actually stand
+     behind: the coaching history, the named services and the location. */
+  const LFACTS=[
+    {k:'Coaching since 2019',t:'Improve Surfing has coached 300+ surfers out of Coolangatta, Gold Coast.'},
+    {k:'What your programme uses',t:'1:1 surf sessions, video surf analysis, surfskate, mobility training and apnea.'},
+    {k:'Where it runs',t:'Coolangatta, Gold Coast — mornings, with a coach in the water with you.'},
+    {k:'Member satisfaction',t:'99% satisfaction across the surfers coached since 2019.'},
   ];
   const chks=[...el.querySelectorAll('.chk')], ring=el.querySelector('#ringfill'), rnum=el.querySelector('#ringnum'),
         lstat=el.querySelector('#lstat'), testi=el.querySelector('#testi'); const C=326.7;
-  function showT(i){const t=testis[i%testis.length];testi.innerHTML=`<img class="av" src="img/${t.f}.jpg" onerror="avFallback(this,'${t.i}')"><div class="tbody"><div class="stars">★★★★★</div><span>“${t.t}”</span><b>${t.n}</b></div>`;
+  function showT(i){const t=LFACTS[i%LFACTS.length];
+    testi.innerHTML=`<span class="tmark">${WAVE_SVG}</span><div class="tbody"><b>${t.k}</b><span>${t.t}</span></div>`;
     testi.classList.remove('tin'); void testi.offsetWidth; testi.classList.add('tin');}
   showT(0);
   /* setInterval (not rAF) — in-app browsers (IG/FB webview) throttle rAF and would freeze the funnel here */
   const from=idx, DUR=4200, t0=performance.now(); let lastStage=-1;
+  const PH=1/LPHASE.length;                     /* one phase = a quarter of the run */
+  /* pillar j of phase i lands 62% / 88% of the way through that phase, so both meters in a
+     phase resolve before its row ticks — the row's result then reads as their conclusion */
+  const landAt=i=>Math.floor(i/2)*PH+(0.62+(i%2)*0.26)*PH;
   const tick=setInterval(()=>{
     if(idx!==from){clearInterval(tick);return;}
     const p=Math.min(1,(performance.now()-t0)/DUR);
     ring.style.strokeDashoffset=C*(1-p);
     rnum.textContent=Math.round(p*100)+'%';
     const done=Math.min(4,Math.floor(p*4));
-    chks.forEach((c,i)=>{c.classList.toggle('done',i<done);c.classList.toggle('active',i===done&&done<4);});
     const stage=Math.min(3,Math.floor(p*4));
+    chks.forEach((c,i)=>{
+      const isDone=i<done, isAct=(i===done&&done<4);
+      c.classList.toggle('done',isDone); c.classList.toggle('active',isAct);
+      const m=c.querySelector('.cmt'); if(!m)return;
+      /* a live phase visibly works: its status line steps through three stages */
+      let txt='';
+      if(isDone) txt=RESULT[i];
+      else if(isAct) txt=LPHASE[i].scan[Math.max(0,Math.min(2,Math.floor((p-i*PH)/PH*3)))]+'…';
+      if(m.textContent!==txt) m.textContent=txt;
+    });
     lstat.textContent=stats[stage];
     if(stage!==lastStage){showT(stage);lastStage=stage;}
-    if(ldp) ldp.textContent=Math.round(p*1240).toLocaleString();
-    pills.forEach((pl,i)=>{ const thr=0.15+i*0.12; if(p>=thr){ pl.classList.add('on'); const bar=pl.querySelector('.lpb i'); if(bar&&!bar.style.width)bar.style.width=pillTargets[i]+'%'; } });
+    if(ldp) ldp.textContent=Math.round(p*nAns);
+    pills.forEach((pl,i)=>{
+      const start=Math.floor(i/2)*PH, land=landAt(i);
+      if(p>=land){
+        if(!pl.classList.contains('on')){
+          pl.classList.remove('scan'); pl.classList.add('on');
+          const bar=pl.querySelector('.lpb i'); if(bar)bar.style.width=pillW[i]+'%';
+        }
+      } else if(p>=start) pl.classList.add('scan');
+    });
     if(p>=1){clearInterval(tick);setTimeout(()=>{if(idx===from)next()},520);}
   },50);
 }
@@ -1817,12 +2023,35 @@ function radarSVG(p){
     s+=`<text class="rlab" x="${l[0].toFixed(1)}" y="${(l[1]+3.5).toFixed(1)}" text-anchor="${anc}">${PILLARS[k].label}</text>`;});
   return s+'</svg>';
 }
+/* the limiter's icon: an arrow running up into a ceiling — "this is what caps everything else" */
+const CAP_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.2h16v2.7H4z"/><path d="M10.75 20.9v-8.5l-2.3 2.35-1.75-1.75L12 7.6l5.3 5.4-1.75 1.75-2.3-2.35v8.5z"/></svg>';
+/* ── score reveal ────────────────────────────────────────────────────────────
+   Three beats, in this order, and nothing between them:
+     1 THE SCORE   — the ring is the hero; under it two chips say where the number
+                     came from (measured level + how many scored answers fed it).
+     2 THE INSIGHT — one instrument card (radar + the six values, limiter cell coral),
+                     then the limiter card, which now states WHY it is the limiter:
+                     how far under the surfer's own strongest reading it sits.
+     3 THE PROOF   — the "stuck" photo is a card, not a trailing image: it carries a
+                     chip tying it to the measured level and the loss line as its foot.
+   Every figure is read from computeScore()/pillarScores()/limiterKey()/computeProjection(). */
 function renderScore(el){
   const r=computeScore(state); state._score=r; const pct=r.score/100;
   const proj=computeProjection(state);
   const lim=LIMITER_META[r.limiter];
   const nm=firstName();
   const RING_C=578;   /* 2πr, r=92 */
+  const keys=Object.keys(PILLARS), P=r.pillars;
+  /* the strongest measured pillar — it is what makes the limiter a FINDING and not a label:
+     the card can say how far under the surfer's own best reading the lowest one sits */
+  let top=null; keys.forEach(k=>{ if(P[k]!=null && (top===null||P[k]>P[top])) top=k; });
+  const lv=P[r.limiter], tv=(top!=null)?P[top]:null;
+  const spread=(lv!=null&&tv!=null)?Math.round((tv-lv)*10)/10:0;
+  const limWhy = (top&&top!==r.limiter&&spread>0)
+    ? `Lowest of your six pillars — <b>${spread.toFixed(1)} under ${PILLARS[top].label}</b>, your strongest reading.`
+    : `Lowest of your six pillar readings${lv!=null?` — <b>${lv.toFixed(1)}/4</b>`:''}.`;
+  /* provenance: how many of the scored technique answers actually fed levelAvg() */
+  const nLvl=LEVEL_QS.filter(q=>scOf(q)!=null).length;
   el.innerHTML=`
     <div class="reveal-wrap">
       <div class="reveal-label">Your Surf Score</div>
@@ -1836,16 +2065,41 @@ function renderScore(el){
         <span class="bub" style="left:16%"></span><span class="bub" style="left:38%;animation-delay:.9s"></span><span class="bub" style="left:62%;animation-delay:1.7s"></span><span class="bub" style="left:83%;animation-delay:.4s"></span>
         <div class="bignum"><span id="bn">0</span><span class="of">/100</span></div>
       </div>
-      <div class="lvl-line">Diagnostic level: <b>L${r.lvl} · ${LEVELS[r.lvl]}</b> (${r.avg}/4)</div>
+      <div class="lvl-line">
+        <span class="lvb"><b>L${r.lvl}</b> ${LEVELS[r.lvl]} <em>· ${r.avg}/4</em></span>
+        <span>Measured on <b>${nLvl}</b> technique answer${nLvl===1?'':'s'}</span>
+      </div>
       <div class="reveal-headline">${nm?nm+', you':'You'}'re surfing at <span class="hl">roughly ${r.score}%</span> of your potential.</div>
-      <div class="reveal-body">Your 20-point diagnostic, mapped across the <b>6 pillars</b> of surf progression:</div>
-      <div class="radarcard">${radarSVG(r.pillars)}</div>
-      <div class="pillrows">${Object.keys(PILLARS).map((k,i)=>{const v=r.pillars[k];const w=k===r.limiter;const pw=v?Math.round(v/4*100):8;
-        return `<div class="prow2${w?' weak':''}">${w?'<span class="pflag">Limiter</span>':''}<span class="nm2">${PILLARS[k].label}</span><span class="vv">${v!=null?v.toFixed(1):'–'}<i>/4</i></span><span class="bar2"><i style="width:0%;transition-delay:${(0.05+i*0.09).toFixed(2)}s" data-w="${pw}"></i></span></div>`;}).join('')}</div>
-      <div class="limbox"><div class="lk">Your #1 limiter</div><div class="ln2">${lim.label}</div><p>This is what's capping everything else. Your programme attacks it first — with <b>${lim.fix}</b>.</p></div>
-      <div class="tenyr">On your own, at this rate, you'll likely still be at this exact level in <b>${proj.stuck}</b>.</div>
-      ${gslot('worried','ar-wide','FRUSTRATED SURFER — prompt #5 (by gender)','')}
-      <button class="cta" style="margin-top:14px" onclick="next()">See how fast I can break through →</button>
+      <div class="radarcard">
+        <!-- 13, not 20: LEVEL_QS (9) + q3/q4/q15/q16 is what actually feeds the pillars -->
+        <div class="dgh"><span class="dgt">Your 6 pillars</span><span class="dgs">13-point diagnostic</span></div>
+        ${radarSVG(r.pillars)}
+        <div class="pillrows">${keys.map((k,i)=>{const v=P[k];const has=v!=null;const w=has&&k===r.limiter;const isTop=(!w&&k===top);
+        /* an unmeasured pillar prints an em dash over an empty outlined track — never a
+           value, and never a bar width that would read as a low score */
+        const cls=!has?' wait':(w?' weak':(isTop?' top':''));
+        return `<div class="prow2${cls}"><span class="p2h"><span class="nm2">${PILLARS[k].label}</span>${w?'<span class="pflag">Limiter</span>':''}</span><span class="vv">${has?v.toFixed(1)+'<i>/4</i>':'—'}</span><span class="bar2"><i style="width:0%;transition-delay:${(0.05+i*0.09).toFixed(2)}s" data-w="${has?Math.round(v/4*100):0}"></i></span></div>`;}).join('')}</div>
+      </div>
+      <div class="limbox">
+        <div class="lhead">
+          <span class="li">${CAP_SVG}</span>
+          <span class="lt"><span class="lk">Your #1 limiter</span><span class="ln2">${lim.label}</span></span>
+          <span class="lv">${lv!=null?lv.toFixed(1)+'<i>/4</i>':'—'}</span>
+        </div>
+        <div class="lwhy">${limWhy}</div>
+        <p>This is what's capping everything else. Your programme attacks it first — with <b>${lim.fix}</b>.</p>
+      </div>
+      <div class="stuck">
+        <div class="sph">
+          ${gslot('worried','ar-wide','FRUSTRATED SURFER — prompt #5 (by gender)','A surfer sitting slumped on their board on a flat grey day')}
+          <span class="schip">You, right now · L${r.lvl}</span>
+        </div>
+        <div class="sbody">
+          <span class="sk">If nothing changes</span>
+          <p>On your own, at this rate, you'll likely still be at <b>Level ${r.lvl}</b> in <b>${proj.stuck}</b> — the same waves, the same session, the same ceiling.</p>
+        </div>
+      </div>
+      <button class="cta" style="margin-top:16px" onclick="next()">See how fast I can break through →</button>
     </div>`;
   const gf=el.querySelector('#gf');
   setTimeout(()=>{gf.style.transition='stroke-dashoffset 1.7s cubic-bezier(.3,.85,.3,1)';gf.style.strokeDashoffset=(RING_C-RING_C*pct)},120);
@@ -1854,8 +2108,18 @@ function renderScore(el){
   setTimeout(()=>{el.querySelectorAll('.bar2 i').forEach(b=>b.style.width=b.dataset.w+'%');},500);
   setTimeout(()=>{const lb=el.querySelector('.limbox'); if(lb)lb.classList.add('attn');},2100);
 }
+/* ── projection ──────────────────────────────────────────────────────────────
+   A fork, not a chart with two stat cards under it. Path A is the default future:
+   flat, dull, coral, with a dashed flat line for a graphic. Path B is the barrel
+   photo — the strongest asset in the set, used at full width with the weeks count
+   on the deep aqua field the scratch prize uses. The curve stays, demoted to what
+   it actually is: an illustration of the two shapes, labelled as one. */
 function renderProjection(el){
   const p=computeProjection(state); state._proj=p;
+  /* both futures are stated against the level the diagnostic actually measured */
+  const lvl=computeScore(state).lvl, nxt=Math.min(4,lvl+1);
+  const sessL={'1':'1 session a week','1-2':'1–2 sessions a week','2+':'2+ sessions a week'}[state.sessions]||'1 session a week';
+  const nextL = lvl>=4 ? 'your next breakthrough' : `Level ${nxt} · ${LEVELS[nxt]}`;
   const x0=16, xR=304, baseY=180, tgtY=44, topY=26, pw=xR-x0;
   const xM=Math.round(x0+0.62*pw);
   const gP=`M${x0},${baseY} C${Math.round(x0+(xM-x0)*0.45)},${baseY-6} ${Math.round(xM-(xM-x0)*0.28)},${tgtY+46} ${xM},${tgtY} C${Math.round(xM+(xR-xM)*0.4)},${tgtY-8} ${Math.round(xR-(xR-xM)*0.4)},${topY+4} ${xR},${topY}`;
@@ -1863,31 +2127,47 @@ function renderProjection(el){
   const rP=`M${x0},${baseY} C${Math.round(x0+pw*0.35)},${baseY-10} ${Math.round(xR-pw*0.3)},${baseY-16} ${xR},${baseY-20}`;
   el.innerHTML=`
     <div class="reveal-wrap" style="justify-content:flex-start">
-      <div class="reveal-label" style="margin-top:6px">Your progression curve</div>
+      <div class="reveal-label" style="margin-top:6px">Where this goes next</div>
       <div class="reveal-headline" style="margin-top:8px">Two paths start <span class="hl">today.</span></div>
+      <div class="fork">
+        <div class="fpath bad">
+          <span class="fk">Path A · On your own</span>
+          <div class="fnum">${p.stuck}</div>
+          <div class="fl">from now — still at <b>Level ${lvl}</b>. The same waves, the same session, over and over.</div>
+          <span class="fflat" aria-hidden="true"></span>
+        </div>
+        <div class="forkor">or</div>
+        <div class="fpath good">
+          <div class="fph">
+            ${gslot('future','ar-wide','FUTURE YOU SURFING WELL — prompt #4 (by gender)','A surfer deep inside a clean green barrel in golden light')}
+            <span class="fchip">Path B · With Improve</span>
+          </div>
+          <div class="ffoot">
+            <span class="fk">Coached · ${sessL}</span>
+            <div class="fnum">${p.weeks} weeks</div>
+            <div class="fl">to <b>${nextL}</b> — with your limiter attacked first, and a coach in the water with you.</div>
+          </div>
+        </div>
+      </div>
       <div class="chartbox2">
+        <div class="cbh"><span class="cbt">How the two paths split</span></div>
         <svg viewBox="0 0 320 206" width="100%" preserveAspectRatio="xMidYMid meet">
           <defs><linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0ea5e9" stop-opacity=".28"/><stop offset="1" stop-color="#0ea5e9" stop-opacity="0"/></linearGradient></defs>
           <line x1="${x0}" y1="${baseY}" x2="${xR}" y2="${baseY}" stroke="#e4eef4"/>
           <line id="pfree" x1="${x0}" y1="${tgtY}" x2="${xR}" y2="${tgtY}" stroke="#a8c0cd" stroke-width="1" stroke-dasharray="4 4" opacity="0"/>
-          <text id="cfree" class="cfree" x="${x0+2}" y="${tgtY-7}" opacity="0">★ Your potential</text>
+          <text id="cfree" class="cfree" x="${x0+2}" y="${tgtY-7}" opacity="0">Your potential</text>
           <path id="parea" d="${gArea}" fill="url(#gArea)" opacity="0"/>
           <path id="pred" d="${rP}" fill="none" stroke="#ea580c" stroke-width="3" stroke-linecap="round" stroke-dasharray="760" stroke-dashoffset="760"/>
           <path id="pgreen" d="${gP}" fill="none" stroke="#0e7490" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="760" stroke-dashoffset="760"/>
           <circle id="dred" cx="${xR}" cy="${baseY-20}" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2" opacity="0"/>
           <circle id="dgreen" cx="${xM}" cy="${tgtY}" r="6.5" fill="#0e7490" stroke="#ffffff" stroke-width="2.5" opacity="0"/>
-          <g id="cgreen" opacity="0"><rect x="${xM-30}" y="${tgtY-34}" width="60" height="21" rx="7" fill="#0e7490"/><text class="ctag" x="${xM}" y="${tgtY-19.5}">${p.weeks} wks</text></g>
           <text class="caxis" x="${x0+2}" y="${baseY+16}">Today</text>
           <text class="caxis" x="${xR}" y="${baseY+16}" text-anchor="end">Time →</text>
         </svg>
-      </div>
-      <div class="legend"><span><i style="background:#ea580c"></i>On your own</span><span><i style="background:#0e7490"></i>With Improve</span></div>
-      <div class="proj-row">
-        <div class="proj-card bad"><div class="pn">${p.stuck}</div><div class="pl">and still the same level, on your own</div></div>
-        <div class="proj-card good"><div class="pn">${p.weeks} wks</div><div class="pl">to your next level, coached</div></div>
+        <div class="legend"><span><i style="background:#ea580c"></i>On your own</span><span><i style="background:#0e7490"></i>With Improve</span></div>
+        <div class="cbnote">An illustration of the two paths — the shape of them, not a measurement. The ${p.weeks} weeks comes from your measured level, ${sessL} and your commitment answer.</div>
       </div>
       <div class="savedpill">Break your plateau and level up in <b>weeks, not years</b> — 1% better every session.</div>
-      ${gslot('future','ar-wide','FUTURE YOU SURFING WELL — prompt #4 (by gender)','')}
       <button class="cta" style="margin-top:16px" onclick="next()">Show me the programme →</button>
     </div>`;
   const pr=el.querySelector('#pred'),pg=el.querySelector('#pgreen'),pa=el.querySelector('#parea'),
@@ -1900,7 +2180,10 @@ function renderProjection(el){
   setTimeout(()=>{free.style.transition='opacity .5s';free.style.opacity=1;cf.style.transition='opacity .5s';cf.style.opacity=1;},150);
   setTimeout(()=>{pr.style.transition='stroke-dashoffset 1.2s ease';pr.style.strokeDashoffset=0;},350);
   setTimeout(()=>{pg.style.transition='stroke-dashoffset 1.4s ease';pg.style.strokeDashoffset=0;pa.style.transition='opacity 1s';pa.style.opacity=1;},700);
-  setTimeout(()=>{['#dred','#dgreen','#cgreen'].forEach(s=>{const e=el.querySelector(s);if(e){e.style.transition='opacity .45s';e.style.opacity=1;}});},2000);
+  /* the "N wks" callout is gone from the curve on purpose: pinning a precise week count to
+     an unlabelled time axis implied measurement the funnel does not have. The number lives
+     in Path B, where it is stated with what produced it. */
+  setTimeout(()=>{['#dred','#dgreen'].forEach(s=>{const e=el.querySelector(s);if(e){e.style.transition='opacity .45s';e.style.opacity=1;}});},2000);
 }
 
 
@@ -1926,7 +2209,9 @@ function openScratchModal(){
       <button class="m-close" id="mClose" type="button" aria-label="Close" onclick="closeScratchModal()">×</button>
       <div class="modal-kick">Founding member bonus</div>
       <div class="modal-h" id="mTitle">Scratch to reveal what you've earned</div>
-      <div class="modal-sub">Reserved for this intake's 15 founding members.</div>
+      <!-- no invented count: "15 founding members" and "3 spots left" were literals in the
+           template, identical for every visitor forever, attached to a real checkout -->
+      <div class="modal-sub">Yours as part of the founding member intake.</div>
       <div class="m-scratch" id="mStage" role="button" tabindex="0" aria-label="Scratch panel — activate to reveal your founding member bonus">
         <div class="m-prize" id="mPrize">
           <div class="pwrap">
@@ -2140,12 +2425,6 @@ function reveal(){
   /* the payoff must be one Tab away — but only once it has settled */
   setTimeout(()=>{ try{ if(document.getElementById('mClaim')===c&&c.focus)c.focus(); }catch(e){} },420);
 }
-function toggleTier(node){
-  const open=node.classList.toggle('open');
-  node.setAttribute('aria-expanded',open?'true':'false');
-  const t=node.querySelector('.ttxt'); if(t)t.textContent=open?'Hide details':'See everything included';
-  buzz(6);
-}
 function claimDiscount(){
   state._discount=0.10;
   closeScratchModal(true);
@@ -2154,20 +2433,10 @@ function claimDiscount(){
   if(STEPS[idx]&&STEPS[idx].type==='plans') render();
 }
 
-function claimTier(){
-  const t=TIERS[state._tier];
-  alert('(prototype) Would open the Stripe checkout for '+t.name+' — '+money(wkNow(t))+'/week.\nURL: '+t.url);
-}
-/* Paste the @improvesurfing LightWidget id here (lightwidget.com → connect account → copy widget id)
-   e.g. IG_WIDGET_ID='ab12cd34...'; leave '' to show the real profile card fallback. */
-const IG_WIDGET_ID='';
 /* the Glasswater check: a drawn mark inside a soft filled circle (glasswater.html:575) */
 const TICK_SVG='<svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="rgba(8,145,178,.16)"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#0891b2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const WAVE_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c2.2 0 2.2-1.8 4.5-1.8S9.8 14 12 14s2.2-1.8 4.5-1.8S18.8 14 21 14"/><path d="M3 19c2.2 0 2.2-1.8 4.5-1.8S9.8 19 12 19s2.2-1.8 4.5-1.8S18.8 19 21 19"/></svg>';
 const CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
-/* the .guar shield — hoisted out of renderResult's template because paintResultCta()
-   rewrites that line's text on every exit from the scratch card */
-const SHIELD_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg>';
 function planCard(k,rec,d){
   const t=TIERS[k]; const sel=state._sel===k;
   /* the whole 12-item list ships in the DOM; .pbody keeps it at 0fr until opened,
@@ -2194,8 +2463,11 @@ function mountCtaBar(){
   const bar=document.createElement('div'); bar.className='ctabar'; bar.id='ctabar';
   /* the tier name lives on the trust line, not in the button: at 17px/800 the old label
      wrapped to two lines for Elite / Foundation / Consistency — i.e. for most selections */
+  /* every text run is wrapped: .paytrust is a flex row with gap:7px, so bare text nodes and
+     bare middots each became their own flex item and collected 7px of stray air — and at
+     375/360 the trailing item wrapped onto a second line that began with a naked "·" */
   bar.innerHTML=`<button class="cta" id="payBtn" onclick="payTier()">Join now → <span id="payprice">${money(wkNow(t))}</span>/week</button>
-    <div class="paytrust">🔒 <span id="payname">${t.name}</span> · secure checkout via Stripe <b class="spots">· 3 spots left</b></div>`;
+    <div class="paytrust"><span aria-hidden="true">🔒</span><span><span id="payname">${t.name}</span> · secure checkout via Stripe</span></div>`;
   document.body.appendChild(bar);
   setTimeout(()=>document.body.classList.add('has-bar'),40);   /* slide it up on enter */
 }
@@ -2205,7 +2477,10 @@ function renderPlans(el){
   /* the bonus is the last beat before price: open it over the plans, and claiming
      simply repaints them — there is no separate result screen to bounce through */
   if(!state._discount&&!state._bonusSeen){ state._bonusSeen=1; setTimeout(()=>openScratchModal(),700); }
-  const order=['foundation','swell','consistency','elite'];
+  /* the recommended tier goes FIRST. Fixed cheapest-first put the badged, pre-selected,
+     pre-expanded match card at y=834 on an 812px viewport — entirely below the fold on
+     first paint — while the sticky bar quoted its price against a A$99 card on screen. */
+  const order=[rec].concat(['foundation','swell','consistency','elite'].filter(k=>k!==rec));
   const nm=firstName(); const d=state._discount||0;
   el.classList.add('padbar');   /* keeps the sticky bar off the content */
   el.innerHTML=`
@@ -2213,7 +2488,7 @@ function renderPlans(el){
     <h1>${nm?nm+', choose':'Choose'} your <span class="hl">programme.</span></h1>
     <div class="sub" style="margin-bottom:14px">Your match is pre-selected — but pick whichever fits you best.</div>
     ${d?`<div class="disc-banner"><span class="disc-badge">✓ 10% founding discount applied to all plans</span></div>`:''}
-    <div class="scarce" style="margin:0"><span class="dotr"></span> Only 15 members this intake · <b>&nbsp;3 spots left</b></div>
+    <div class="scarce" style="margin:0"><span class="dotr"></span><span>Founding member intake</span></div>
     <div class="plans">${order.map(k=>planCard(k,rec,d)).join('')}</div>
     <div class="guar" style="margin-top:4px"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> Founding member intake · billed weekly in A$</div>
     `;
@@ -2236,7 +2511,6 @@ function selectPlan(node,k,fromTap){
   updateDebug();
 }
 function payTier(){ const t=TIERS[state._sel]; alert('(prototype) Opens the Stripe checkout for '+t.name+' — '+money(wkNow(t))+'/week.\nURL: '+t.url); }
-function igFallback(img){ img.style.display='none'; const s=img.nextElementSibling; if(s)s.style.display='flex'; }
 function burstConfetti(n){
   const cols=['#0891b2','#0ea5e9','#38bdf8','#fb923c','#0f2530'];   /* Glasswater palette */
   for(let i=0;i<(n||70);i++){ const c=document.createElement('div'); c.className='confetti';
