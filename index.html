@@ -921,11 +921,36 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 /* it *is* the .cta component — the hand-copied version had drifted (no press feedback,
    56px instead of 58px, no shine sweep). Now it only adds the hidden-until-revealed state. */
 /* ---------- founding-bonus screen (was a modal over the prices) ---------- */
-.bonuswrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:4px}
+/* a real scratch ticket: printed card, perforation, panel only in the middle band */
+.ticket{position:relative;width:100%;max-width:330px;background:linear-gradient(168deg,#0b3b4f,#072634);
+  border-radius:18px;padding:16px 16px 13px;box-shadow:var(--sh3),0 0 0 1px rgba(255,255,255,.07) inset;
+  overflow:hidden}
+.ticket:before{content:"";position:absolute;inset:0;pointer-events:none;border-radius:18px;
+  background:radial-gradient(120% 70% at 50% -20%,rgba(56,189,248,.20),transparent 62%)}
+/* the punched notches down each side */
+.ticket:after{content:"";position:absolute;left:-9px;right:-9px;top:50%;height:18px;margin-top:-9px;
+  pointer-events:none;
+  background:radial-gradient(circle at 9px 9px,#eaf4f8 8.5px,transparent 9px) left center/18px 18px no-repeat,
+             radial-gradient(circle at 9px 9px,#eaf4f8 8.5px,transparent 9px) right center/18px 18px no-repeat}
+.tk-head{position:relative;display:flex;align-items:center;gap:10px;text-align:left}
+.tk-logo{width:30px;height:30px;object-fit:contain;flex:0 0 30px}
+.tk-kick{font-size:9.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:#7fd7ee}
+.tk-name{font-size:13px;font-weight:800;color:#fff;letter-spacing:.01em;margin-top:1px}
+.tk-perf{position:relative;height:1px;margin:12px 0;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.34) 0 5px,transparent 5px 10px)}
+.ticket .m-scratch{width:100%;border-radius:12px}
+.tk-foot{position:relative;display:flex;justify-content:space-between;align-items:center;margin-top:11px;
+  font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(214,238,247,.62)}
+.tk-no b{color:#9fe0f2;font-weight:800;letter-spacing:.02em}
+@media (max-width:360px){.ticket{max-width:290px;padding:14px 13px 11px}}
+.bonushead{text-align:center;padding-top:2px}
+.bonushead .modal-h{font-size:25px;line-height:1.15;margin:8px 0 6px}
+.bonushead .modal-sub{margin-bottom:0}
+.bonuswrap{display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:20px}
 .bonuswrap .modal-kick{margin-bottom:2px}
 .bonuswrap .modal-h{font-size:26px;line-height:1.14;margin:8px 0 6px}
 .bonuswrap .modal-sub{margin-bottom:20px}
-.bonuswrap .m-scratch{width:100%;max-width:340px}
+
 .bonuswrap .m-hint{margin-top:16px}
 .step.bonusscreen .m-claim{margin-top:auto}
 .step.bonusscreen .skiplink{margin-top:12px}
@@ -2210,26 +2235,44 @@ function renderBonus(el){
      so the prices land already discounted instead of the card ambushing them */
   el.classList.add('bonusscreen');
   el.innerHTML=`
-    <div class="qgap t"></div>
-    <div class="bonuswrap">
-      <div class="modal-kick">Founding member bonus</div>
+    <div class="bonushead">
+      <div class="modal-kick">Your founding member bonus</div>
       <div class="modal-h" id="mTitle">Scratch the wax to reveal what you've earned</div>
       <div class="modal-sub">Yours as part of the founding member intake.</div>
-      <div class="m-scratch" id="mStage" role="button" tabindex="0" aria-label="Scratch panel — activate to reveal your founding member bonus">
-        <div class="m-prize" id="mPrize">
-          <div class="pwrap">
-            <div class="pk">Unlocked</div>
-            <div class="pt">10% OFF</div>
-            <div class="ps">on your matched programme — applied at checkout</div>
+    </div>
+    <div class="bonuswrap">
+      <div class="ticket">
+        <div class="tk-head">
+          <img class="tk-logo" src="img/ta-logo.png" alt="" onerror="this.style.display='none'">
+          <div class="tk-hl">
+            <div class="tk-kick">Founding member bonus</div>
+            <div class="tk-name">Improve Surfing</div>
           </div>
         </div>
-        <canvas id="mScratchCanvas"></canvas>
-        <div class="m-foilshine" id="mFoilShine"></div>
+        <div class="tk-perf"></div>
+        <div class="m-scratch" id="mStage" role="button" tabindex="0" aria-label="Scratch panel — activate to reveal your founding member bonus">
+          <div class="m-prize" id="mPrize">
+            <div class="pwrap">
+              <div class="pk">Unlocked</div>
+              <div class="pt">10% OFF</div>
+              <div class="ps">on your matched programme — applied at checkout</div>
+            </div>
+          </div>
+          <canvas id="mScratchCanvas"></canvas>
+          <div class="m-foilshine" id="mFoilShine"></div>
+        </div>
+        <div class="tk-foot">
+          <span>One per member</span>
+          <span class="tk-no">NO. <b id="tkNo">0000</b></span>
+        </div>
       </div>
-      <div class="m-hint" id="mHint">Drag your finger across the wax</div>
+      <div class="m-hint" id="mHint">Rub the wax off with your finger</div>
     </div>
     <button class="cta m-claim" id="mClaim" onclick="claimDiscount()">Lock in my 10% off →</button>
     <div class="skiplink" role="button" tabindex="0" onclick="next()">Skip — show me the plans</div>`;
+  /* a ticket number that is stable for this run — decoration, not a claim of stock */
+  const no=el.querySelector('#tkNo');
+  if(no){ state._tkNo=state._tkNo||String(1000+Math.floor(Math.random()*8999)); no.textContent=state._tkNo; }
   const stage=el.querySelector('#mStage');
   stage.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();reveal();} });
   setTimeout(()=>initScratch(),60);
@@ -2336,7 +2379,7 @@ function initScratch(){
   ctx.fillStyle='#000'; ctx.strokeStyle='#000';
   let drawing=false, done=false, lastBz=0, lastP=null, touched=false;
   function pos(e){const t=e.touches?e.touches[0]:e;const b=cv.getBoundingClientRect();return{x:t.clientX-b.left,y:t.clientY-b.top}}
-  function scratch(e){ if(!drawing)return; const p=pos(e);
+  function scratch(e){ if(!drawing)return; cv.__scratched=true; const p=pos(e);
     /* the shimmer is an invitation to scratch — once the gesture starts it has done its
        job, and leaving it on would sweep a white band across the exposed prize */
     if(!touched){ touched=true; const sh=document.getElementById('mFoilShine'); if(sh)sh.classList.add('off'); }
@@ -2369,48 +2412,30 @@ function initScratch(){
    Brushed metal, painted once: a diagonal ramp (cool silver with one warm stop),
    a specular band laid across it, a 4px hatch, five swirl arcs and a top/bottom
    vignette. ~150 draw ops, no assets, no rAF. */
+/* the scratch surface is a real photograph of a waxed board deck — code-drawn texture
+   read as a beige smudge, not as wax. Preloaded so the canvas is never painted empty. */
+const WAX_IMG=new Image(); WAX_IMG.src='img/wax.jpg';
 function paintFoil(ctx,w,h){
-  /* surf wax, not generic foil — the one surface a surfer actually scratches.
-     The bump texture is built ONCE on a small offscreen canvas and stretched: painting
-     ~300 radial gradients at DPR2 directly onto the stage locked up the renderer. */
-  const g=ctx.createLinearGradient(0,0,w*.25,h);
-  g.addColorStop(0,'#f7f3e6'); g.addColorStop(.22,'#efe7d2'); g.addColorStop(.45,'#f9f6ec');
-  g.addColorStop(.66,'#e6dcc2'); g.addColorStop(.85,'#f4efe0'); g.addColorStop(1,'#e2d7ba');
-  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
-
-  if(!paintFoil._tex){
-    const TW=110, TH=70, t=document.createElement('canvas'); t.width=TW; t.height=TH;
-    const c=t.getContext('2d'); const R=7;
-    for(let i=0;i<58;i++){                       /* lit crowns */
-      const x=Math.random()*TW, y=Math.random()*TH, r=R*(0.5+Math.random()*0.7);
-      const b=c.createRadialGradient(x-r*.32,y-r*.34,r*.08,x,y,r);
-      b.addColorStop(0,'rgba(255,255,255,.62)'); b.addColorStop(.6,'rgba(224,213,186,.14)');
-      b.addColorStop(1,'rgba(150,134,98,0)');
-      c.fillStyle=b; c.beginPath(); c.arc(x,y,r,0,6.284); c.fill();
-    }
-    for(let i=0;i<38;i++){                       /* the shadow each bump throws */
-      const x=Math.random()*TW, y=Math.random()*TH, r=R*(0.45+Math.random()*0.6);
-      const b=c.createRadialGradient(x+r*.3,y+r*.36,r*.1,x,y,r);
-      b.addColorStop(0,'rgba(120,104,70,.24)'); b.addColorStop(1,'rgba(120,104,70,0)');
-      c.fillStyle=b; c.beginPath(); c.arc(x,y,r,0,6.284); c.fill();
-    }
-    paintFoil._tex=t;
+  if(WAX_IMG.complete&&WAX_IMG.naturalWidth){
+    /* cover-fit the photo into the stage */
+    const ir=WAX_IMG.naturalWidth/WAX_IMG.naturalHeight, sr=w/h;
+    let sw=WAX_IMG.naturalWidth, sh=WAX_IMG.naturalHeight, sx=0, sy=0;
+    if(ir>sr){ sw=Math.round(sh*sr); sx=Math.round((WAX_IMG.naturalWidth-sw)/2); }
+    else     { sh=Math.round(sw/sr); sy=Math.round((WAX_IMG.naturalHeight-sh)/2); }
+    ctx.drawImage(WAX_IMG,sx,sy,sw,sh,0,0,w,h);
+  } else {
+    /* flat wax tone until the photo lands — never leave the prize showing */
+    const g=ctx.createLinearGradient(0,0,w*.25,h);
+    g.addColorStop(0,'#f7f3e6'); g.addColorStop(.5,'#efe7d2'); g.addColorStop(1,'#e2d7ba');
+    ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+    WAX_IMG.addEventListener('load',()=>{
+      const cv=document.getElementById('mScratchCanvas');
+      if(cv&&!cv.__scratched) initScratch();        /* repaint once, only if untouched */
+    },{once:true});
   }
-  ctx.drawImage(paintFoil._tex,0,0,w,h);
-
-  /* the circular strokes you leave rubbing a bar on — cheap, and they read as wax combing */
-  ctx.save(); ctx.lineWidth=2.2;
-  for(let i=0;i<9;i++){
-    const cx=w*(0.12+((i*37)%76)/100), cy=h*(0.14+((i*53)%68)/100), rr=h*(0.10+((i*29)%24)/100);
-    ctx.strokeStyle=(i%2)?'rgba(255,255,255,.32)':'rgba(140,124,88,.13)';
-    const a0=i*0.9;
-    ctx.beginPath(); ctx.arc(cx,cy,rr,a0,a0+2.4); ctx.stroke();
-  }
-  ctx.restore();
-
   /* seat it in the card: sun on the top edge, shade in the well */
   const v=ctx.createLinearGradient(0,0,0,h);
-  v.addColorStop(0,'rgba(255,255,255,.30)'); v.addColorStop(.5,'rgba(255,255,255,0)'); v.addColorStop(1,'rgba(96,82,52,.20)');
+  v.addColorStop(0,'rgba(255,255,255,.16)'); v.addColorStop(.55,'rgba(255,255,255,0)'); v.addColorStop(1,'rgba(78,64,38,.26)');
   ctx.fillStyle=v; ctx.fillRect(0,0,w,h);
 
   paintFoilLabel(ctx,w,h);
