@@ -41,6 +41,7 @@
   --green:#22c55e; --green-deep:#16a34a;
   --red:#ea580c; --red-deep:#9a3412;            /* the JS sets an invalid field to var(--red) */
   --gold:#b45309;                               /* amber: ★ glyphs are text-sized, so they need 4.5:1 — #b45309 is 4.7 on white, 4.4 on the wash */
+  --gold-on-dark:#ffdfa1;                       /* the same semantic gold, on the deep aqua prize field: measured 4.84:1 at 375px and 4.64:1 at 320px (a 9.5px kicker is normal text → 4.5 minimum) */
   --f:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
   --track:rgba(15,37,48,.09);
   --shadow:var(--sh3); --shadow-card:var(--sh1);
@@ -120,7 +121,7 @@ button{font:inherit;color:inherit}
 .loader-wrap>*:nth-child(4),.reveal-wrap>*:nth-child(4),.scratch-wrap>*:nth-child(4){animation-delay:.15s}
 .loader-wrap>*:nth-child(5),.reveal-wrap>*:nth-child(5),.scratch-wrap>*:nth-child(5){animation-delay:.20s}
 .loader-wrap>*:nth-child(6),.reveal-wrap>*:nth-child(6),.scratch-wrap>*:nth-child(6){animation-delay:.25s}
-.loader-wrap>*:nth-child(7),.reveal-wrap>*:nth-child(7){animation-delay:.30s}
+.loader-wrap>*:nth-child(7),.reveal-wrap>*:nth-child(7),.scratch-wrap>*:nth-child(7){animation-delay:.30s}
 .loader-wrap>*:nth-child(8),.reveal-wrap>*:nth-child(8){animation-delay:.35s}
 .loader-wrap>*:nth-child(9),.reveal-wrap>*:nth-child(9){animation-delay:.40s}
 .loader-wrap>*:nth-child(10),.reveal-wrap>*:nth-child(10){animation-delay:.45s}
@@ -478,6 +479,9 @@ h1 .red{color:var(--coral)}
 .scarce .dotr{width:8px;height:8px;border-radius:50%;background:#f97316;box-shadow:0 0 0 4px rgba(234,88,12,.14);animation:pulse 1.6s infinite;flex-shrink:0}
 .guar{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12px;font-weight:600;color:var(--mut);margin-top:14px}
 .guar svg{width:15px;height:15px;fill:var(--aq1);flex-shrink:0}
+/* the honest exit for someone who dismissed the scratch card: the bonus is still theirs
+   to take, so it stays one tap away instead of quietly vanishing. 44px tap target. */
+.reopen{display:none;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:10px;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--aq1);text-decoration:underline;text-underline-offset:3px;cursor:pointer;border-radius:14px}
 
 /* ---------- plans / payment — vertical accordion ---------- */
 /* every plan visible at once, cheapest first; the body collapses so the list stays
@@ -574,15 +578,9 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .igbtn svg{width:20px;height:20px;fill:#fff}
 
 /* ---------- scratch ---------- */
+/* the in-page scratch card is gone — the card lives in the modal now (.m-scratch et al).
+   .scratch-wrap survives as the result screen's flex wrapper + entrance-cascade hook. */
 .scratch-wrap{text-align:center;display:flex;flex-direction:column}
-.scratch-stage{position:relative;width:300px;max-width:100%;aspect-ratio:5/3;margin:6px auto 0;border-radius:24px;overflow:hidden;box-shadow:var(--sh3)}
-.prize-under{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;background:radial-gradient(circle at 50% 30%,#0e7490,#0b2a38)}
-.prize-kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;font-weight:800;color:#fbbf24}
-.prize-title{font-size:23px;line-height:1.08;font-weight:800;color:#fff;letter-spacing:-.02em}
-.prize-sub{font-size:12px;font-weight:600;color:#cfe8f3;margin-top:9px;line-height:1.45;max-width:240px}
-#scratchCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
-.scratch-hint{font-size:12px;color:var(--aq1);margin-top:12px;letter-spacing:.02em;font-weight:700}
-.jackpot-line{font-size:20px;font-weight:800;color:var(--gold);margin:14px 0 2px;display:none}
 /* above .modal-ov (z-index 100) — the reveal burst used to paint *under* the scrim's
    blur, so the one moment of reward in the paywall rendered as nothing */
 .confetti{position:fixed;top:-10px;width:9px;height:14px;z-index:120;pointer-events:none;border-radius:2px;animation:fall linear forwards}
@@ -625,7 +623,9 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .mprog .mpbar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width 1s var(--spring)}
 .mprog .mpt{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);font-weight:700;margin-top:9px}
 .mprog .mpt b{color:var(--aq1);font-weight:800}
-.mile{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center}
+/* every other screen starts at the top of #app; centring this one left the block floating
+   in the middle with dead space above and below, reading as misaligned against the rest */
+.mile{flex:1;display:flex;flex-direction:column;justify-content:flex-start;text-align:center;padding-top:8px}
 .mile .mck{width:74px;height:74px;border-radius:50%;background:var(--grad);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),0 18px 40px -14px rgba(8,145,178,.6);animation:pop .5s var(--over) both}
 .mile .mck svg{width:32px;height:32px;fill:#fff}
 @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
@@ -646,6 +646,9 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .boardcard .bk{position:relative;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--aq1);font-weight:800;display:flex;align-items:center;gap:7px}
 .boardcard .bv{position:relative;font-size:31px;font-weight:800;line-height:1;letter-spacing:-.04em;margin:9px 0 3px;background:var(--grad-ink);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 .boardcard .bv small{font-size:14px;font-weight:700;-webkit-text-fill-color:var(--mut);color:var(--mut)}
+/* the "why" line — the actual sum, so the litres read as a calculation, not a guess.
+   --aq1 (#0e7490) on the #f2fbfe card is 5.3:1, so 11px is safely AA. */
+.boardcard .bw{position:relative;font-size:11px;font-weight:700;color:var(--aq1);line-height:1.45;margin:0 0 7px}
 .boardcard .bd{position:relative;font-size:12.5px;font-weight:600;color:var(--mut);line-height:1.5}
 .boardcard .bd b{color:var(--ink);font-weight:800}
 .boardcard.empty{background:var(--card);border:1.5px dashed rgba(15,37,48,.12);color:var(--mut);box-shadow:var(--sh1)}
@@ -713,7 +716,7 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 @keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
 .plan .pbadge{animation:badgeP 2s infinite}
 @keyframes badgeP{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.08)}}
-.scratch-hint{animation:hintB 1.6s infinite}
+/* hintB is bound on .m-hint (the modal's scratch cue) */
 @keyframes hintB{50%{transform:translateY(3px)}}
 
 /* ---------- SVG re-tint (markup is built in JS — restyled here) ---------- */
@@ -765,23 +768,34 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 /* the stage — a real card edge (inner hairline + layered shadow), so the foil reads as
    something physically laid ON the prize instead of a flat grey rectangle */
 .m-scratch{position:relative;width:100%;aspect-ratio:16/10;border-radius:20px;overflow:hidden;isolation:isolate;
-  box-shadow:var(--sh2),inset 0 0 0 1px rgba(255,255,255,.18)}
+  box-shadow:var(--sh2)}
+/* the edge light has to be an OVERLAY, not an inset shadow: an inset shadow paints with the
+   element's own background layer, which is under every positioned child — .m-prize (z1) and
+   the canvas (z2) cover the padding box exactly, so it never rendered. z-index 4 puts it over
+   the shimmer (z3) too, and it survives the canvas being removed on reveal. */
+.m-scratch:after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 1px 0 rgba(255,255,255,.30)}
 .m-scratch:focus-visible{outline:3px solid #0e7490;outline-offset:3px;border-radius:20px;box-shadow:var(--sh2),0 0 0 7px rgba(14,165,233,.18)}
 
 /* the prize — a deep aqua→ink field, not a flat radial: a cool top light, a blue floor
-   bounce and a diagonal body ramp, so the number sits in a lit space */
+   bounce and a diagonal body ramp, so the number sits in a lit space.
+   The top light is pulled up out of the frame (50% -12%) and cut to .22: at .40 from
+   50% 4% it lifted the band where the kicker sits to rgb(33,122,159), on which NO gold —
+   and not even pure white (4.85:1) — clears 4.5:1. That band is now ~rgb(22,104,136). */
 .m-prize{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;overflow:hidden;
   background:
-    radial-gradient(115% 85% at 50% 4%,rgba(56,189,248,.40),rgba(56,189,248,0) 58%),
+    radial-gradient(115% 85% at 50% -12%,rgba(56,189,248,.22),rgba(56,189,248,0) 58%),
     radial-gradient(95% 75% at 50% 120%,rgba(2,132,199,.34),rgba(2,132,199,0) 62%),
     linear-gradient(162deg,#0b6f8c 0%,#0a5270 40%,#072b3d 76%,#05202e 100%)}
-/* the radial bloom that sits behind the headline number */
+/* the radial bloom behind the headline number — dimmed so it lights the NUMBER, not the
+   kicker line above it (the number is 38px+ bold: it only owes 3:1) */
 .m-prize:before{content:"";position:absolute;left:50%;top:50%;width:250px;height:250px;margin:-125px 0 0 -125px;
   border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(125,211,252,.34),rgba(125,211,252,.10) 42%,rgba(125,211,252,0) 68%)}
-/* one-shot shine sweep — armed only once the foil is off */
+  background:radial-gradient(circle,rgba(125,211,252,.20),rgba(125,211,252,.07) 42%,rgba(125,211,252,0) 68%)}
+/* one-shot shine sweep — armed only once the foil is off. It is deliberately BRIGHTER and
+   wider than the foil's idle shimmer: the payoff must out-sparkle the thing being destroyed. */
 .m-prize:after{content:"";position:absolute;top:-40%;left:0;width:46%;height:180%;pointer-events:none;
-  background:linear-gradient(100deg,rgba(255,255,255,0) 14%,rgba(255,255,255,.40) 50%,rgba(255,255,255,0) 86%);
+  background:linear-gradient(100deg,rgba(255,255,255,0) 14%,rgba(255,255,255,.55) 50%,rgba(255,255,255,0) 86%);
   transform:translateX(-200%) skewX(-16deg);opacity:0}
 .m-prize.revealed:after{opacity:1;animation:prizeSweep 1.05s .14s var(--spring) forwards}
 @keyframes prizeSweep{from{transform:translateX(-200%) skewX(-16deg)}to{transform:translateX(330%) skewX(-16deg)}}
@@ -791,11 +805,12 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 .m-prize .pwrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 14px;text-align:center}
 .m-prize.revealed .pwrap{animation:prizeIn .62s var(--over) both}
 @keyframes prizeIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
-/* warm gold kicker, flanked by two fading hairlines */
+/* warm gold kicker, flanked by two fading hairlines. No text-shadow: a warm 10px blur under
+   a 9.5px glyph only softens its edges — it costs legibility instead of buying glow. */
 .m-prize .pk{display:flex;align-items:center;gap:9px;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;
-  color:#f6cf7a;font-weight:800;text-shadow:0 1px 10px rgba(245,178,42,.45)}
-.m-prize .pk:before,.m-prize .pk:after{content:"";width:17px;height:1px;flex:none;background:linear-gradient(90deg,rgba(246,207,122,0),rgba(246,207,122,.85))}
-.m-prize .pk:after{background:linear-gradient(90deg,rgba(246,207,122,.85),rgba(246,207,122,0))}
+  color:var(--gold-on-dark);font-weight:800}
+.m-prize .pk:before,.m-prize .pk:after{content:"";width:17px;height:1px;flex:none;background:linear-gradient(90deg,rgba(255,223,161,0),rgba(255,223,161,.85))}
+.m-prize .pk:after{background:linear-gradient(90deg,rgba(255,223,161,.85),rgba(255,223,161,0))}
 /* THE element — pushed as large as the stage allows, tracking pulled tight */
 .m-prize .pt{font-size:clamp(38px,13.5vw,52px);font-weight:800;line-height:.96;letter-spacing:-.055em;margin:9px 0 8px;
   color:#fff;background:linear-gradient(178deg,#ffffff 0%,#eaf8ff 46%,#a9dcf6 100%);
@@ -806,9 +821,10 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
 /* slow shimmer travelling over the untouched foil — pure CSS, killed on reveal */
 .m-foilshine{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
 .m-foilshine:after{content:"";position:absolute;top:-40%;left:0;width:38%;height:180%;
-  background:linear-gradient(100deg,rgba(255,255,255,0) 12%,rgba(255,255,255,.5) 50%,rgba(255,255,255,0) 88%);
+  background:linear-gradient(100deg,rgba(255,255,255,0) 12%,rgba(255,255,255,.30) 50%,rgba(255,255,255,0) 88%);
   transform:translateX(-200%) skewX(-16deg);animation:foilSweep 3.1s ease-in-out infinite}
-@keyframes foilSweep{0%,44%{transform:translateX(-200%) skewX(-16deg)}84%,100%{transform:translateX(330%) skewX(-16deg)}}
+/* longer rest phase — the band should read as light occasionally catching the foil, not a metronome */
+@keyframes foilSweep{0%,52%{transform:translateX(-200%) skewX(-16deg)}84%,100%{transform:translateX(330%) skewX(-16deg)}}
 .m-foilshine.off{display:none}
 
 .m-hint{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--aq1);margin-top:14px;font-weight:700;animation:hintB 1.6s infinite}
@@ -816,22 +832,27 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
    56px instead of 58px, no shine sweep). Now it only adds the hidden-until-revealed state. */
 .m-claim{display:none;margin-top:18px}
 .m-claim.in{animation:childIn .5s var(--spring) both}
-.m-claim:focus-visible{border-radius:99px;outline:3px solid #0e7490;outline-offset:3px;box-shadow:0 0 0 7px rgba(14,165,233,.18)}
+/* re-state --shadow-btn: a bare box-shadow here would REPLACE .cta's, flattening the button
+   onto the card at exactly the moment a keyboard user is on it (same pattern as .m-scratch) */
+.m-claim:focus-visible{border-radius:99px;outline:3px solid #0e7490;outline-offset:3px;box-shadow:var(--shadow-btn),0 0 0 7px rgba(14,165,233,.18)}
 /* the modal must never be a dead end: an always-reachable dismiss, keyboard included.
    The mute toggle is its mirror on the left, so the header stays optically balanced. */
-/* 44px: the smallest reliable touch target — the visual circle stays 36px via the inset ring */
-.m-close,.m-mute{position:absolute;top:8px;width:44px;height:44px;border-radius:50%;border:0;
-  background-clip:content-box;padding:4px;
-  background:#eef4f8;color:var(--mut);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s var(--spring),color .2s}
-.m-close{right:8px;font-size:20px;font-weight:700;line-height:1}
-.m-mute{left:8px}
+/* 44px: the smallest reliable touch target. The box is 44 and the PAINTED circle stays 36 —
+   4px of padding plus background-clip:content-box. Order matters: `background-clip` has to
+   come after any `background` shorthand, which resets it to border-box.
+   Everything below uses the background-COLOR longhand for the same reason. */
+.m-close,.m-mute{position:absolute;top:4px;width:44px;height:44px;border-radius:50%;border:0;padding:4px;
+  background-color:var(--surface2);background-clip:content-box;color:var(--mut);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background-color .2s,transform .2s var(--spring),color .2s}
+.m-close{right:4px;font-size:20px;font-weight:700;line-height:1}
+.m-mute{left:4px}
 .m-mute svg{width:17px;height:17px;fill:currentColor;display:block;pointer-events:none}
-.m-close:hover,.m-mute:hover{background:#e2edf3;color:var(--ink)}
+.m-close:hover,.m-mute:hover{background-color:#e2edf3;color:var(--ink)}
 .m-close:active,.m-mute:active{transform:scale(.92)}
-/* the muted state reads as dimmed but stays ≥3:1 on #eef4f8 (AA non-text) */
-.m-mute[aria-pressed="true"]{color:#6b8492}
-.m-close:focus-visible,.m-mute:focus-visible{border-radius:50%;outline:3px solid #0e7490;outline-offset:2px;box-shadow:0 0 0 7px rgba(14,165,233,.18)}
+/* the muted state reads as dimmed but stays ≥3:1 on the chip (AA non-text) */
+.m-mute[aria-pressed="true"]{color:var(--mute)}
+/* negative offset so the ring hugs the 36px painted circle, not the 44px hit box */
+.m-close:focus-visible,.m-mute:focus-visible{border-radius:50%;outline:3px solid #0e7490;outline-offset:-4px;box-shadow:0 0 0 5px rgba(14,165,233,.18)}
 
 .tag-debug{position:fixed;bottom:8px;left:10px;font-size:10px;font-family:monospace;z-index:50;color:#7b96a4;display:none} /* hidden in production; add ?debug to the URL to show */
 
@@ -858,8 +879,10 @@ body.has-bar .ctabar{transform:none;visibility:visible;transition-delay:0s}
      tighten the kicker so "Founding member bonus" still clears them on one line */
   .modal-card{padding:22px 18px}
   .modal-h{font-size:21px}
-  .m-close,.m-mute{width:32px;height:32px;top:10px}
-  .m-close{right:10px}.m-mute{left:10px}
+  /* the painted circle drops to 32px; the 44px hit box does NOT — the padding absorbs it */
+  .m-close,.m-mute{width:44px;height:44px;top:4px;padding:6px}
+  .m-close{right:4px}.m-mute{left:4px}
+  .m-close:focus-visible,.m-mute:focus-visible{outline-offset:-6px}
   .modal-kick{font-size:9.5px;letter-spacing:.1em;padding:0 34px;min-height:32px}
   .m-prize .ps{font-size:11px}
 }
@@ -1157,8 +1180,6 @@ const STEPS = [
   { id:'loader', type:'loader' },
   { id:'score', type:'score' },
   { id:'projection', type:'projection' },
-  { id:'bridge', type:'bridge' },
-  { id:'result', type:'result' },
   { id:'plans', type:'plans' },
 ];
 
@@ -1272,7 +1293,7 @@ function render(){
   const el=document.createElement('div'); el.className='step';
   ({intro:renderIntro,text:renderText,gender:renderGender,imgcards:renderImgCards,single:renderSingle,
     multi:renderMulti,num:renderNum,snippet:renderSnippet,milestone:renderMilestone,
-    loader:renderLoader,score:renderScore,projection:renderProjection,bridge:renderBridge,result:renderResult,plans:renderPlans})[step.type](el,step);
+    loader:renderLoader,score:renderScore,projection:renderProjection,plans:renderPlans})[step.type](el,step);
   app.appendChild(el); window.scrollTo(0,0); updateDebug();
 }
 function imgFallback(el){ const d=document.createElement('div'); d.className='imgslot ph '+el.dataset.ar; d.textContent=el.dataset.label; el.replaceWith(d); }
@@ -1399,7 +1420,10 @@ const SFX=(function(){
   function ac(){
     try{
       if(!ctx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return null; ctx=new AC(); }
-      if(ctx.state==='suspended'&&ctx.resume)ctx.resume();
+      /* resume() returns a promise — a webview that refuses to resume rejects it, and the
+         try/catch around this cannot catch that. Swallow it: unhandled rejections in an
+         IG/FB webview are pure console noise the funnel doesn't need. */
+      if(ctx.state==='suspended'&&ctx.resume){ const p=ctx.resume(); if(p&&p.catch)p.catch(()=>{}); }
       return ctx;
     }catch(e){ return null; }
   }
@@ -1602,6 +1626,23 @@ function renderNum(el,step){
   step.fields.forEach(f=>{const i=el.querySelector('#nf_'+f.key); if(i)i.addEventListener('input',upd);});
   renderBoardEst(el);
 }
+/* ── recommended board volume ────────────────────────────────────────────────
+   How volume is actually recommended: litres ≈ bodyweight(kg) × a skill factor.
+   The industry bands are beginner .9–1.0, intermediate .6–.7, advanced .45–.55,
+   expert .35–.42 — the old table ran 0.75 for a level-2 surfer, a whole band of
+   float too much, and 0.55 / 0.42 both sat on the wrong side of their band edge.
+   Each factor below is the mid-point of its band.
+   Two inputs the screen collected and then ignored now do work:
+     · age   → older surfers need more float (paddle power and pop-up speed drop),
+     · height→ does NOT move the litres (float is a weight problem) but does move
+               the recommended LENGTH, which is where a tall surfer gets punished.
+   The measured Fitness pillar (q3 rhythm + q4 paddle power) nudges it too. */
+const SKILL_BANDS=[
+  {max:1.6, f:0.95, name:'beginner',     shape:'high-float foam or mini-mal',    baseIn:96},
+  {max:2.4, f:0.65, name:'intermediate', shape:'forgiving mid-length or hybrid', baseIn:84},
+  {max:3.2, f:0.50, name:'advanced',     shape:'performance hybrid or fish',     baseIn:74},
+  {max:Infinity, f:0.39, name:'expert',  shape:'tuned performance shortboard',   baseIn:71},
+];
 function renderBoardEst(el){
   const box=el.querySelector('#boardEst'); if(!box)return;
   /* read off `el`, NOT the document: render() appends `el` to #app only after the
@@ -1610,13 +1651,37 @@ function renderBoardEst(el){
   const wi=el.querySelector('#nf_weight_kg'); const raw=parseFloat(wi?wi.value.trim():'');
   if(!raw||raw<40||raw>200){ box.innerHTML=`<div class="boardcard empty"><div class="bk">🏄 Recommended board volume</div><div class="bd" style="margin-top:6px">Add your weight to see the ideal board volume for your level.</div></div>`; return; }
   const w=Math.min(150,raw);   /* a fat-fingered 600 must not print "570–630 L" */
-  // volume factor by measured level: beginner needs more float, advanced less
-  const lvl=levelAvg(); const f = lvl<1.6?1.0 : lvl<2.4?0.75 : lvl<3.2?0.55 : 0.42;
-  const lo=Math.round(w*(f-0.05)), hi=Math.round(w*(f+0.05));
-  const lab = lvl<1.6?'high-float, stable foam or mid-length' : lvl<2.4?'forgiving mid-length or hybrid' : lvl<3.2?'performance hybrid or fish' : 'tuned performance shortboard';
+  const lvl=levelAvg();
+  const b=SKILL_BANDS.find(s=>lvl<s.max)||SKILL_BANDS[SKILL_BANDS.length-1];
+  /* parseInt sidesteps the en-dash in the option values: '18–29' → 18, '50+' → 50 */
+  const a=parseInt(state.age,10)||0;
+  const ageAdj = a>=50?1.09 : a>=40?1.05 : a>=30?1.02 : 1;
+  /* Fitness pillar, 1–4 (null until q3/q4 are answered). Below par = a few % more float. */
+  const fit=pillarScores().fitness;
+  const fitAdj = fit==null ? 1 : Math.max(0.97,Math.min(1.06,1+(3-fit)*0.025));
+  const vol=w*b.f*ageAdj*fitAdj;
+  const spread=Math.max(2,Math.round(vol*0.05));   /* the honest ±, not a fixed litre count */
+  const lo=Math.round(vol)-spread, hi=Math.round(vol)+spread;
+  /* height → length: ~1 inch per 8cm off a 175cm reference, capped either way so a
+     freak entry can't hand a 190cm surfer a longboard or a 150cm surfer a 5'2". */
+  const hIn=el.querySelector('#nf_height_cm'); const hRaw=parseFloat(hIn?hIn.value.trim():'');
+  const hcm=(hRaw>=140&&hRaw<=220)?Math.round(hRaw):0;
+  let lenLine='';
+  if(hcm){
+    const tot=b.baseIn+Math.max(-3,Math.min(4,Math.round((hcm-175)/8)));
+    lenLine=` around <b>${Math.floor(tot/12)}'${tot%12}"</b>`;
+    if(hcm>=188)      lenLine+=` — at ${hcm} cm, buy that length before you buy extra thickness`;
+    else if(hcm<=166) lenLine+=` — at ${hcm} cm, a shorter, wider outline gives you more leverage`;
+  }
+  /* one short line showing the actual sum, so the number reads as a calculation */
+  const pc=n=>{const v=Math.round((n-1)*100); return v?(v>0?'+':'')+v+'%':'';};
+  const why=[`${Math.round(w)} kg × ${b.name} factor ${b.f.toFixed(2)}`];
+  if(state.age&&pc(ageAdj)) why.push(`${pc(ageAdj)} age ${esc(state.age)}`);
+  if(pc(fitAdj))            why.push(`${pc(fitAdj)} paddle fitness ${fit.toFixed(1)}/4`);
   box.innerHTML=`<div class="boardcard"><div class="bk">🏄 Your recommended board volume</div>
     <div class="bv">${lo}–${hi}<small> L</small></div>
-    <div class="bd">Best paired with a <b>${lab}</b>. Your coach fine-tunes this in your first session.</div></div>`;
+    <div class="bw">${why.join(' · ')}</div>
+    <div class="bd">Best paired with a <b>${b.shape}</b>${lenLine}. Your coach fine-tunes this in your first session.</div></div>`;
 }
 function saveNums(id){
   const step=STEPS.find(s=>s.id===id);
@@ -1631,7 +1696,7 @@ function renderSnippet(el,step){
   el.innerHTML=`
     <div class="spacer" style="max-height:46px"></div>
     <div class="snip">
-      <div class="sav"><img src="img/coach.jpg" alt="Improve Surfing coach" onerror="this.style.display='none'"></div>
+      <div class="sav"><img src="img/coach-av.jpg" alt="Improve Surfing coach" onerror="this.style.display='none'"></div>
       <div class="sk">
         <div class="skk">Improve Surfing · Coach</div>
         <div class="sbub">
@@ -1837,71 +1902,18 @@ function renderProjection(el){
   setTimeout(()=>{pg.style.transition='stroke-dashoffset 1.4s ease';pg.style.strokeDashoffset=0;pa.style.transition='opacity 1s';pa.style.opacity=1;},700);
   setTimeout(()=>{['#dred','#dgreen','#cgreen'].forEach(s=>{const e=el.querySelector(s);if(e){e.style.transition='opacity .45s';e.style.opacity=1;}});},2000);
 }
-function renderBridge(el){
-  el.innerHTML=`
-    <div class="eyebrow">The method</div>
-    <h1>The system that turns <span class="hl">frustrated surfers</span> into confident ones.</h1>
-    <div class="heroph">${slot('coach','ar-wide','COACH IN WATER — prompt #3','An Improve Surfing coach in the water with a student')}</div>
-    <div class="auth-grid">
-      <div class="a"><b>2019</b><span>Since</span></div>
-      <div class="a"><b>300+</b><span>surfers</span></div>
-      <div class="a"><b>99%</b><span>satisfaction</span></div>
-    </div>
-    <div class="sub" style="margin-top:14px">Since <b>2019</b>, Improve Surfing has coached <b>300+ surfers</b> on the Gold Coast with one obsession: <b>1% better every session.</b> Not random surfs — a real plan, real feedback, real progress.</div>
-    <div class="methodrow">
-      <span class="m"><b>Surf</b> sessions 1:1</span>
-      <span class="m"><b>Video</b> analysis</span>
-      <span class="m"><b>Surfskate</b></span>
-      <span class="m"><b>Mobility</b></span>
-      <span class="m"><b>Apnea</b></span>
-    </div>
-    <button class="cta" onclick="next()">See my recommended programme →</button>
-    <div class="btnnote">Matched to <b>your</b> answers · limited spots</div>`;
-}
-function renderResult(el){
-  const key=pickTier(state); const t=TIERS[key]; state._tier=key;
-  const nm=firstName();
-  const goalLine={catch_waves:'catch more waves, more consistently',turns_control:'own your turns and control',flow_style:'surf with flow, speed and style',bigger_waves:'ride bigger waves with confidence',compete:'push into real performance'}[state.q1]||'reach your next level';
-  const lim=LIMITER_META[(state._score&&state._score.limiter)||limiterKey()];
-  const spots=3;
-  el.innerHTML=`
-    <div class="scratch-wrap">
-      <div class="eyebrow" style="justify-content:center">${nm?nm+', your match':'Your match'}</div>
-      <h1 style="text-align:center">Based on your answers, this is <span class="hl">your programme.</span></h1>
-      <!-- describe what the TIER delivers, not what the user asked for: the two never
-           had to match, and quoting state.sessions promised "1–2 a week" on a 1-a-week plan -->
-      <div class="sub" style="text-align:center">To ${goalLine} — starting with your #1 limiter, <b>${lim.label}</b> — this is your best-fit tier, at <b>${t.sessions.split(' — ')[0]}</b>.</div>
-      <!-- header only; the 12 inclusions unfold on tap so the card stays short -->
-      <div class="tiercard" id="tcCard" role="button" tabindex="0" aria-expanded="false" onclick="toggleTier(this)">
-        <div class="tier-tag">${t.tag} · your match</div>
-        <div class="tier-name">${t.name}</div>
-        <div class="tier-price" id="tcPrice"></div>
-        <div class="tier-perday" id="tcDay"></div>
-        <div id="tcBadge"></div>
-        <div class="tier-toggle">${CHEV}<span class="ttxt">See everything included</span></div>
-        <div class="tier-body"><div><ul class="tier-inc">${t.inc.map(i=>`<li>${TICK_SVG}<span>${i}</span></li>`).join('')}</ul></div></div>
-      </div>
 
-      <button class="cta" id="claimBtn" style="display:none;margin-top:16px" onclick="next()">See all plans → join now</button>
-      <div class="guar" id="guar" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> 10% founding discount unlocked · secure checkout</div>
-    </div>`;
-  /* render() appends `el` to #app only after this function returns, so these nodes
-     aren't in the document yet — defer the paint, and query `el` directly here.
-     (getElementById used to return null: the price never painted, and the else
-     branch threw and blanked the screen when a discount was already claimed.) */
-  setTimeout(paintTierPrice,0);
-  if(!state._discount) setTimeout(()=>openScratchModal(),850);
-  else { const cb=el.querySelector('#claimBtn'), gr=el.querySelector('#guar');
-         if(cb)cb.style.display='block'; if(gr)gr.style.display='flex'; }
-}
-function paintTierPrice(){
-  const t=TIERS[state._tier]; const d=state._discount||0;
-  const pw=document.getElementById('tcPrice'), pd=document.getElementById('tcDay'), pb=document.getElementById('tcBadge');
-  if(!pw)return;
-  pw.innerHTML=(d?`<span class="was">${t.price}</span>`:'')+`<b>${money(wkNow(t))}</b><span>/week</span>`;
-  pd.innerHTML=`<b>${t.sessions}</b>`;
-  pb.innerHTML=d?`<span class="disc-badge">✓ 10% founding discount applied</span>`:'';
-}
+
+/* The result screen may only promise the discount once state._discount is actually set.
+   Dismissing the scratch card (× / Escape / backdrop) left "10% founding discount
+   unlocked" sitting above the undiscounted price — a claim the funnel never honoured.
+   The dismisser instead gets a plain CTA into the same plans, plus the bonus still one
+   tap away. Called on every entry to and exit from the modal. */
+
+/* The single way off the result screen. claimDiscount() fires it on a timer and the CTA
+   fires it on tap, so it has to be safe to call twice — the type test makes it a no-op
+   once we've already landed on the plans. */
+
 function openScratchModal(){
   if(document.getElementById('scratchModal'))return;
   const ov=document.createElement('div'); ov.className='modal-ov'; ov.id='scratchModal';
@@ -1914,19 +1926,24 @@ function openScratchModal(){
       <button class="m-close" id="mClose" type="button" aria-label="Close" onclick="closeScratchModal()">×</button>
       <div class="modal-kick">Founding member bonus</div>
       <div class="modal-h" id="mTitle">Scratch to reveal what you've earned</div>
-      <div class="modal-sub">Reserved for this intake's 15 founding members. Scratch the foil 👇</div>
+      <div class="modal-sub">Reserved for this intake's 15 founding members.</div>
       <div class="m-scratch" id="mStage" role="button" tabindex="0" aria-label="Scratch panel — activate to reveal your founding member bonus">
         <div class="m-prize" id="mPrize">
           <div class="pwrap">
-            <div class="pk">You've earned</div>
+            <div class="pk">Unlocked</div>
             <div class="pt">10% OFF</div>
-            <div class="ps">your programme — locked in for as long as you stay</div>
+            <!-- copy note: every tier is a FIXED-TERM contract (3/6/12-month, billed weekly),
+                 so this line may not promise a price lock "for as long as you stay" — that
+                 would be an invented lifetime guarantee. It says only what checkout does. -->
+            <div class="ps">on your matched programme — applied at checkout</div>
           </div>
         </div>
         <canvas id="mScratchCanvas"></canvas>
         <div class="m-foilshine" id="mFoilShine"></div>
       </div>
-      <div class="m-hint" id="mHint">👆 Scratch the foil to reveal it</div>
+      <!-- the foil already says SCRATCH HERE / DRAG ACROSS THE PANEL, embossed: this is the
+           bobbing cue underneath it, not a third copy of the instruction -->
+      <div class="m-hint" id="mHint">Drag across the panel</div>
       <button class="cta m-claim" id="mClaim" onclick="claimDiscount()">Lock in my 10% off →</button>
     </div>`;
   document.body.appendChild(ov);
@@ -1946,19 +1963,32 @@ function openScratchModal(){
      lands (keyboard, switch control, a canvas that failed to size), reveal anyway.
      Scoped to THIS overlay — if the user dismissed it and a later render opened a fresh
      one, the stale timer must not reach across and pop the new card's prize. */
-  setTimeout(()=>{ if(!ov.parentNode||!document.body.contains(ov))return;
+  /* the id is kept on the overlay: closeScratchModal() clears it. Without that, dismissing
+     between ~7.7s and 8.0s let the timer fire while the fade-out was still running (the node
+     is only removed at +300ms), popping confetti, a haptic and the chime over the result screen. */
+  ov.__fb=setTimeout(()=>{ if(!ov.parentNode||!document.body.contains(ov))return;
     const c=ov.querySelector('#mClaim');
     if(c&&c.style.display!=='block') reveal(); },8000);
 }
-function closeScratchModal(){
+/* `advancing` is set by claimDiscount(), which is about to navigate: don't pull focus
+   (and the scroll position) onto a button that is 560ms from being torn down. */
+function closeScratchModal(advancing){
   const ov=document.getElementById('scratchModal'); if(!ov)return;
   if(ov.__esc)document.removeEventListener('keydown',ov.__esc);
+  /* the canvas listeners die with the canvas node; this one is window-scoped and would
+     otherwise outlive the modal, pinning the whole backing store (~1MB at DPR 2) per open */
+  if(ov.__mup)window.removeEventListener('mouseup',ov.__mup);
+  if(ov.__fb)clearTimeout(ov.__fb);
+  /* strip every id on the way out. The node lives another 300ms while it fades, and it
+     sits EARLIER in the document than any replacement — so a stale #mClaim/#mScratchCanvas
+     would capture the getElementById calls of a card re-opened inside that window, which
+     the Reopen link now makes reachable. (openScratchModal's own #scratchModal guard also
+     needed this to stop swallowing a fast re-open.) */
+  ov.id=''; ov.style.pointerEvents='none';
+  [].forEach.call(ov.querySelectorAll('[id]'),n=>{n.id='';});
   ov.style.transition='opacity .3s'; ov.style.opacity=0; setTimeout(()=>ov.remove(),300);
-  /* the result screen's own forward control is hidden until the modal is done with —
-     unhide it on every exit path, or the funnel stops here. */
-  const cb=document.getElementById('claimBtn'), gr=document.getElementById('guar');
-  if(cb){ cb.style.display='block'; if(cb.focus)cb.focus(); }
-  if(gr)gr.style.display='flex';
+  /* nothing to unhide any more: the modal now sits over the plans screen, which is
+     already fully interactive behind it. Dismissing simply leaves the full prices. */
 }
 function initScratch(){
   const cv=document.getElementById('mScratchCanvas'); if(!cv)return;
@@ -1972,6 +2002,12 @@ function initScratch(){
   const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
   paintFoil(ctx,w,h);
   ctx.globalCompositeOperation='destination-out';
+  /* paintFoil() leaves fillStyle set to its vignette gradient — which is transparent at
+     mid-height. In destination-out the SOURCE alpha is the eraser, so both fill() passes
+     below were erasing nothing at the centre of the panel and only the stroke was working:
+     a tap with no drag did nothing at all, and the feathered edge never existed.
+     Opaque black on both channels — ctx.globalAlpha alone now controls the feather. */
+  ctx.fillStyle='#000'; ctx.strokeStyle='#000';
   let drawing=false, done=false, lastBz=0, lastP=null, touched=false;
   function pos(e){const t=e.touches?e.touches[0]:e;const b=cv.getBoundingClientRect();return{x:t.clientX-b.left,y:t.clientY-b.top}}
   function scratch(e){ if(!drawing)return; const p=pos(e);
@@ -1994,7 +2030,11 @@ function initScratch(){
   function cleared(){ const d=ctx.getImageData(0,0,cv.width,cv.height).data; let c=0; for(let i=3;i<d.length;i+=40){if(d[i]===0)c++;} return c/(d.length/40); }
   cv.addEventListener('mousedown',e=>{drawing=true;lastP=null;scratch(e)});
   cv.addEventListener('mousemove',scratch);
-  window.addEventListener('mouseup',()=>{drawing=false;lastP=null});
+  /* mouseup has to be window-scoped (the button often comes up outside the canvas), so the
+     handler is parked on the overlay for closeScratchModal() to remove — see the note there */
+  const onUp=()=>{drawing=false;lastP=null};
+  window.addEventListener('mouseup',onUp);
+  const ov=document.getElementById('scratchModal'); if(ov)ov.__mup=onUp;
   cv.addEventListener('touchstart',e=>{drawing=true;lastP=null;scratch(e);e.preventDefault()},{passive:false});
   cv.addEventListener('touchmove',e=>{scratch(e);e.preventDefault()},{passive:false});
   cv.addEventListener('touchend',()=>{drawing=false;lastP=null});
@@ -2108,16 +2148,12 @@ function toggleTier(node){
 }
 function claimDiscount(){
   state._discount=0.10;
-  closeScratchModal();          /* unhides #claimBtn / #guar and restores focus */
-  paintTierPrice();
-  const cb=document.getElementById('claimBtn'); if(cb)cb.classList.add('snipin');
-  const pw=document.getElementById('tcPrice'); if(pw){pw.classList.remove('settled');void pw.offsetWidth;pw.classList.add('settled');}
-  /* claiming the discount is the buyer saying yes — take them straight to the full list
-     with it applied, instead of parking them on the single matched tier behind one more tap.
-     (Dismissing the modal without claiming still leaves them on the result screen.) */
-  const from=idx;
-  setTimeout(()=>{ if(idx===from&&STEPS[idx].type==='result') next(); },560);
+  closeScratchModal(true);
+  /* already on the plans screen — re-render so all four cards, the strike-throughs
+     and the sticky bar pick the discount up */
+  if(STEPS[idx]&&STEPS[idx].type==='plans') render();
 }
+
 function claimTier(){
   const t=TIERS[state._tier];
   alert('(prototype) Would open the Stripe checkout for '+t.name+' — '+money(wkNow(t))+'/week.\nURL: '+t.url);
@@ -2129,6 +2165,9 @@ const IG_WIDGET_ID='';
 const TICK_SVG='<svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="rgba(8,145,178,.16)"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#0891b2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const WAVE_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c2.2 0 2.2-1.8 4.5-1.8S9.8 14 12 14s2.2-1.8 4.5-1.8S18.8 14 21 14"/><path d="M3 19c2.2 0 2.2-1.8 4.5-1.8S9.8 19 12 19s2.2-1.8 4.5-1.8S18.8 19 21 19"/></svg>';
 const CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+/* the .guar shield — hoisted out of renderResult's template because paintResultCta()
+   rewrites that line's text on every exit from the scratch card */
+const SHIELD_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg>';
 function planCard(k,rec,d){
   const t=TIERS[k]; const sel=state._sel===k;
   /* the whole 12-item list ships in the DOM; .pbody keeps it at 0fr until opened,
@@ -2162,6 +2201,10 @@ function mountCtaBar(){
 }
 function renderPlans(el){
   const rec=state._tier||pickTier(state); if(!state._sel)state._sel=rec;
+  state._tier=rec;
+  /* the bonus is the last beat before price: open it over the plans, and claiming
+     simply repaints them — there is no separate result screen to bounce through */
+  if(!state._discount&&!state._bonusSeen){ state._bonusSeen=1; setTimeout(()=>openScratchModal(),700); }
   const order=['foundation','swell','consistency','elite'];
   const nm=firstName(); const d=state._discount||0;
   el.classList.add('padbar');   /* keeps the sticky bar off the content */
@@ -2173,33 +2216,11 @@ function renderPlans(el){
     <div class="scarce" style="margin:0"><span class="dotr"></span> Only 15 members this intake · <b>&nbsp;3 spots left</b></div>
     <div class="plans">${order.map(k=>planCard(k,rec,d)).join('')}</div>
     <div class="guar" style="margin-top:4px"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg> Founding member intake · billed weekly in A$</div>
-    <div class="igsec">
-      <div class="ighead">
-        <div class="igav"><img src="img/ta-logo.png" alt="TA"></div>
-        <div class="igmeta"><div class="ighandle">@improvesurfing</div><div class="igtag">Improve Surfing · Training Academy — Coolangatta, Gold Coast</div></div>
-      </div>
-      <div class="igservices"><span>1:1 Surf</span><span>Video Analysis</span><span>Surfskate</span><span>Mobility</span><span>Apnea</span></div>
-      <div id="igFeed"></div>
-      <a class="igbtn" href="https://www.instagram.com/improvesurfing/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1012 18.6 6.6 6.6 0 0012 5.4zm0 10.9a4.3 4.3 0 110-8.6 4.3 4.3 0 010 8.6zM18.9 5.1a1.5 1.5 0 100 3.1 1.5 1.5 0 000-3.1z"/></svg> Follow the real feed → @improvesurfing</a>
-    </div>`;
-  mountIgFeed(el);
+    `;
   mountCtaBar();
 }
 
-function mountIgFeed(root){
-  /* `root` is the still-detached .step: getElementById can't see it yet */
-  const box=(root||document).querySelector('#igFeed'); if(!box)return;
-  if(IG_WIDGET_ID){
-    box.innerHTML=`<iframe src="//lightwidget.com/widgets/${IG_WIDGET_ID}.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;border-radius:12px;margin-top:12px"></iframe>`;
-    if(!window.__lwLoaded){ const s=document.createElement('script'); s.src='https://cdn.lightwidget.com/widgets/lightwidget.js'; document.body.appendChild(s); window.__lwLoaded=true; }
-  } else {
-    box.innerHTML=`<div class="igreal">
-      <div class="igreal-row"><span>📍</span> Coolangatta, Gold Coast QLD</div>
-      <div class="igreal-row"><span>🗓️</span> Coaching since 2019 · 300+ surfers · 99% satisfaction</div>
-      <div class="igreal-note">Live feed loads here once the @improvesurfing Instagram is connected.</div>
-    </div>`;
-  }
-}
+
 function selectPlan(node,k,fromTap){
   state._sel=k;
   document.querySelectorAll('.plan').forEach(p=>{
