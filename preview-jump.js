@@ -7,7 +7,7 @@
   if(!target) return;
   function go(){
     if(typeof STEPS==='undefined'||typeof state==='undefined'){ return setTimeout(go,60); }
-    state.name='Rafael'; state.gender='Man'; state.age='30–39';   /* gslot() tests gender==='Woman' */
+    state.name='Rafael'; state.gender='Man'; state.age='30-39';   /* gslot() tests gender==='Woman' */
     state._sc = state._sc || {};
     STEPS.forEach(function(s){
       if(!s.options) return;
