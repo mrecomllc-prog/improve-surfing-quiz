@@ -1187,7 +1187,7 @@ const STEPS = [
 
   { id:'age', type:'imgcards', q:true,
     eyebrow:'The time factor', title:"What's your age range?",
-    sub:'Every year on your own is a year of <b>waves left on the table.</b> The sooner you fix your technique, the faster it compounds.',
+    sub:'Progression compounds. The sooner you <b>train with intent</b>, the faster every session pays off, at any age.',
     options:[
       {label:'18-29',val:'18-29',img:'age1'},
       {label:'30-39',val:'30-39',img:'age2'},
@@ -1267,7 +1267,7 @@ const STEPS = [
     content:()=>({
       title:"Wave reading isn't talent. It's pattern recognition.",
       body:"And you can't learn it by trial and error alone. This is what <b>video surf analysis</b> is for, you watch the pattern back with your coach until you own it.",
-      stat:['1:1',"video surf analysis is part of every Improve Surfing programme"]
+      stat:['1:1',"video surf analysis is part of every Improve Surfing program"]
     })},
 
 
@@ -1316,7 +1316,7 @@ const STEPS = [
 
   { id:'q12', type:'single', q:true,
     eyebrow:'The real blocker', title:"What's the single biggest thing holding your surfing back right now?",
-    sub:'{nm}be honest, this decides where your programme starts.',
+    sub:'{nm}be honest, this decides where your program starts.',
     options:[
       {label:"My technique, I know what to do, my body doesn't do it yet",val:'technique_limiter',score:4},
       {label:"My understanding, I don't always know what to do or why",val:'knowledge_limiter',score:2},
@@ -1328,13 +1328,13 @@ const STEPS = [
 
   { id:'sn12', type:'snippet', cond:()=>!!state.q12,
     content:()=>({
-      technique_limiter:{title:"Your body is one rep behind your brain. Classic.",body:"You know what to do; it just doesn't happen at wave speed yet. That gap closes with <b>repetition + feedback</b>, coached sessions and surfskate drills, not more random surfs."},
+      technique_limiter:{title:"Your body is one rep behind your brain. Classic.",body:"You know what to do; it just doesn't happen at wave speed yet. That gap closes with <b>repetition + feedback</b>, coached sessions and surf skate drills, not more random surfs."},
       knowledge_limiter:{title:"Not knowing <i>why</i> is the fastest thing to fix.",body:"Most surfers waste years on trial and error. <b>Theory + video analysis</b> compresses that into weeks, you see exactly what to change and why."},
       mindset_limiter:{title:"Fear and hesitation are trainable. Literally.",body:"It's not a personality trait. It's a skill gap. <b>Breath work (apnea) + gradual exposure</b> with a coach rewires it session by session."},
       equipment_limiter:{title:"The wrong board means fighting the ocean AND your gear.",body:"A 10-minute <b>board check</b> often explains years of frustration, volume, shape and fin setup matched to your actual level, not your ego or your fear."},
       ocean_limiter:{title:"Positioning is 80% of a good session.",body:"Read the peak better and everything downstream gets easier, more waves, better waves, less paddling. It's the most coachable skill in surfing."},
       unsure:{title:"'A bit of everything' usually means no feedback loop.",body:"Nobody's ever shown you which lever actually moves your surfing. A <b>diagnostic session</b> finds the real bottleneck fast, that's exactly what this quiz starts."},
-    }[state.q12]||{title:'Noted.',body:'Your programme starts exactly here.'}),
+    }[state.q12]||{title:'Noted.',body:'Your program starts exactly here.'}),
     },
 
 
@@ -1391,13 +1391,13 @@ const STEPS = [
   { id:'ms2', type:'milestone', stage:4, confetti:70,
     title:'{nm}your surf profile is complete.',
     /* says what has actually been captured, not a fixed total the funnel never runs */
-    sub:'Your technique, ocean and gear read is captured. A few quick ones to match your programme, then we calculate your Surf Score.',
-    btn:'Match my programme →' },
+    sub:'Your technique, ocean and gear read is captured. A few quick ones to match your program, then we calculate your Surf Score.',
+    btn:'Match my program →' },
 
   /* ═══ Section 5 · Programme match ═══ */
 
   { id:'sessions', type:'single', q:true,
-    eyebrow:'Programme match', title:'How many coached sessions a week feel right?',
+    eyebrow:'Program match', title:'How many coached sessions a week feel right?',
     options:[
       {label:'1 session, steady and simple',val:'1'},
       {label:'1-2 sessions, real momentum',val:'1-2'},
@@ -1405,8 +1405,8 @@ const STEPS = [
     ]},
 
   { id:'commit', type:'single', q:true,
-    eyebrow:'Programme match', title:'How committed are you to breaking through?',
-    sub:'There are no wrong answers, this just matches you to the right programme.',
+    eyebrow:'Program match', title:'How committed are you to breaking through?',
+    sub:'There are no wrong answers, this just matches you to the right program.',
     options:[
       {label:"Let's test it, a few months",val:'test'},
       {label:"I'm in for ~6 months",val:'6mo'},
@@ -1424,7 +1424,7 @@ const STEPS = [
     ]},
 
   { id:'q19', type:'num', q:true,
-    eyebrow:'Coach profile', title:'Almost there: these help your coach personalise fitness & board recs.',
+    eyebrow:'Coach profile', title:'Almost there: these help your coach personalise your training & board fit.',
     sub:'Optional, skip if you prefer.',
     fields:[
       {key:'height_cm',label:'Height (cm)',placeholder:'e.g. 175',min:140,max:220},
@@ -1433,7 +1433,7 @@ const STEPS = [
 
   { id:'phone', type:'text', field:'phone', inputType:'tel', phone:true, privacy:true,
     eyebrow:'Almost there', title:'{nm}where do we send your <span class="hl">Surf Score?</span>',
-    sub:'Drop your number to unlock your result + programme match. We text it over, no spam.',
+    sub:'Drop your number to unlock your result + program match. We text it over, no spam.',
     placeholder:'4xx xxx xxx' },
 
   { id:'loader', type:'loader' },
@@ -1459,11 +1459,11 @@ const PILLARS={
 };
 function pillarScores(){ const out={}; for(const k in PILLARS){ let t=0,c=0; PILLARS[k].qs.forEach(q=>{const s=scOf(q); if(s!=null){t+=s;c++}}); out[k]=c?Math.round(t/c*10)/10:null; } return out; }
 const LIMITER_META={
-  skill:{label:'Skill',fix:'technique-first coached sessions + surfskate drills'},
-  theory:{label:'Wave IQ',fix:'video analysis + wave-reading theory'},
+  skill:{label:'Skill',fix:'technique-first coached sessions + surf skate drills'},
+  theory:{label:'Wave IQ',fix:'video surf analysis + wave-reading theory'},
   mindset:{label:'Mindset',fix:'confidence coaching + apnea training'},
   ocean:{label:'Ocean Sense',fix:'lineup positioning work in guided sessions'},
-  fitness:{label:'Fitness',fix:'paddle fitness + mobility programme'},
+  fitness:{label:'Fitness',fix:'paddle fitness + mobility training'},
   equipment:{label:'Equipment',fix:'a board check + $200-off partner shapers'},
 };
 function limiterKey(){ const p=pillarScores(); let k=null,v=99; for(const key in p){ if(p[key]!=null&&p[key]<v){v=p[key];k=key;} } return k||'skill'; }
@@ -1582,7 +1582,7 @@ function renderIntro(el){
   el.innerHTML=`
     <div class="intro-badge">Free · 3-min surf diagnostic</div>
     <div class="intro-head">
-      <div class="intro-h">There are 2 kinds of surfers: the ones who <span class="hl">keep improving</span>, and the ones <span class="red">stuck at the same level for years.</span></div>
+      <div class="intro-h">There are 2 kinds of surfers: the ones getting <span class="hl">1% better everyday</span>, and the ones <span class="red">stuck at the same level for years.</span></div>
       <div class="sub">Every session on your own without feedback is a session that <b>doesn't move you forward.</b></div>
     </div>
     <div class="herocard">
@@ -1969,7 +1969,7 @@ const MSEC=[
   {s:'Take-off',    t:'Ocean comfort & take-off',   next:['Wave reading','Peak positioning','Ocean confidence']},
   {s:'Wave read',   t:'Wave reading & positioning', next:['Turning mechanics','Your real blocker','Board fit & volume']},
   {s:'Rail & board',t:'Rail control & your board',  next:['Turning mechanics','Your real blocker','Board fit & volume']},
-  {s:'Programme',   t:'Goals & programme match',    next:['Weekly rhythm','Commitment','Coach profile']},
+  {s:'Program',     t:'Goals & program match',      next:['Weekly rhythm','Commitment','Coach profile']},
 ];
 const ARROW_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.6 12h14"/><path d="M12.6 5.6L19 12l-6.4 6.4"/></svg>';
 function renderMilestone(el,step){
@@ -2068,7 +2068,7 @@ const LPHASE=[
    scan:['Reading your take-off & ride answers','Weighting session frequency','Scoring Skill · Ocean Sense']},
   {row:"Spotting what's holding you back",      pill:['theory','mindset'],
    scan:['Comparing all six pillar readings','Isolating your lowest pillar','Scoring Wave IQ · Mindset']},
-  {row:'Matching you to a coaching programme',  pill:['fitness','equipment'],
+  {row:'Matching you to a coaching program',    pill:['fitness','equipment'],
    scan:['Checking paddle fitness','Checking board fit & volume','Matching session load']},
   {row:'Projecting your progression curve',     pill:[],
    scan:['Modelling weeks to your next level','Cross-checking coached progression','Finalising your Surf Score']},
@@ -2121,7 +2121,7 @@ function renderLoader(el){
      behind: the coaching history, the named services and the location. */
   const LFACTS=[
     {k:'Coaching since 2019',t:'Improve Surfing has coached 300+ surfers out of Coolangatta, Gold Coast.'},
-    {k:'What your programme uses',t:'1:1 surf sessions, video surf analysis, surfskate, mobility training and apnea.'},
+    {k:'What your program includes',t:'Surf sessions, surf skate, video surf analysis, mobility training and apnea work.'},
     {k:'Where it runs',t:'Coolangatta, Gold Coast, mornings, with a coach in the water with you.'},
     {k:'Member satisfaction',t:'99% satisfaction across the surfers coached since 2019.'},
   ];
@@ -2245,7 +2245,7 @@ function renderScore(el){
           <span class="lv">${lv!=null?lv.toFixed(1)+'<i>/4</i>':'·'}</span>
         </div>
         <div class="lwhy">${limWhy}</div>
-        <p>This is what's capping everything else. Your programme attacks it first, with <b>${lim.fix}</b>.</p>
+        <p>This is what's holding the rest back. Your program targets it first, with <b>${lim.fix}</b>.</p>
       </div>
       <div class="stuck">
         <div class="sph">
@@ -2303,7 +2303,7 @@ function renderProjection(el){
           <div class="ffoot">
             <span class="fk">Coached · ${sessL}</span>
             <div class="fnum">${p.weeks} weeks</div>
-            <div class="fl">to <b>${nextL}</b>, with your limiter attacked first, and a coach in the water with you.</div>
+            <div class="fl">to <b>${nextL}</b>, with your limiter targeted first, and a coach in the water with you.</div>
           </div>
         </div>
       </div>
@@ -2325,8 +2325,8 @@ function renderProjection(el){
         <div class="legend"><span><i style="background:#8a8a8a"></i>On your own</span><span><i style="background:#ffffff"></i>With Improve</span></div>
         <div class="cbnote">An illustration of the two paths, the shape of them, not a measurement. The ${p.weeks} weeks comes from your measured level, ${sessL} and your commitment answer.</div>
       </div>
-      <div class="savedpill">Break your plateau and level up in <b>weeks, not years</b>, 1% better every session.</div>
-      <button class="cta" style="margin-top:16px" onclick="next()">Show me the programme →</button>
+      <div class="savedpill">Take your surfing to the next level in <b>weeks, not years</b>. 1% better everyday.</div>
+      <button class="cta" style="margin-top:16px" onclick="next()">Show me the program →</button>
     </div>`;
   const pr=el.querySelector('#pred'),pg=el.querySelector('#pgreen'),pa=el.querySelector('#parea'),
         free=el.querySelector('#pfree'),cf=el.querySelector('#cfree');
@@ -2380,7 +2380,7 @@ function renderBonus(el){
             <div class="pwrap">
               <div class="pk">Unlocked</div>
               <div class="pt">10% OFF</div>
-              <div class="ps">on your matched programme, applied at checkout</div>
+              <div class="ps">on your matched program, applied at checkout</div>
             </div>
           </div>
           <canvas id="mScratchCanvas"></canvas>
@@ -2429,7 +2429,7 @@ function openScratchModal(){
             <!-- copy note: every tier is a FIXED-TERM contract (3/6/12-month, billed weekly),
                  so this line may not promise a price lock "for as long as you stay", that
                  would be an invented lifetime guarantee. It says only what checkout does. -->
-            <div class="ps">on your matched programme, applied at checkout</div>
+            <div class="ps">on your matched program, applied at checkout</div>
           </div>
         </div>
         <canvas id="mScratchCanvas"></canvas>
@@ -2690,7 +2690,7 @@ function renderPlans(el){
   el.classList.add('padbar');   /* keeps the sticky bar off the content */
   el.innerHTML=`
     <div class="eyebrow">Choose your plan</div>
-    <h1>${nm?nm+', choose':'Choose'} your <span class="hl">programme.</span></h1>
+    <h1>${nm?nm+', choose':'Choose'} your <span class="hl">program.</span></h1>
     <div class="sub" style="margin-bottom:14px">Your match is pre-selected, but pick whichever fits you best.</div>
     ${d?`<div class="disc-banner"><span class="disc-badge">✓ 10% founding discount applied to all plans</span></div>`:''}
     <div class="scarce" style="margin:0"><span class="dotr"></span><span>Founding member intake</span></div>
